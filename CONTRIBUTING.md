@@ -10,8 +10,8 @@ Contributions are welcome, small ones included. Some places to start:
   came first. Make up an example if the real one is private.
 - **Improve the docs**, if something was unclear when you installed or used SemSearch.
 
-Bug fixes and new features are welcome too. For a bigger change, please open an issue first so
-we can talk about it.
+Bug fixes and new features are welcome too. If you're planning a bigger change, opening an issue
+first helps us agree on the approach before you put in the work.
 
 ## Development
 
