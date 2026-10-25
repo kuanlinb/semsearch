@@ -28,19 +28,15 @@ SemSearch from its menu and open it again.
 
 ## Uninstall
 
-Run these from the folder you cloned (`cd semsearch`):
+From the folder you cloned:
 
 ```bash
-osascript -e 'quit app "SemSearch"'      # stops the app and its search service
-launchctl bootout gui/$(id -u)/io.github.kuanlinb.semsearch 2>/dev/null
-rm -rf /Applications/SemSearch.app ~/Library/LaunchAgents/io.github.kuanlinb.semsearch.plist
-rm -rf ~/.semsearch                       # the index, logs and the opened-files log (opens.db)
-rm -rf ~/.cache/huggingface/hub/models--BAAI--bge-m3   # the model (about 2.3 GB)
-for d in /opt/homebrew/bin /usr/local/bin; do         # the `ss` command, only if it is ours
-  [[ "$(readlink "$d/ss")" == "$PWD/ss" ]] && rm "$d/ss"
-done
-cd .. && rm -rf semsearch                 # the code and its Python environment
+./uninstall.sh          # removes the app, its login item and the `ss` command
+./uninstall.sh --all    # also deletes the index, logs and the downloaded model (about 2.3 GB)
+cd .. && rm -rf semsearch   # the code and its Python environment
 ```
+
+The plain version keeps the index and the model, so installing again later is quick.
 
 ## Development
 

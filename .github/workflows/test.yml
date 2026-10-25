@@ -4,25 +4,37 @@ on:
   push:
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   test:
     runs-on: macos-14   # Apple silicon
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: ${{ matrix.python }}
           cache: pip
           cache-dependency-path: requirements*.txt
-      - name: Install dependencies
-        run: pip install -r requirements-dev.txt
-      - name: Compile the Swift app and helpers
+      - name: Install (test mode; builds the app, the helpers and .venv like a user's install)
+        run: SEMSEARCH_APP="$RUNNER_TEMP/SemSearch.app" SEMSEARCH_SKIP_AGENT=1 ./install.sh
+      - name: Check the built app
         run: |
-          mkdir -p build bin
-          swiftc -O mac/main.swift -o build/SemSearch
-          swiftc -O mac/ocr.swift -o bin/semsearch-ocr
-          swiftc -O mac/fswatch.swift -o bin/semsearch-fswatch
+          test -x "$RUNNER_TEMP/SemSearch.app/Contents/MacOS/SemSearch"
+          test -x bin/semsearch-ocr && test -x bin/semsearch-fswatch
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/SemSearch.app/Contents/Info.plist")" = "$(cat VERSION)"
       - name: Run tests (tiny fake embedding model, no download)
         env:
           SEMSEARCH_DEVICE: cpu   # hosted runners report MPS but cannot allocate on it
-        run: python -m pytest -q tests
+        run: |
+          .venv/bin/pip install -q -r requirements-dev.txt
+          .venv/bin/python -m pytest -q tests
+      - name: Uninstall (test mode)
+        run: |
+          SEMSEARCH_APP="$RUNNER_TEMP/SemSearch.app" SEMSEARCH_SKIP_AGENT=1 ./uninstall.sh
+          test ! -e "$RUNNER_TEMP/SemSearch.app"

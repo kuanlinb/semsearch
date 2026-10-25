@@ -12,6 +12,7 @@ REPO="$PWD"
 APP="${SEMSEARCH_APP:-/Applications/SemSearch.app}"
 SKIP_AGENT="${SEMSEARCH_SKIP_AGENT:-}"
 LABEL="io.github.kuanlinb.semsearch"
+VERSION="$(cat VERSION)"
 
 die() { echo "Error: $*" >&2; exit 1; }
 [[ "$(uname -m)" == "arm64" ]] || die "SemSearch needs an Apple silicon Mac (arm64)."
@@ -60,7 +61,7 @@ cat > "$BUILD/SemSearch.app/Contents/Info.plist" <<PLIST
   <key>CFBundleExecutable</key><string>SemSearch</string>
   <key>CFBundleIconFile</key><string>AppIcon</string>
   <key>CFBundlePackageType</key><string>APPL</string>
-  <key>CFBundleShortVersionString</key><string>0.1.0</string>
+  <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleVersion</key><string>1</string>
   <key>LSMinimumSystemVersion</key><string>13.0</string>
   <key>LSUIElement</key><true/>

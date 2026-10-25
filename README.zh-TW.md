@@ -51,6 +51,7 @@ cd semsearch
 - 第一次會下載語言模型（約 2.3 GB，只下載一次）。
 - **幾分鐘內就能用檔名搜尋**，16 萬個檔案大約 15 分鐘。 讀完所有文件的內文要比較久，資料少的話幾分鐘，16 萬個檔案大約 2 小時，期間可以照常搜尋。
 - `semsearch` 資料夾請不要移動或刪除，App 會從那裡執行。
+- 之後想移除，在這個資料夾執行 `./uninstall.sh` 就好。
 
 > 如果安裝程式說 Python 版本太舊，執行 `brew install python`（或安裝 [uv](https://github.com/astral-sh/uv)）後，再跑一次 `./install.sh`。
 
@@ -94,6 +95,7 @@ cd semsearch
 - [設定](docs/configuration.md)：加入資料夾、排除路徑、關閉文字辨識、更改連接埠
 - [運作方式](docs/how-it-works.md)：架構圖、搜尋流程、模型怎麼選的
 - [限制、移除與開發](docs/troubleshooting.md)
+- [安全性](SECURITY.md)與[更新紀錄](CHANGELOG.md)
 
 ## 授權
 

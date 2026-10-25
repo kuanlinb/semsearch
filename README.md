@@ -58,6 +58,7 @@ That's it. SemSearch now starts automatically when you log in. What happens next
   longer, from minutes for a small folder to about 2 hours for 165,000 files; you can search
   while it works.
 - Keep the `semsearch` folder where it is: the app runs from it.
+- To remove SemSearch later, run `./uninstall.sh` in that folder.
 
 > If the installer says Python is too old, install a newer one with `brew install python`
 > (or install [uv](https://github.com/astral-sh/uv)) and run `./install.sh` again.
@@ -105,6 +106,7 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 - [Configuration](docs/configuration.md): add folders, exclude paths, turn OCR off, change the port
 - [How it works](docs/how-it-works.md): architecture, the search pipeline, how the model was chosen
 - [Limitations, uninstall and development](docs/troubleshooting.md)
+- [Security](SECURITY.md) and [changelog](CHANGELOG.md)
 
 ## License
 
