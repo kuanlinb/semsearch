@@ -30,13 +30,13 @@ https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
 
 **需要**：M1 以後的 Mac（Apple 晶片）、macOS 13 以上、約 4 GB 空間。
 
-**1. 安裝 Apple 開發者工具**（只要一次，已經裝過 Xcode 可跳過）：
+**用 [Homebrew](https://brew.sh) 安裝**（一行）：
 
 ```bash
-xcode-select --install
+brew install kuanlinb/tap/semsearch && semsearch-install
 ```
 
-**2. 下載並安裝 SemSearch：**
+**或從原始碼安裝**（要先執行一次 `xcode-select --install`）：
 
 ```bash
 git clone https://github.com/kuanlinb/semsearch.git
@@ -44,14 +44,15 @@ cd semsearch
 ./install.sh
 ```
 
-**3. macOS 詢問能不能讀取「文件」「桌面」「下載項目」時，按「允許」。**
+裝好後，**macOS 詢問能不能讀取「文件」「桌面」「下載項目」時，按「允許」。**
 
 這樣就好了。之後每次登入會自動啟動。接下來會發生的事：
 
 - 第一次會下載語言模型（約 2.3 GB，只下載一次）。
-- **幾分鐘內就能用檔名搜尋**，16 萬個檔案大約 15 分鐘。 讀完所有文件的內文要比較久，資料少的話幾分鐘，16 萬個檔案大約 2 小時，期間可以照常搜尋。
-- `semsearch` 資料夾請不要移動或刪除，App 會從那裡執行。
-- 之後想移除，在這個資料夾執行 `./uninstall.sh` 就好。
+- **幾分鐘內就能用檔名搜尋**，16 萬個檔案大約 15 分鐘。讀完所有文件的內文要比較久，資料少的話幾分鐘，16 萬個檔案大約 2 小時，期間可以照常搜尋。
+- 更新：`brew upgrade semsearch && semsearch-install`，或 `git pull && ./install.sh`。
+- 移除：`semsearch-uninstall`（再執行 `brew uninstall semsearch`），或 `./uninstall.sh`。
+- 從原始碼安裝的話，`semsearch` 資料夾請不要移動或刪除，App 會從那裡執行。
 
 > 如果安裝程式說 Python 版本太舊，執行 `brew install python`（或安裝 [uv](https://github.com/astral-sh/uv)）後，再跑一次 `./install.sh`。
 
@@ -96,6 +97,8 @@ cd semsearch
 - [運作方式](docs/how-it-works.md)：架構圖、搜尋流程、模型怎麼選的
 - [限制、移除與開發](docs/troubleshooting.md)
 - [安全性](SECURITY.md)與[更新紀錄](CHANGELOG.md)
+
+**歡迎一起參與**，翻譯介面、補充 App 用途說明都很有幫助，詳見 [CONTRIBUTING.md](CONTRIBUTING.md)。
 
 ## 授權
 

@@ -34,13 +34,13 @@ https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
 
 **You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 4 GB of free space.
 
-**1. Install Apple's developer tools** (once; skip if you have Xcode):
+**With [Homebrew](https://brew.sh)** (one line):
 
 ```bash
-xcode-select --install
+brew install kuanlinb/tap/semsearch && semsearch-install
 ```
 
-**2. Download and install SemSearch:**
+**Or from source** (needs `xcode-select --install` once):
 
 ```bash
 git clone https://github.com/kuanlinb/semsearch.git
@@ -48,17 +48,18 @@ cd semsearch
 ./install.sh
 ```
 
-**3. Click “Allow”** when macOS asks whether SemSearch may read your Documents, Desktop and
+Then **click “Allow”** when macOS asks whether SemSearch may read your Documents, Desktop and
 Downloads.
 
 That's it. SemSearch now starts automatically when you log in. What happens next:
 
 - The first time, it downloads the language model (about 2.3 GB, only once).
-- **File names are searchable within minutes** (about 15 minutes for 165,000 files). Reading the text inside every document takes
-  longer, from minutes for a small folder to about 2 hours for 165,000 files; you can search
-  while it works.
-- Keep the `semsearch` folder where it is: the app runs from it.
-- To remove SemSearch later, run `./uninstall.sh` in that folder.
+- **File names are searchable within minutes** (about 15 minutes for 165,000 files). Reading the
+  text inside every document takes longer, from minutes for a small folder to about 2 hours for
+  165,000 files; you can search while it works.
+- Updating: `brew upgrade semsearch && semsearch-install`, or `git pull && ./install.sh`.
+- Removing: `semsearch-uninstall` (then `brew uninstall semsearch`), or `./uninstall.sh`.
+- From source, keep the `semsearch` folder where it is: the app runs from it.
 
 > If the installer says Python is too old, install a newer one with `brew install python`
 > (or install [uv](https://github.com/astral-sh/uv)) and run `./install.sh` again.
@@ -107,6 +108,8 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 - [How it works](docs/how-it-works.md): architecture, the search pipeline, how the model was chosen
 - [Limitations, uninstall and development](docs/troubleshooting.md)
 - [Security](SECURITY.md) and [changelog](CHANGELOG.md)
+
+**Contributions are welcome**, from translations to app descriptions: see [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

@@ -44,11 +44,17 @@ if [[ -d "$APP" ]]; then
   fi
 fi
 
+# Set by the Homebrew wrapper (semsearch-uninstall)
+if [[ -n "${SEMSEARCH_BREW:-}" ]]; then
+  again="semsearch-uninstall --all"; code="brew uninstall semsearch"
+else
+  again="./uninstall.sh --all"; code="cd .. && rm -rf \"$REPO\""
+fi
 if [[ -n "$ALL" ]]; then
   rm -rf "${SEMSEARCH_DATA:-$HOME/.semsearch}"
   rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--BAAI--bge-m3"
   echo "Removed SemSearch, its index and the model."
 else
-  echo "Removed SemSearch. The index (~/.semsearch) and the model are kept; ./uninstall.sh --all deletes them."
+  echo "Removed SemSearch. The index (~/.semsearch) and the model are kept; $again deletes them."
 fi
-echo "To delete the code too: cd .. && rm -rf \"$REPO\""
+echo "To delete the code too: $code"

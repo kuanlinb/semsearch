@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1 (2026-10-26)
+
+- Install with Homebrew: `brew install kuanlinb/tap/semsearch && semsearch-install`.
+- The search box no longer shows a square edge around its rounded corners.
+
 ## 0.1.0 (2026-10-26)
 
 First public release.

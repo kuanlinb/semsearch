@@ -28,7 +28,10 @@ SemSearch from its menu and open it again.
 
 ## Uninstall
 
-From the folder you cloned:
+Installed with Homebrew: `semsearch-uninstall` (add `--all` to delete the index and model too), then
+`brew uninstall semsearch`.
+
+Installed from source, from the folder you cloned:
 
 ```bash
 ./uninstall.sh          # removes the app, its login item and the `ss` command
