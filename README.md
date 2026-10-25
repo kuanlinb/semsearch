@@ -81,7 +81,7 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
   *“receipt for the new laptop”*.
 - Add a type word to narrow it down: *“… pdf”*, *“… slides”*, *“… folder”*, *“… app”*.
 - Ask in any language; the file can be in another one.
-- ⌥ Space does nothing? Another app is using it: [pick another shortcut](docs/troubleshooting.md#space-does-nothing).
+- ⌥ Space does nothing? Another app is using it: pick another shortcut under **Shortcut** in the menu-bar icon ([more](docs/troubleshooting.md#space-does-nothing)).
 - Also available from the menu-bar icon, in a browser at `http://127.0.0.1:8799`, and in
   Terminal as `ss your question`.
 

@@ -24,8 +24,9 @@ func L(_ en: String, _ args: [String: Any] = [:]) -> String {
     return s
 }
 
+let configPath = NSHomeDirectory() + "/.semsearch/config.json"
 let userConfig: [String: Any] = {
-    guard let d = FileManager.default.contents(atPath: NSHomeDirectory() + "/.semsearch/config.json") else { return [:] }
+    guard let d = FileManager.default.contents(atPath: configPath) else { return [:] }
     return (try? JSONSerialization.jsonObject(with: d)) as? [String: Any] ?? [:]
 }()
 
@@ -35,26 +36,56 @@ let serverPort: Int = {
     return userConfig["port"] as? Int ?? 8799
 }()
 
-// Shortcut: "hotkey" in ~/.semsearch/config.json, e.g. "option+shift+space"; default option+space.
-// macOS does not report a shortcut that another app already uses, so this is the way out of a clash.
-struct Shortcut {
+// Shortcut: picked in the menu-bar menu, or "hotkey" in ~/.semsearch/config.json, e.g.
+// "option+shift+space" ("cmd", "option", "control", "shift" plus "space", a letter or a digit).
+// macOS does not report a shortcut that another app already uses, so changing it is the way out of a clash.
+struct Shortcut: Equatable {
     var keyCode = UInt32(kVK_Space), carbon = UInt32(optionKey), flags: NSEvent.ModifierFlags = [.option], key = " "
-}
-let shortcut: Shortcut = {
-    let codes: [String: Int] = ["space": kVK_Space, "a": kVK_ANSI_A, "b": kVK_ANSI_B, "c": kVK_ANSI_C, "d": kVK_ANSI_D, "e": kVK_ANSI_E, "f": kVK_ANSI_F, "g": kVK_ANSI_G, "h": kVK_ANSI_H, "i": kVK_ANSI_I, "j": kVK_ANSI_J, "k": kVK_ANSI_K, "l": kVK_ANSI_L, "m": kVK_ANSI_M, "n": kVK_ANSI_N, "o": kVK_ANSI_O, "p": kVK_ANSI_P, "q": kVK_ANSI_Q, "r": kVK_ANSI_R, "s": kVK_ANSI_S, "t": kVK_ANSI_T, "u": kVK_ANSI_U, "v": kVK_ANSI_V, "w": kVK_ANSI_W, "x": kVK_ANSI_X, "y": kVK_ANSI_Y, "z": kVK_ANSI_Z, "0": kVK_ANSI_0, "1": kVK_ANSI_1, "2": kVK_ANSI_2, "3": kVK_ANSI_3, "4": kVK_ANSI_4, "5": kVK_ANSI_5, "6": kVK_ANSI_6, "7": kVK_ANSI_7, "8": kVK_ANSI_8, "9": kVK_ANSI_9]
-    var sc = Shortcut(keyCode: 0, carbon: 0, flags: [], key: "")
-    for part in (userConfig["hotkey"] as? String ?? "").lowercased().split(separator: "+") {
-        switch part.trimmingCharacters(in: .whitespaces) {
-        case "cmd", "command": sc.carbon |= UInt32(cmdKey); sc.flags.insert(.command)
-        case "option", "opt", "alt": sc.carbon |= UInt32(optionKey); sc.flags.insert(.option)
-        case "control", "ctrl": sc.carbon |= UInt32(controlKey); sc.flags.insert(.control)
-        case "shift": sc.carbon |= UInt32(shiftKey); sc.flags.insert(.shift)
-        case let k where codes[k] != nil: sc.keyCode = UInt32(codes[k]!); sc.key = k == "space" ? " " : k
-        default: return Shortcut()
+
+    init() {}
+
+    /// nil when `spec` is not a valid shortcut (an unknown word, or no key or no modifier)
+    init?(_ spec: String) {
+        let codes: [String: Int] = ["space": kVK_Space, "a": kVK_ANSI_A, "b": kVK_ANSI_B, "c": kVK_ANSI_C, "d": kVK_ANSI_D, "e": kVK_ANSI_E, "f": kVK_ANSI_F, "g": kVK_ANSI_G, "h": kVK_ANSI_H, "i": kVK_ANSI_I, "j": kVK_ANSI_J, "k": kVK_ANSI_K, "l": kVK_ANSI_L, "m": kVK_ANSI_M, "n": kVK_ANSI_N, "o": kVK_ANSI_O, "p": kVK_ANSI_P, "q": kVK_ANSI_Q, "r": kVK_ANSI_R, "s": kVK_ANSI_S, "t": kVK_ANSI_T, "u": kVK_ANSI_U, "v": kVK_ANSI_V, "w": kVK_ANSI_W, "x": kVK_ANSI_X, "y": kVK_ANSI_Y, "z": kVK_ANSI_Z, "0": kVK_ANSI_0, "1": kVK_ANSI_1, "2": kVK_ANSI_2, "3": kVK_ANSI_3, "4": kVK_ANSI_4, "5": kVK_ANSI_5, "6": kVK_ANSI_6, "7": kVK_ANSI_7, "8": kVK_ANSI_8, "9": kVK_ANSI_9]
+        keyCode = 0; carbon = 0; flags = []; key = ""
+        for part in spec.lowercased().split(separator: "+") {
+            switch part.trimmingCharacters(in: .whitespaces) {
+            case "cmd", "command": carbon |= UInt32(cmdKey); flags.insert(.command)
+            case "option", "opt", "alt": carbon |= UInt32(optionKey); flags.insert(.option)
+            case "control", "ctrl": carbon |= UInt32(controlKey); flags.insert(.control)
+            case "shift": carbon |= UInt32(shiftKey); flags.insert(.shift)
+            case let k where codes[k] != nil: keyCode = UInt32(codes[k]!); key = k == "space" ? " " : k
+            default: return nil
+            }
         }
+        if key.isEmpty || flags.isEmpty { return nil }
     }
-    return sc.key.isEmpty || sc.flags.isEmpty ? Shortcut() : sc  // missing or invalid: the default
-}()
+
+    /// As macOS writes shortcuts: "⌥⇧ Space", "⌘⇧ K"
+    var label: String {
+        let mods = [(NSEvent.ModifierFlags.control, "⌃"), (.option, "⌥"), (.shift, "⇧"), (.command, "⌘")]
+        return mods.filter { flags.contains($0.0) }.map { $0.1 }.joined() + " " + (key == " " ? L("Space") : key.uppercased())
+    }
+}
+// Offered in the menu (a different "hotkey" from config.json is listed too)
+let shortcutChoices = ["option+space", "option+shift+space", "cmd+shift+space", "control+shift+space"]
+let configuredHotkey = (userConfig["hotkey"] as? String).flatMap { Shortcut($0) == nil ? nil : $0 } ?? "option+space"
+var shortcut = Shortcut(configuredHotkey) ?? Shortcut()
+
+/// Remember the shortcut in config.json, keeping the other settings. A file that is not valid JSON is left alone.
+func saveHotkey(_ spec: String) {
+    var cfg: [String: Any] = [:]
+    if let d = FileManager.default.contents(atPath: configPath) {
+        guard let j = (try? JSONSerialization.jsonObject(with: d)) as? [String: Any] else { return }
+        cfg = j
+    }
+    cfg["hotkey"] = spec
+    try? FileManager.default.createDirectory(atPath: (configPath as NSString).deletingLastPathComponent,
+                                             withIntermediateDirectories: true)
+    if let out = try? JSONSerialization.data(withJSONObject: cfg, options: [.prettyPrinted, .sortedKeys, .withoutEscapingSlashes]) {
+        try? out.write(to: URL(fileURLWithPath: configPath), options: .atomic)
+    }
+}
 let serverURL = "http://127.0.0.1:\(serverPort)"
 
 struct Hit: Decodable {
@@ -83,15 +114,21 @@ final class HotKey {
     private var ref: EventHotKeyRef?
     private static var handler: (() -> Void)?
 
-    init(keyCode: UInt32, modifiers: UInt32, action: @escaping () -> Void) {
+    init(action: @escaping () -> Void) {
         HotKey.handler = action
         var spec = EventTypeSpec(eventClass: OSType(kEventClassKeyboard), eventKind: UInt32(kEventHotKeyPressed))
         InstallEventHandler(GetApplicationEventTarget(), { _, _, _ in
             HotKey.handler?()
             return noErr
         }, 1, &spec, nil, nil)
+    }
+
+    /// Replace the registered shortcut; false if macOS refuses it
+    @discardableResult
+    func register(_ sc: Shortcut) -> Bool {
+        if let old = ref { UnregisterEventHotKey(old); ref = nil }
         let id = EventHotKeyID(signature: OSType(0x5353_4348), id: 1)  // "SSCH"
-        RegisterEventHotKey(keyCode, modifiers, id, GetApplicationEventTarget(), 0, &ref)
+        return RegisterEventHotKey(sc.keyCode, sc.carbon, id, GetApplicationEventTarget(), 0, &ref) == noErr
     }
 }
 
@@ -627,6 +664,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var status: NSStatusItem!
     var controller: SearchController!
     var hotkey: HotKey!
+    let searchItem = NSMenuItem(title: L("Search"), action: #selector(openSearch), keyEquivalent: "")
+    let shortcutItem = NSMenuItem(title: L("Shortcut"), action: nil, keyEquivalent: "")
     let statusLine = NSMenuItem(title: L("Loading index status…"), action: nil, keyEquivalent: "")
 
     var server: Process?
@@ -709,20 +748,20 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         startServer()
         controller = SearchController()
-        hotkey = HotKey(keyCode: shortcut.keyCode, modifiers: shortcut.carbon) { [weak self] in
-            self?.controller.toggle()
-        }
+        hotkey = HotKey { [weak self] in self?.controller.toggle() }
+        hotkey.register(shortcut)
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         status.button?.image = NSImage(systemSymbolName: "sparkle.magnifyingglass", accessibilityDescription: "SemSearch")
         let menu = NSMenu()
         menu.delegate = self
-        let open = NSMenuItem(title: L("Search"), action: #selector(openSearch), keyEquivalent: shortcut.key)
-        open.keyEquivalentModifierMask = shortcut.flags
-        menu.addItem(open)
+        menu.addItem(searchItem)
         menu.addItem(.separator())
         menu.addItem(statusLine)
         menu.addItem(NSMenuItem(title: L("Update Index Now"), action: #selector(reindex), keyEquivalent: ""))
         menu.addItem(NSMenuItem(title: L("Open Web Version"), action: #selector(openWeb), keyEquivalent: ""))
+        shortcutItem.submenu = NSMenu()
+        menu.addItem(shortcutItem)
+        showShortcut()
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: L("Quit SemSearch"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         for i in menu.items where i.action != nil && i.action != #selector(NSApplication.terminate(_:)) { i.target = self }
@@ -807,6 +846,32 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc func openSearch() { controller.toggle() }
+    /// The current shortcut next to "Search", and a check mark on it in the Shortcut submenu
+    func showShortcut() {
+        searchItem.keyEquivalent = shortcut.key
+        searchItem.keyEquivalentModifierMask = shortcut.flags
+        let sub = shortcutItem.submenu!
+        sub.removeAllItems()
+        var specs = shortcutChoices
+        if !specs.contains(where: { Shortcut($0) == shortcut }) { specs.append(configuredHotkey) }
+        for spec in specs {
+            guard let sc = Shortcut(spec) else { continue }
+            let item = NSMenuItem(title: sc.label, action: #selector(pickShortcut(_:)), keyEquivalent: "")
+            item.representedObject = spec
+            item.state = sc == shortcut ? .on : .off
+            item.target = self
+            sub.addItem(item)
+        }
+    }
+
+    @objc func pickShortcut(_ item: NSMenuItem) {
+        guard let spec = item.representedObject as? String, let sc = Shortcut(spec), sc != shortcut else { return }
+        guard hotkey.register(sc) else { hotkey.register(shortcut); return }
+        shortcut = sc
+        saveHotkey(spec)
+        showShortcut()
+    }
+
     @objc func openWeb() { NSWorkspace.shared.open(URL(string: serverURL)!) }
     @objc func reindex() {
         var r = URLRequest(url: URL(string: serverURL + "/reindex")!)

@@ -18,16 +18,13 @@
 
 ## ⌥Space does nothing
 
-Another app probably uses the same shortcut (Raycast, Alfred, ChatGPT and input-method switching
-often do), and macOS does not tell SemSearch about the clash. Either free ⌥Space in that app, or
-pick another shortcut with `"hotkey"` in `~/.semsearch/config.json` (see
-[Configuration](configuration.md)), for example:
+Another app probably uses the same shortcut (Raycast, Alfred and ChatGPT often do), and macOS
+does not tell SemSearch about the clash. Click the SemSearch icon in the menu bar, open
+**Shortcut** and pick another one; it works right away. Or free ⌥Space in the other app.
 
-```json
-{ "hotkey": "option+shift+space" }
-```
-
-Then quit SemSearch from its menu-bar icon and open it again. The menu-bar icon always works too.
+For a combination that is not in the menu, set `"hotkey"` in `~/.semsearch/config.json` (see
+[Configuration](configuration.md)), e.g. `{ "hotkey": "control+option+cmd+k" }`, then quit
+SemSearch from its menu and open it again.
 
 ## Uninstall
 

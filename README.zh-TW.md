@@ -72,7 +72,7 @@ cd semsearch
 - 像跟朋友說話一樣描述：「上課講 attention 的投影片」「新筆電的收據」。
 - 加上類型字可以縮小範圍：「…pdf」「…簡報」「…資料夾」「…app」。
 - 用中文問、檔案是英文也找得到，反過來也可以。
-- 按 ⌥ Space 沒反應？通常是別的 App 佔用了這個快捷鍵，可以[換一個快捷鍵](docs/troubleshooting.md#space-does-nothing)。
+- 按 ⌥ Space 沒反應？通常是別的 App 佔用了這個快捷鍵，點選單列的 SemSearch 圖示，在「快捷鍵」裡換一個就好（[詳細說明](docs/troubleshooting.md#space-does-nothing)）。
 - 也可以從選單列的放大鏡圖示、瀏覽器 `http://127.0.0.1:8799`，或終端機 `ss 你的問題` 來搜尋。
 - 介面語言跟著系統：支援英文、繁體中文、簡體中文、日文、韓文，其他語言顯示英文。
 
