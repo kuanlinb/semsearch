@@ -6,6 +6,8 @@
 
 Spotlight 要記得檔名裡的字才找得到。SemSearch 看得懂意思，就算完全不記得檔案叫什麼也找得到。全部在你的 Mac 上執行，檔案和搜尋內容都不會上傳。
 
+*🔊 影片預設靜音，請點播放器上的喇叭圖示打開聲音。*
+
 https://github.com/user-attachments/assets/de713086-3c07-4550-a0e2-dcbe90595951
 
 ## 它能做什麼
