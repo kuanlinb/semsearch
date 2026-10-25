@@ -24,7 +24,7 @@ pick another shortcut with `"hotkey"` in `~/.semsearch/config.json` (see
 [Configuration](configuration.md)), for example:
 
 ```json
-{ "hotkey": "control+option+space" }
+{ "hotkey": "option+shift+space" }
 ```
 
 Then quit SemSearch from its menu-bar icon and open it again. The menu-bar icon always works too.

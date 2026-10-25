@@ -35,7 +35,7 @@ let serverPort: Int = {
     return userConfig["port"] as? Int ?? 8799
 }()
 
-// Shortcut: "hotkey" in ~/.semsearch/config.json, e.g. "control+option+space"; default option+space.
+// Shortcut: "hotkey" in ~/.semsearch/config.json, e.g. "option+shift+space"; default option+space.
 // macOS does not report a shortcut that another app already uses, so this is the way out of a clash.
 struct Shortcut {
     var keyCode = UInt32(kVK_Space), carbon = UInt32(optionKey), flags: NSEvent.ModifierFlags = [.option], key = " "
