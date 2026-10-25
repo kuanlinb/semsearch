@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SemSearch</title>
+<style>
+  :root { --bg:#f5f5f7; --card:#fff; --fg:#1d1d1f; --sub:#6e6e73; --line:#e3e3e8; --acc:#0a84ff; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1c1c1e; --card:#2c2c2e; --fg:#f5f5f7; --sub:#a1a1a6; --line:#3a3a3c; } }
+  body { margin:0; background:var(--bg); color:var(--fg); font:15px -apple-system, "PingFang TC", sans-serif; }
+  main { max-width:820px; margin:0 auto; padding:40px 16px; }
+  h1 { font-size:22px; margin:0 0 4px; }
+  #status { color:var(--sub); font-size:13px; margin-bottom:16px; }
+  input { width:100%; box-sizing:border-box; font-size:20px; padding:14px 16px; border-radius:12px;
+          border:1px solid var(--line); background:var(--card); color:var(--fg); outline:none; }
+  input:focus { border-color:var(--acc); }
+  ol { list-style:none; padding:0; margin:16px 0; }
+  li { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 14px; margin-bottom:8px; }
+  .name { font-weight:600; word-break:break-all; }
+  .path { color:var(--sub); font-size:12px; word-break:break-all; margin-top:2px; }
+  .snip { font-size:13px; margin-top:4px; }
+  .tag { font-size:11px; color:var(--sub); float:right; margin-left:8px; }
+</style>
+</head>
+<body>
+<main>
+  <h1>SemSearch</h1>
+  <div id="status">…</div>
+  <input id="q" autofocus>
+  <ol id="out"></ol>
+</main>
+<script>
+// UI language follows the browser; translations are l10n/<lang>.json, keyed by the English text
+const parts = (navigator.language || 'en').split('-');
+const lang = parts[0] !== 'zh' ? parts[0]
+  : (parts.includes('Hant') || ['TW', 'HK', 'MO'].includes(parts[parts.length - 1]) ? 'zh-Hant' : 'zh-Hans');
+let strings = {};
+const T = (en, args = {}) => Object.entries(args).reduce((s, [k, v]) => s.replaceAll(`{${k}}`, v), strings[en] ?? en);
+const q = document.getElementById('q'), out = document.getElementById('out');
+let timer;
+(lang === 'en' ? Promise.resolve({}) : fetch(`/l10n/${lang}.json`).then(r => r.ok ? r.json() : {}).catch(() => ({})))
+  .then(t => {
+    strings = t;
+    q.placeholder = T('Describe the file or app you are looking for');
+    return fetch('/status');
+  })
+  .then(r => r.json()).then(s => {
+    document.getElementById('status').textContent =
+      T('{files} items · {chunks} vectors · last update {last}{busy} · {model}', {files: s.files, chunks: s.chunks,
+        last: s.last_index || T('not yet'), busy: s.indexing ? T(', updating') : '', model: s.model});
+  });
+q.addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(run, 180); });
+function esc(s) { return s.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])); }
+async function run() {
+  const v = q.value.trim();
+  if (!v) { out.innerHTML = ''; return; }
+  const r = await (await fetch('/search?n=30&q=' + encodeURIComponent(v))).json();
+  if (q.value.trim() !== v) return;
+  out.innerHTML = r.results.map(h => `<li>
+    <span class="tag">${h.match === 'content' ? T('content · ') : ''}${h.match === 'place' ? T('place') : ''}${h.cloud ? T('cloud · ') : ''}${h.mtime ? new Date(h.mtime * 1000).toLocaleDateString() : ''}</span>
+    <div class="name">${h.is_dir ? '📁 ' : ''}${esc(h.name)}</div>
+    <div class="path">${esc(h.path)}${h.note ? ` · ${T('contains')} ` + esc(h.note) : ''}</div>
+    ${h.snippet ? `<div class="snip">${esc(h.snippet)}</div>` : ''}
+    ${(h.group || []).length ? `<details><summary class="path">${T('+{n} more in the same folder', {n: h.group.length})}</summary>${h.group.map(g => `<div class="path">${esc(g.name)}</div>`).join('')}</details>` : ''}</li>`).join('')
+    || `<li>${T('Nothing found. Try describing it differently.')}</li>`;
+}
+</script>
+</body>
+</html>

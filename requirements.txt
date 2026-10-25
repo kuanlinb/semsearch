@@ -1,0 +1,9 @@
+# Tested on macOS 26 / Apple M4 / Python 3.11
+torch==2.14.1
+sentence-transformers==6.2.0
+transformers==5.20.2
+numpy==2.4.6
+pypdfium2==5.14.0
+python-docx==1.2.0
+python-pptx==1.0.2
+openpyxl==3.1.5

@@ -1,0 +1,28 @@
+name: test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-14   # Apple silicon
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+          cache-dependency-path: requirements*.txt
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+      - name: Compile the Swift app and helpers
+        run: |
+          mkdir -p build bin
+          swiftc -O mac/main.swift -o build/SemSearch
+          swiftc -O mac/ocr.swift -o bin/semsearch-ocr
+          swiftc -O mac/fswatch.swift -o bin/semsearch-fswatch
+      - name: Run tests (tiny fake embedding model, no download)
+        env:
+          SEMSEARCH_DEVICE: cpu   # hosted runners report MPS but cannot allocate on it
+        run: python -m pytest -q tests

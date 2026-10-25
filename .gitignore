@@ -1,0 +1,7 @@
+.venv/
+__pycache__/
+.pytest_cache/
+mac/AppIcon.iconset/
+mac/AppIcon.png
+bin/
+build/

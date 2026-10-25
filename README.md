@@ -1,0 +1,108 @@
+# SemSearch
+
+**English** · [繁體中文](README.zh-TW.md)
+
+![test](../../actions/workflows/test.yml/badge.svg)
+
+**Find files and apps on your Mac by describing them, in any language.**
+
+Spotlight only finds a file when you remember words from its name. SemSearch understands what
+you mean, so you can find a file even when you have no idea what it is called. Everything runs
+on your Mac: your files and searches never leave it.
+
+https://github.com/user-attachments/assets/de713086-3c07-4550-a0e2-dcbe90595951
+
+## What it can do
+
+| You type | It finds | Why Spotlight can't |
+|---|---|---|
+| how much is my rent | a lease saved as `Document (3).txt` | “rent” is in neither the name nor the text |
+| when is my car insurance due | `scan_0042.pdf`, a “motor vehicle policy” | it matches meaning, not words |
+| beef noodle soup recipe | `紅燒牛肉麵.md` | English question, Chinese file |
+| note-taking app | Notes, Goodnotes, OneNote | it knows what each app is for |
+| trash | the Trash | places work too |
+
+| An English question finds a lease named `Document (3).txt` | A Chinese question finds an English PDF (Chinese interface) |
+|---|---|
+| ![“how much is my rent” finds Document (3).txt](docs/screenshot-en.png) | ![「車險什麼時候要續約」 finds scan_0042.pdf](docs/screenshot-zh.png) |
+
+*(The video and screenshots use fictional example files from the [`demo/`](demo) folder.)*
+
+## Install
+
+**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 4 GB of free space.
+
+**1. Install Apple's developer tools** (once; skip if you have Xcode):
+
+```bash
+xcode-select --install
+```
+
+**2. Download and install SemSearch:**
+
+```bash
+git clone https://github.com/kuanlinb/semsearch.git
+cd semsearch
+./install.sh
+```
+
+**3. Click “Allow”** when macOS asks whether SemSearch may read your Documents, Desktop and
+Downloads.
+
+That's it. SemSearch now starts automatically when you log in. What happens next:
+
+- The first time, it downloads the language model (about 2.3 GB, only once).
+- **File names are searchable within a few minutes.** Reading the text inside every document takes
+  longer, from minutes for a small folder to about 2 hours for 165,000 files; you can search
+  while it works.
+- Keep the `semsearch` folder where it is: the app runs from it.
+
+> If the installer says Python is too old, install a newer one with `brew install python`
+> (or install [uv](https://github.com/astral-sh/uv)) and run `./install.sh` again.
+
+## How to use
+
+Press **⌥ Space** (Option + Space), type what you are looking for in your own words, and press **↩**.
+
+| Key | Does |
+|---|---|
+| ↩ | Open the file or app |
+| ⌘ ↩ | Show it in Finder |
+| ⌘ Y | Quick Look preview |
+| ⌘ C | Copy the path |
+| Tab | Show the other matches from the same folder |
+| Esc | Close |
+
+**Tips**
+
+- Describe it the way you would to a friend: *“the slides about attention from class”*,
+  *“receipt for the new laptop”*.
+- Add a type word to narrow it down: *“… pdf”*, *“… slides”*, *“… folder”*, *“… app”*.
+- Ask in any language; the file can be in another one.
+- Also available from the menu-bar icon, in a browser at `http://127.0.0.1:8799`, and in
+  Terminal as `ss your question`.
+
+## Features
+
+- **Reads inside your files**: PDF, Word, PowerPoint, Excel, Markdown, plain text, notebooks, and
+  the text in screenshots and scanned PDFs.
+- **Finds apps by what they do**: “take a screenshot” finds Screenshot, “video call” finds FaceTime.
+- **Any language**: ask in Chinese, find an English file, and the other way round.
+- **Interface in your language**: English, 繁體中文, 简体中文, 日本語 and 한국어, following your Mac.
+  [Add yours](l10n/README.md).
+- **Learns what you use**: files you open often move up.
+- **Stays up to date**: new downloads show up in about 30 seconds.
+- **Cloud-friendly**: files that are only in iCloud, OneDrive, Google Drive or Dropbox are found by
+  name and never downloaded.
+- **Private**: runs entirely on your Mac. An optional [GPU reranker](remote/README.md) on another
+  machine of yours can sharpen the ranking.
+
+## Learn more
+
+- [Configuration](docs/configuration.md): add folders, exclude paths, turn OCR off, change the port
+- [How it works](docs/how-it-works.md): architecture, the search pipeline, how the model was chosen
+- [Limitations, uninstall and development](docs/troubleshooting.md)
+
+## License
+
+MIT, see [LICENSE](LICENSE).
