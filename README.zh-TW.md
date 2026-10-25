@@ -8,7 +8,7 @@ Spotlight 要記得檔名裡的字才找得到。SemSearch 看得懂意思，就
 
 *🔊 影片預設靜音，請點播放器上的喇叭圖示打開聲音。*
 
-https://github.com/user-attachments/assets/de713086-3c07-4550-a0e2-dcbe90595951
+https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
 
 ## 它能做什麼
 
