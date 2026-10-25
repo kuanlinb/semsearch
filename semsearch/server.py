@@ -26,6 +26,29 @@ ROOT = Path(__file__).resolve().parent.parent
 searcher = None
 search_lock = threading.Lock()
 indexer_proc = None
+_children = []  # helper processes to stop when the service stops (indexer, file watcher, SSH tunnel)
+
+
+def _spawn(*args, **kw):
+    proc = subprocess.Popen(*args, **kw)
+    _children.append(proc)
+    _children[:] = [p for p in _children if p.poll() is None]
+    return proc
+
+
+def _stop(signum=None, frame=None):
+    """Quitting the app sends SIGTERM: stop the helpers too, so a long indexing run doesn't outlive it."""
+    procs = list(_children)
+    for p in procs:
+        if p.poll() is None:
+            p.terminate()
+    deadline = time.time() + 3
+    for p in procs:
+        try:
+            p.wait(max(0.0, deadline - time.time()))
+        except subprocess.TimeoutExpired:
+            p.kill()
+    os._exit(0)
 
 
 def start_indexer(quick=False):
@@ -33,7 +56,7 @@ def start_indexer(quick=False):
     if indexer_proc and indexer_proc.poll() is None:
         return False
     log = open(config.DATA_DIR / "indexer.log", "a")
-    indexer_proc = subprocess.Popen(
+    indexer_proc = _spawn(
         ["nice", "-n", "15", sys.executable, "-m", "semsearch.indexer"] + (["--quick"] if quick else []),
         cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     return True
@@ -84,7 +107,7 @@ class Handler(BaseHTTPRequestHandler):
         elif u.path == "/status":
             st = searcher.status()
             st["indexing"] = bool(indexer_proc and indexer_proc.poll() is None) or _lock_held()
-            st["no_access"] = [r for r, v in _access.items() if v != "ok"]
+            st["no_access"] = [r for r, v in dict(_access).items() if v != "ok"]  # probe threads add keys
             self._send(200, st)
         elif re.fullmatch(r"/l10n/[A-Za-z-]+\.json", u.path) and (ROOT / u.path[1:]).is_file():
             self._send(200, (ROOT / u.path[1:]).read_bytes())
@@ -177,7 +200,7 @@ def _start_fs_watch():
         return
     while True:
         try:
-            proc = subprocess.Popen([str(exe), *roots], stdout=subprocess.PIPE, text=True)
+            proc = _spawn([str(exe), *roots], stdout=subprocess.PIPE, text=True)
             for _ in proc.stdout:
                 _changed[0] = time.time()
         except OSError:
@@ -197,9 +220,9 @@ def _keep_tunnel(host, port):
     remote reranker, reconnecting when it drops."""
     while True:
         try:
-            subprocess.run(["ssh", "-N", "-o", "ExitOnForwardFailure=yes", "-o", "ServerAliveInterval=30",
-                            "-o", "BatchMode=yes", "-L", f"{port}:127.0.0.1:{port}", host],
-                           stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            _spawn(["ssh", "-N", "-o", "ExitOnForwardFailure=yes", "-o", "ServerAliveInterval=30",
+                    "-o", "BatchMode=yes", "-L", f"{port}:127.0.0.1:{port}", host],
+                   stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL).wait()
         except OSError:
             pass
         time.sleep(30)
@@ -236,6 +259,8 @@ def main():
     import faulthandler
     import signal
     faulthandler.register(signal.SIGUSR1, all_threads=True)
+    signal.signal(signal.SIGTERM, _stop)
+    signal.signal(signal.SIGINT, _stop)
     cfg = config.load()
     config.DATA_DIR.mkdir(exist_ok=True)
     # Bind the port before loading the model: a second copy fails fast instead of loading for nothing

@@ -68,3 +68,12 @@ def test_exclude_substrings_match_full_paths(index_env):
 def test_extra_roots_are_added(tmp_path, monkeypatch):
     (config.DATA_DIR / "config.json").write_text('{"roots": ["/a"], "extra_roots": ["/b/"]}')
     assert config.load()["roots"] == ["/a", "/b"]
+
+
+def test_only_web_page_asset_folders_are_skipped():
+    from semsearch.indexer import skip_dir
+    assert skip_dir("Article_files", {"Article.html", "Article_files"})
+    assert skip_dir("page.files", {"page.htm", "page.files"})
+    assert not skip_dir("tax_files", {"tax_files", "notes.txt"})
+    assert not skip_dir("client_files")
+    assert skip_dir("node_modules") and skip_dir(".git")

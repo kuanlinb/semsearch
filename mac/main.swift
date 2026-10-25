@@ -24,15 +24,36 @@ func L(_ en: String, _ args: [String: Any] = [:]) -> String {
     return s
 }
 
+let userConfig: [String: Any] = {
+    guard let d = FileManager.default.contents(atPath: NSHomeDirectory() + "/.semsearch/config.json") else { return [:] }
+    return (try? JSONSerialization.jsonObject(with: d)) as? [String: Any] ?? [:]
+}()
+
 // Port: SEMSEARCH_PORT, else "port" in ~/.semsearch/config.json, else 8799
 let serverPort: Int = {
     if let p = ProcessInfo.processInfo.environment["SEMSEARCH_PORT"], let n = Int(p) { return n }
-    let cfg = NSHomeDirectory() + "/.semsearch/config.json"
-    if let d = FileManager.default.contents(atPath: cfg),
-       let j = try? JSONSerialization.jsonObject(with: d) as? [String: Any], let n = j["port"] as? Int {
-        return n
+    return userConfig["port"] as? Int ?? 8799
+}()
+
+// Shortcut: "hotkey" in ~/.semsearch/config.json, e.g. "control+option+space"; default option+space.
+// macOS does not report a shortcut that another app already uses, so this is the way out of a clash.
+struct Shortcut {
+    var keyCode = UInt32(kVK_Space), carbon = UInt32(optionKey), flags: NSEvent.ModifierFlags = [.option], key = " "
+}
+let shortcut: Shortcut = {
+    let codes: [String: Int] = ["space": kVK_Space, "a": kVK_ANSI_A, "b": kVK_ANSI_B, "c": kVK_ANSI_C, "d": kVK_ANSI_D, "e": kVK_ANSI_E, "f": kVK_ANSI_F, "g": kVK_ANSI_G, "h": kVK_ANSI_H, "i": kVK_ANSI_I, "j": kVK_ANSI_J, "k": kVK_ANSI_K, "l": kVK_ANSI_L, "m": kVK_ANSI_M, "n": kVK_ANSI_N, "o": kVK_ANSI_O, "p": kVK_ANSI_P, "q": kVK_ANSI_Q, "r": kVK_ANSI_R, "s": kVK_ANSI_S, "t": kVK_ANSI_T, "u": kVK_ANSI_U, "v": kVK_ANSI_V, "w": kVK_ANSI_W, "x": kVK_ANSI_X, "y": kVK_ANSI_Y, "z": kVK_ANSI_Z, "0": kVK_ANSI_0, "1": kVK_ANSI_1, "2": kVK_ANSI_2, "3": kVK_ANSI_3, "4": kVK_ANSI_4, "5": kVK_ANSI_5, "6": kVK_ANSI_6, "7": kVK_ANSI_7, "8": kVK_ANSI_8, "9": kVK_ANSI_9]
+    var sc = Shortcut(keyCode: 0, carbon: 0, flags: [], key: "")
+    for part in (userConfig["hotkey"] as? String ?? "").lowercased().split(separator: "+") {
+        switch part.trimmingCharacters(in: .whitespaces) {
+        case "cmd", "command": sc.carbon |= UInt32(cmdKey); sc.flags.insert(.command)
+        case "option", "opt", "alt": sc.carbon |= UInt32(optionKey); sc.flags.insert(.option)
+        case "control", "ctrl": sc.carbon |= UInt32(controlKey); sc.flags.insert(.control)
+        case "shift": sc.carbon |= UInt32(shiftKey); sc.flags.insert(.shift)
+        case let k where codes[k] != nil: sc.keyCode = UInt32(codes[k]!); sc.key = k == "space" ? " " : k
+        default: return Shortcut()
+        }
     }
-    return 8799
+    return sc.key.isEmpty || sc.flags.isEmpty ? Shortcut() : sc  // missing or invalid: the default
 }()
 let serverURL = "http://127.0.0.1:\(serverPort)"
 
@@ -688,15 +709,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }
         startServer()
         controller = SearchController()
-        hotkey = HotKey(keyCode: UInt32(kVK_Space), modifiers: UInt32(optionKey)) { [weak self] in
+        hotkey = HotKey(keyCode: shortcut.keyCode, modifiers: shortcut.carbon) { [weak self] in
             self?.controller.toggle()
         }
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         status.button?.image = NSImage(systemSymbolName: "sparkle.magnifyingglass", accessibilityDescription: "SemSearch")
         let menu = NSMenu()
         menu.delegate = self
-        let open = NSMenuItem(title: L("Search"), action: #selector(openSearch), keyEquivalent: " ")
-        open.keyEquivalentModifierMask = [.option]
+        let open = NSMenuItem(title: L("Search"), action: #selector(openSearch), keyEquivalent: shortcut.key)
+        open.keyEquivalentModifierMask = shortcut.flags
         menu.addItem(open)
         menu.addItem(.separator())
         menu.addItem(statusLine)

@@ -1,6 +1,6 @@
 #!/bin/zsh
 # Build and install SemSearch:
-#   1. create .venv and install Python dependencies (needs python3.10+; uses uv if present)
+#   1. create .venv and install Python dependencies (needs Python 3.11+; uses uv if present)
 #   2. compile the menu-bar app into /Applications/SemSearch.app and the helpers into bin/
 #   3. start it at login (LaunchAgent) and link the `ss` command
 # Usage: ./install.sh            (run again after pulling updates)
@@ -27,8 +27,8 @@ if [[ ! -x .venv/bin/python ]]; then
   if command -v uv >/dev/null; then
     uv venv -q -p 3.11 .venv
   else
-    python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))' \
-      || die "Python 3.10+ is required (found $(python3 --version 2>&1)). Install uv or a newer Python."
+    python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))' \
+      || die "Python 3.11+ is required (found $(python3 --version 2>&1)). Install uv or a newer Python."
     python3 -m venv .venv
   fi
 fi

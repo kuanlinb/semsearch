@@ -7,7 +7,7 @@
 - Audio and video are found by name only. OCR reads only the first 5 pages of a scanned PDF,
   skips images where no line of text is detected (most photos) and files over 40 MB,
   and a large backlog of images takes several index runs (15 minutes each by default).
-- Indexing speed is bound by the Mac GPU (~10 chunks/s for bge-m3 on an M4).
+- Indexing speed is bound by the Mac GPU: on an M4, about 200 file names or 8 documents per second.
 - The app is ad-hoc signed, not notarized: build it yourself with `install.sh`.
 - Files inside the Trash are not indexed (macOS requires Full Disk Access for that).
 - On macOS 13, iCloud Drive files that are not downloaded appear as hidden `.icloud`
@@ -16,14 +16,33 @@
   host (DNS-rebinding protection), but other user accounts on the same Mac can query it.
 - If another program already uses port 8799, set a different `port`.
 
+## ⌥Space does nothing
+
+Another app probably uses the same shortcut (Raycast, Alfred, ChatGPT and input-method switching
+often do), and macOS does not tell SemSearch about the clash. Either free ⌥Space in that app, or
+pick another shortcut with `"hotkey"` in `~/.semsearch/config.json` (see
+[Configuration](configuration.md)), for example:
+
+```json
+{ "hotkey": "control+option+space" }
+```
+
+Then quit SemSearch from its menu-bar icon and open it again. The menu-bar icon always works too.
+
 ## Uninstall
 
+Run these from the folder you cloned (`cd semsearch`):
+
 ```bash
-launchctl bootout gui/$(id -u)/io.github.kuanlinb.semsearch
+osascript -e 'quit app "SemSearch"'      # stops the app and its search service
+launchctl bootout gui/$(id -u)/io.github.kuanlinb.semsearch 2>/dev/null
 rm -rf /Applications/SemSearch.app ~/Library/LaunchAgents/io.github.kuanlinb.semsearch.plist
 rm -rf ~/.semsearch                       # the index, logs and the opened-files log (opens.db)
-rm -f "$(brew --prefix)/bin/ss"           # if it points to this repo
-rm -rf ~/.cache/huggingface/hub/models--BAAI--bge-m3   # the model
+rm -rf ~/.cache/huggingface/hub/models--BAAI--bge-m3   # the model (about 2.3 GB)
+for d in /opt/homebrew/bin /usr/local/bin; do         # the `ss` command, only if it is ours
+  [[ "$(readlink "$d/ss")" == "$PWD/ss" ]] && rm "$d/ss"
+done
+cd .. && rm -rf semsearch                 # the code and its Python environment
 ```
 
 ## Development

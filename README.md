@@ -54,7 +54,7 @@ Downloads.
 That's it. SemSearch now starts automatically when you log in. What happens next:
 
 - The first time, it downloads the language model (about 2.3 GB, only once).
-- **File names are searchable within a few minutes.** Reading the text inside every document takes
+- **File names are searchable within minutes** (about 15 minutes for 165,000 files). Reading the text inside every document takes
   longer, from minutes for a small folder to about 2 hours for 165,000 files; you can search
   while it works.
 - Keep the `semsearch` folder where it is: the app runs from it.
@@ -81,6 +81,7 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
   *“receipt for the new laptop”*.
 - Add a type word to narrow it down: *“… pdf”*, *“… slides”*, *“… folder”*, *“… app”*.
 - Ask in any language; the file can be in another one.
+- ⌥ Space does nothing? Another app is using it: [pick another shortcut](docs/troubleshooting.md#space-does-nothing).
 - Also available from the menu-bar icon, in a browser at `http://127.0.0.1:8799`, and in
   Terminal as `ss your question`.
 

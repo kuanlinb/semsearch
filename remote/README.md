@@ -4,7 +4,7 @@ A cross-encoder reranker (bge-reranker-v2-m3) improves the order of the top resu
 2–4 s per query on a laptop GPU. If you have another machine with a CUDA GPU, it can do the
 reranking in tens of milliseconds instead. When that machine is unreachable, SemSearch simply
 shows the fast results: each attempt waits at most 3 s, and after a failure the remote
-reranker is not tried again for 60 s.
+reranker is not tried again for 15 s.
 
 What is sent: the query and, for each of the top `rerank_top` results, its name text and one
 snippet (up to 400 characters). Nothing is stored on the remote machine.

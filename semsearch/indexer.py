@@ -53,11 +53,14 @@ def log(*a):
     print(time.strftime("%H:%M:%S"), *a, flush=True)
 
 
-def skip_dir(name: str) -> bool:
+def skip_dir(name: str, siblings=()) -> bool:
     if name in config.EXCLUDE_DIRS or name.startswith("."):
         return True
-    if name.endswith("_files") or name.endswith(".files"):
-        return True  # asset folder of a "Save Page As" web page
+    for suffix in ("_files", ".files"):
+        # asset folder of a "Save Page As" web page: only when the page itself sits next to it
+        base = name[:-len(suffix)]
+        if name.endswith(suffix) and any(base + x in siblings for x in (".html", ".htm", ".xhtml")):
+            return True
     return False
 
 
@@ -115,7 +118,7 @@ def walk(roots, failed=None):
                         ext = os.path.splitext(e.name)[1].lower()
                         if ext in config.BUNDLE_EXT:
                             yield e.path, e.stat(follow_symlinks=False), False, ""
-                        elif not skip_dir(e.name):
+                        elif not skip_dir(e.name, names):
                             stack.append(e.path)
                     elif e.is_file():
                         if os.path.splitext(e.name)[1].lower() in bulk:
