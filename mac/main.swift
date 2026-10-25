@@ -341,7 +341,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary, .transient]
         panel.backgroundColor = .clear
         panel.isOpaque = false
-        panel.hasShadow = true
+        panel.hasShadow = false  // the window shadow follows the square window and shows around the rounded corners
         panel.isMovableByWindowBackground = true
         panel.hidesOnDeactivate = false
         panel.delegate = self
@@ -456,7 +456,6 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         f.size.height = h
         f.origin.y = top - h
         panel.setFrame(f, display: true)
-        panel.invalidateShadow()
     }
 
     func toggle() {
