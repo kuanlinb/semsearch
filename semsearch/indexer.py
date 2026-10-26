@@ -31,6 +31,7 @@ CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(text, tokenize='trigram
 CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v TEXT);
 CREATE TABLE IF NOT EXISTS usage(path TEXT PRIMARY KEY, last_used REAL);
 CREATE TABLE IF NOT EXISTS image_vecs(file_id INTEGER PRIMARY KEY, vec BLOB);
+CREATE TABLE IF NOT EXISTS gemma_vecs(chunk_id INTEGER PRIMARY KEY, vec BLOB);
 """
 KIND_NAME, KIND_CONTENT = 0, 1
 # Content chunks are embedded with the file name prepended so they know which document
@@ -360,6 +361,7 @@ def run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only):
                     qm = ",".join("?" * len(old))
                     db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({qm})", old)
                     db.execute(f"DELETE FROM chunks WHERE id IN ({qm})", old)
+                    db.execute(f"DELETE FROM gemma_vecs WHERE chunk_id IN ({qm})", old)
                 for c in extract.chunk(text[: config.MAX_CHARS_PER_FILE]):
                     pending.append((fid, KIND_CONTENT, c))
                 found += 1
@@ -424,7 +426,8 @@ def run(full=False, limit=None, workers=4, quick=False):
     old_model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
     if full or (old_model and old_model[0] != cfg["model"]):
         log("clearing the old index")
-        db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts; DELETE FROM image_vecs;")
+        db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts; DELETE FROM image_vecs; "
+                       "DELETE FROM gemma_vecs;")
     db.execute("INSERT OR REPLACE INTO meta VALUES('model', ?)", (cfg["model"],))
     # Unique and increasing even when two runs start within the same second
     last = db.execute("SELECT max(seen) FROM files").fetchone()[0] or 0
@@ -483,14 +486,27 @@ def run(full=False, limit=None, workers=4, quick=False):
     pending = []  # (file_id, kind, text)
     ctx = {}  # file_id -> readable file name
 
+    # Optional second text space (config "gemma_channel"): every chunk also gets an EmbeddingGemma
+    # vector from llama-server, in the same space as the image vectors
+    gemma = cfg.get("gemma_channel") and not (embed._name and "embeddinggemma" in embed._name.lower())
+    if gemma:
+        from . import imagevec
+
     def flush():
         if not pending:
             return
         vecs = embed.encode([embed.content_text(ctx[f], t) if k == KIND_CONTENT else t for f, k, t in pending])
-        for (fid, kind, text), v in zip(pending, vecs):
+        if gemma:
+            g = [f"title: {ctx[f]} | text: {t}" if k == KIND_CONTENT else f"title: none | text: {t}"
+                 for f, k, t in pending]
+            gvecs = np.concatenate([imagevec.embed_texts(g[i:i + 32]) for i in range(0, len(g), 32)])
+        for i, ((fid, kind, text), v) in enumerate(zip(pending, vecs)):
             cur = db.execute("INSERT INTO chunks(file_id, kind, text, vec) VALUES(?,?,?,?)",
                              (fid, kind, text, v.tobytes()))
             db.execute("INSERT INTO chunks_fts(rowid, text) VALUES(?,?)", (cur.lastrowid, text))
+            if gemma:
+                db.execute("INSERT OR REPLACE INTO gemma_vecs VALUES(?,?)",
+                           (cur.lastrowid, gvecs[i].astype(np.float16).tobytes()))
         pending.clear()
         progress[0] = time.time()
 
@@ -501,6 +517,7 @@ def run(full=False, limit=None, workers=4, quick=False):
             q = ",".join("?" * len(old))
             db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({q})", old)
             db.execute(f"DELETE FROM chunks WHERE id IN ({q})", old)
+            db.execute(f"DELETE FROM gemma_vecs WHERE chunk_id IN ({q})", old)
         if not content_only:
             db.execute("DELETE FROM image_vecs WHERE file_id=?", (fid,))
 
@@ -623,6 +640,7 @@ def run(full=False, limit=None, workers=4, quick=False):
                 cq = ",".join("?" * len(cids[j:j + 2000]))
                 db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({cq})", cids[j:j + 2000])
                 db.execute(f"DELETE FROM chunks WHERE id IN ({cq})", cids[j:j + 2000])
+                db.execute(f"DELETE FROM gemma_vecs WHERE chunk_id IN ({cq})", cids[j:j + 2000])
             db.execute(f"DELETE FROM image_vecs WHERE file_id IN ({q})", ids)
             db.execute(f"DELETE FROM files WHERE id IN ({q})", ids)
         log("removed vanished entries:", len(gone))

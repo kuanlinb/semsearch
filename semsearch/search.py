@@ -56,6 +56,13 @@ IMAGE_Z = float(os.environ.get("SEMSEARCH_IMAGE_Z", 0.0))  # the best image must
 # chunks on raw similarity instead; image-to-text similarities run lower than text-to-text
 # (modality gap), so they get IMAGE_OFFSET added.
 IMAGE_OFFSET = float(os.environ.get("SEMSEARCH_IMAGE_OFFSET", 0.0))
+# "gemma_channel": next to the main model's lists, one more list from EmbeddingGemma vectors of the
+# same chunks, with the images ranked in it (same space). Its weight:
+W_GEMMA = float(os.environ.get("SEMSEARCH_W_GEMMA", 1.0))
+# An image has no main-model vectors and no keywords, so its rank in the Gemma list stands in for
+# the lists it is missing: counted IMAGE_MULT times, but only when it beats every text chunk in the
+# Gemma space (similarity + IMAGE_OFFSET); otherwise photos would push documents down for text questions
+IMAGE_MULT = float(os.environ.get("SEMSEARCH_IMAGE_MULT", 6.0))  # eval/embeddinggemma2: 6 with offset 0
 
 
 # Filler words in English queries are not matched as keywords ("our" would hit "sourdough")
@@ -249,6 +256,17 @@ class Searcher:
             ids = fids = np.zeros(0, dtype=np.int64)
             kinds = np.zeros(0, dtype=np.int8)
             mat = None
+        g_fids, g_mat = np.zeros(0, dtype=np.int64), None
+        if self.cfg.get("gemma_channel"):
+            db = self._db()
+            try:
+                g = db.execute("SELECT c.file_id, g.vec FROM gemma_vecs g JOIN chunks c ON c.id = g.chunk_id").fetchall()
+            except sqlite3.Error:
+                g = []
+            db.close()
+            if g:
+                g_fids = np.fromiter((r[0] for r in g), dtype=np.int64, count=len(g))
+                g_mat = np.frombuffer(b"".join(r[1] for r in g), dtype=np.float16).reshape(len(g), -1).copy()
         img_ids, img_mat = np.zeros(0, dtype=np.int64), None
         if self.cfg.get("image_search"):
             db = self._db()
@@ -276,6 +294,7 @@ class Searcher:
             self.mat, self.chunk_ids, self.chunk_file, self.version = mat, ids, fids, v
             self.chunk_kind = kinds
             self.img_ids, self.img_mat = img_ids, img_mat
+            self.g_fids, self.g_mat = g_fids, g_mat
             self.names = names
             self.recent = recent
         return True
@@ -455,6 +474,33 @@ class Searcher:
         top = np.argsort(-sc)[:IMAGE_TOP * 5]
         return [(int(ids[i]), float(sc[i])) for i in top]
 
+    def _gemma_list(self, q, images):
+        """File ids by EmbeddingGemma similarity: each file's best chunk, and images (+IMAGE_OFFSET)."""
+        with self.lock:
+            fids, mat = getattr(self, "g_fids", None), getattr(self, "g_mat", None)
+        if mat is None:
+            return []
+        from . import imagevec
+        try:
+            sc = _scores(mat, imagevec.query_vector(q))
+        except OSError:
+            return []
+        k = min(500, len(sc))
+        idx = np.argpartition(-sc, k - 1)[:k]
+        best = {}
+        for i in idx:
+            f = int(fids[i])
+            if sc[i] > best.get(f, -1.0):
+                best[f] = float(sc[i])
+        text_best = dict(best)
+        for f, s in images[:IMAGE_TOP]:
+            s += IMAGE_OFFSET
+            if s > best.get(f, -1.0):
+                best[f] = s
+        top_text = max(text_best.values(), default=-1.0)
+        self.gemma_photo_wins = {f for f, s in images[:IMAGE_TOP] if s + IMAGE_OFFSET >= top_text}
+        return sorted(best, key=lambda f: -best[f])
+
     def _images(self, scores):
         """Separate image list: only photos close to the best match and above the floor."""
         if not scores:
@@ -489,6 +535,7 @@ class Searcher:
         if self.cfg.get("image_search") and not lookup and (not want_types or want_types & config.IMAGE_EXT):
             images = self._image_scores(q)
         shared = embed._name and "embeddinggemma" in embed._name.lower()
+        gemma_list = self._gemma_list(q, images) if self.cfg.get("gemma_channel") and not shared else []
         if images and shared:
             for fid, sc in images[:IMAGE_TOP]:
                 sc += IMAGE_OFFSET
@@ -514,7 +561,11 @@ class Searcher:
             fused[fid] = fused.get(fid, 0) + w / (RRF_K + r)
             if fid not in best_chunk and cid:
                 best_chunk[fid] = cid
-        if images and not shared:
+        wins = getattr(self, "gemma_photo_wins", set()) if gemma_list else set()
+        for r, fid in enumerate(gemma_list):
+            m = IMAGE_MULT if fid in wins else 1.0
+            fused[fid] = fused.get(fid, 0) + m * vec_w * W_GEMMA / (RRF_K + r)
+        if images and not shared and not gemma_list:
             for r, fid in enumerate(self._images(images)):
                 fused[fid] = fused.get(fid, 0) + W_IMAGE / (RRF_K + r)
         if want_types and ".app" in want_types:

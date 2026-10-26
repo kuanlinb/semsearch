@@ -100,3 +100,27 @@ and Chinese question / English file (6 → 4); English question / Chinese file g
 Photos took 0.8 s each here (Open Images photos are about 1024 px): 500 in 7 minutes. A folder
 with over 150 serially named files (`IMG_0001.jpg`…) is treated as a dataset and only the folder
 is indexed, so camera folders would need an exception for image search.
+
+## C: bge-m3 for text plus a Gemma list (text and photos)
+
+Config `"gemma_channel": true, "image_search": true` with bge-m3 as the model: every chunk also
+gets an EmbeddingGemma vector (table `gemma_vecs`), and search adds one more RRF list, each file's
+best Gemma similarity with the images ranked in it. A photo has no bge-m3 vectors or keywords, so
+when it beats every text chunk in the Gemma space its rank there counts 6 times (`IMAGE_MULT`).
+Without that gate, any multiplier that surfaces photos pushes documents down (text 49-57).
+
+Crossmodal-3600 set (where the multiplier and offset were picked):
+
+| | Text (76) | Photos, Chinese (100) | Photos, English (100) |
+|---|---|---|---|
+| bge-m3 | 61 / 69 | 1 / 1 | 0 / 0 |
+| B, offset 0.03 | 57 / 68 | 57 / 82 | 69 / 89 |
+| C, no photo gate | 62 / 70 | 1 / 1 | 2 / 2 |
+| **C, ×6 when the photo wins, offset 0** | **62 / 70** | 66 / 71 | 68 / 83 |
+| C, ×6, offset 0.03 | 60 / 68 | 74 / 90 | 68 / 89 |
+
+Wallpaper set (not used for picking): bge-m3 59/69 text; B 58/67 text, 33/37 photos;
+C ×6 offset 0 60/70 text, 34/36 photos; offset 0.03 59/68, 33/37.
+
+C costs both models: about 1.7 GB of memory (bge-m3 920 MB + llama-server 760-970 MB), every
+chunk embedded twice, search median 44-72 ms.
