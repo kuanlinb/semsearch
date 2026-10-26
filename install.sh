@@ -117,6 +117,6 @@ if [[ -d "$BIN" && -w "$BIN" ]]; then
 fi
 
 echo
-echo "Installed $APP. Press ⌥Space to search."
+echo "Installed $APP. Press ⌥Space to search (change it under Shortcut in the menu or the gear in the search box)."
 echo "The first index build runs in the background (see ~/.semsearch/indexer.log)."
 echo "macOS will ask SemSearch for access to Documents/Desktop/Downloads: allow it."
