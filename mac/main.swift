@@ -286,6 +286,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let table = NSTableView()
     let scroll = NSScrollView()
     let footer = NSTextField(labelWithString: "")
+    let gear = NSButton()
+    var settingsMenu: NSMenu?  // the menu-bar icon's menu
     var hits: [Hit] = []          // rows on screen, including expanded same-folder files
     var heads: [Hit] = []         // results from the service (one per folder)
     var expanded = Set<String>()  // paths of the heads that are expanded
@@ -365,6 +367,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         let glyph = NSImageView(image: NSImage(systemSymbolName: "magnifyingglass", accessibilityDescription: nil)!)
         glyph.symbolConfiguration = .init(pointSize: 19, weight: .medium)
         glyph.contentTintColor = .secondaryLabelColor
+        // The menu-bar icon can be hidden (notch, too many icons): the same menu opens from here
+        gear.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: L("Settings"))
+        gear.symbolConfiguration = .init(pointSize: 15, weight: .regular)
+        gear.isBordered = false
+        gear.contentTintColor = .tertiaryLabelColor
+        gear.toolTip = L("Settings")
+        gear.target = self
+        gear.action = #selector(showSettingsMenu)
 
         field.placeholderString = L("SemSearch: describe the file or app you are looking for")
         field.font = .systemFont(ofSize: 21, weight: .regular)
@@ -399,7 +409,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         hints.alignment = .right
 
-        for (v, parent) in [(glyph, barContent), (field, barContent), (scroll, cardContent),
+        for (v, parent) in [(glyph, barContent), (field, barContent), (gear, barContent), (scroll, cardContent),
                             (footer, cardContent), (hints, cardContent)] as [(NSView, NSView)] {
             v.translatesAutoresizingMaskIntoConstraints = false
             parent.addSubview(v)
@@ -418,7 +428,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             glyph.leadingAnchor.constraint(equalTo: barContent.leadingAnchor, constant: 20),
             glyph.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             field.leadingAnchor.constraint(equalTo: glyph.trailingAnchor, constant: 12),
-            field.trailingAnchor.constraint(equalTo: barContent.trailingAnchor, constant: -22),
+            field.trailingAnchor.constraint(equalTo: gear.leadingAnchor, constant: -10),
+            gear.trailingAnchor.constraint(equalTo: barContent.trailingAnchor, constant: -20),
+            gear.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             field.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             scroll.topAnchor.constraint(equalTo: cardContent.topAnchor),
             scroll.leadingAnchor.constraint(equalTo: cardContent.leadingAnchor),
@@ -541,6 +553,10 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             table.scrollRowToVisible(i)
         }
         setExpanded(true)
+    }
+
+    @objc func showSettingsMenu() {
+        settingsMenu?.popUp(positioning: nil, at: NSPoint(x: 0, y: gear.bounds.height + 6), in: gear)
     }
 
     func run(_ q: String, fine: Bool) {
@@ -816,6 +832,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(NSMenuItem(title: L("Quit SemSearch"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         for i in menu.items where i.action != nil && i.action != #selector(NSApplication.terminate(_:)) { i.target = self }
         status.menu = menu
+        controller.settingsMenu = menu
         if CommandLine.arguments.contains("--show") {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.controller.toggle() }
         }
@@ -896,6 +913,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     }
 
     @objc func openSearch() { controller.toggle() }
+
+    // Opening the app again (from Applications or Spotlight) shows the search box: the way in when the
+    // shortcut is taken by another app and the menu-bar icon is hidden
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        if controller != nil && !controller.panel.isVisible { controller.toggle() }
+        return false
+    }
     /// The current shortcut next to "Search", and a check mark on it in the Shortcut submenu
     func showShortcut() {
         searchItem.keyEquivalent = shortcut.key

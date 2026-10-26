@@ -22,6 +22,10 @@ Another app probably uses the same shortcut (Raycast, Alfred and ChatGPT often d
 does not tell SemSearch about the clash. Click the SemSearch icon in the menu bar, open
 **Shortcut** and pick another one; it works right away. Or free ⌥Space in the other app.
 
+Can't see the menu-bar icon? With many icons, macOS hides some of them behind the notch. Open
+SemSearch again from the Applications folder or Spotlight: the search box appears, and the gear
+on its right opens the same menu.
+
 For a combination that is not in the menu, set `"hotkey"` in `~/.semsearch/config.json` (see
 [Configuration](configuration.md)), e.g. `{ "hotkey": "control+option+cmd+k" }`, then quit
 SemSearch from its menu and open it again.
