@@ -52,6 +52,9 @@ else
 fi
 if [[ -n "$ALL" ]]; then
   rm -rf "${SEMSEARCH_DATA:-$HOME/.semsearch}"
+  if [[ -z "$SKIP_AGENT" ]]; then  # the signing certificate made by install.sh
+    security delete-keychain "$HOME/Library/Keychains/semsearch-signing.keychain-db" 2>/dev/null || true
+  fi
   rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--BAAI--bge-m3"
   echo "Removed SemSearch, its index and the model."
 else

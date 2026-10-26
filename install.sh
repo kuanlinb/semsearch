@@ -73,7 +73,11 @@ cat > "$BUILD/SemSearch.app/Contents/Info.plist" <<PLIST
 </dict>
 </plist>
 PLIST
-codesign --force --sign - "$BUILD/SemSearch.app"
+if [[ -n "$SKIP_AGENT" ]]; then
+  codesign --force --sign - "$BUILD/SemSearch.app"  # test mode: leave keychains alone
+else
+  mac/sign.sh "$BUILD/SemSearch.app"  # stable signature: folder permissions survive updates
+fi
 
 if [[ -z "$SKIP_AGENT" ]]; then
   # Stop the old version of *this* app (the search service is its child process)

@@ -20,5 +20,6 @@ Only the latest version on `main` is supported.
 - **Other programs running on the same Mac can query it**, including ones macOS has not given
   access to your Documents, Desktop or Downloads, and other user accounts on the Mac. They would
   see file names, paths and short snippets. Keep this in mind on a shared Mac.
-- **The app is ad-hoc signed and not notarized.** Build it from source with `./install.sh`;
+- **The app is not notarized.** `./install.sh` signs it with a self-signed certificate created on your
+  Mac, in its own keychain (`semsearch-signing`), only so that folder permissions survive updates. Build it from source;
   do not run a copy someone sends you.
