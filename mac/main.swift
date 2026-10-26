@@ -100,6 +100,7 @@ struct Hit: Decodable {
     let mtime: Double
     let copies: Int?
     let group: [Hit]?   // lower-ranked files from the same folder (Tab expands them)
+    let tier: Int?      // 2 = less related (well below the top reranker score): drawn dimmer
 }
 
 struct SearchResponse: Decodable {
@@ -170,6 +171,7 @@ final class ResultCell: NSTableCellView {
     let title = NSTextField(labelWithString: "")
     let detail = NSTextField(labelWithString: "")
     let badge = NSTextField(labelWithString: "")
+    var weak = false  // less related results: dimmer text and icon
 
     lazy var indent: NSLayoutConstraint = icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18)
 
@@ -212,13 +214,16 @@ final class ResultCell: NSTableCellView {
 
     func recolor() {
         let on = backgroundStyle == .emphasized
-        title.textColor = on ? .white : .labelColor
+        title.textColor = on ? .white : (weak ? .secondaryLabelColor : .labelColor)
+        icon.alphaValue = on || !weak ? 1 : 0.55
         detail.textColor = on ? NSColor.white.withAlphaComponent(0.85) : .secondaryLabelColor
         badge.textColor = on ? NSColor.white.withAlphaComponent(0.85) : .tertiaryLabelColor
     }
 
     func show(_ h: Hit, child: Bool = false, expanded: Bool = false) {
         indent.constant = child ? 46 : 18
+        weak = (h.tier ?? 1) == 2
+        recolor()
         if h.path.hasSuffix("/.Trash") {
             icon.image = NSImage(named: NSImage.trashFullName) ?? NSWorkspace.shared.icon(forFile: h.path)
         } else {

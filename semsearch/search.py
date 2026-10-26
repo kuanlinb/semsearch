@@ -23,6 +23,14 @@ RRF_K = 20  # tuned with eval/tune.py
 W_NAME, W_CONTENT = 1.0, 1.0
 # Also count how far ahead a file's content similarity is, so a clear content match is not
 # cancelled out by unhelpful file names ("Document (3).txt"). Tuned on two query sets.
+# Results come in two tiers and weak ones are dropped, but only with reranker scores: vector
+# similarity alone cannot tell relevant from irrelevant. Only the distance from the top score
+# counts, never the raw score: the same model gives a correct but indirect match as little as
+# -6.7 ("flight to osaka" for a TPE-KIX booking) while a question with no answer can top at -0.2.
+# Measured on real queries: every correct file stayed visible. Ranked list truncation by the gap
+# from the top score, calibrated on our own data (Arampatzis 2009; Meng 2024).
+TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
+SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
 W_SIM = 0.4
 
 
@@ -228,12 +236,15 @@ class Searcher:
         scores = self._remote_scores(q, texts) if self.remote else None
         if scores is None and self.reranker:
             with self.gpu:
-                scores = self.reranker.predict([(q, t) for t in texts], batch_size=16, show_progress_bar=False)
+                import torch
+                # raw logits, the same scale as the remote reranker (the tier thresholds use it)
+                scores = self.reranker.predict([(q, t) for t in texts], batch_size=16, show_progress_bar=False,
+                                               activation_fn=torch.nn.Identity())
         if scores is None or len(scores) != len(top):
-            return order, False  # no reranker reachable: keep the fast order
+            return order, False, {}  # no reranker reachable: keep the fast order
         bonus = {fid: (1.0 if fid in kw and kw[fid][2] else 0.0) for fid in top}
         ranked = sorted(zip(top, scores), key=lambda x: -(float(x[1]) + bonus[x[0]]))
-        return [f for f, _ in ranked] + order[len(top):], True
+        return [f for f, _ in ranked] + order[len(top):], True, {f: float(sc) for f, sc in zip(top, scores)}
 
     def _remote_scores(self, q, texts):
         """Scores from the remote reranker (remote/rerank_server.py), or None when it is
@@ -397,9 +408,9 @@ class Searcher:
             fused[fid] = max(fused.values(), default=0) + 1
         self._usage_boost(fused, q)
         order = sorted(fused, key=lambda f: -fused[f])
-        reranked = False
+        reranked, rel = False, {}
         if rerank and (self.reranker or self.remote) and order:
-            order, reranked = self._rerank(db, q, order, best_chunk, kw)
+            order, reranked, rel = self._rerank(db, q, order, best_chunk, kw)
 
         results, seen = match_places(q), {}
         limit = n * 4 if group else n  # more candidates before folding folders together
@@ -434,11 +445,15 @@ class Searcher:
                 "note": note or "", "snippet": snippet, "match": where,
                 "score": round(fused[fid] * 1000, 2),
                 "semantic": round(vec_score.get(fid, 0.0), 3),
+                "rel": round(rel[fid], 3) if fid in rel else None,  # reranker logit
+                "exact": bool(fid in kw and kw[fid][2]),  # the query is the file name
                 "copies": 0,
             })
             if key:
                 seen[key] = results[-1]
         db.close()
+        if reranked:
+            results = _tiers(results)
         places = {r["path"] for r in results if r["match"] == "place"}
         results = [r for r in results if r["match"] == "place" or r["path"] not in places]
         if group:
@@ -512,6 +527,29 @@ class _NameIndex:
                 idx = idx[np.argsort(-self.mtime[idx])][:parent_limit]
                 out += [(int(self.ids[i]), 0, float(self.mtime[i])) for i in idx if i not in count]
         return out
+
+
+def _tiers(results):
+    """Tier by reranker score: 1 = best matches, 2 = less related; drop the weak rest.
+    Places and exact file-name matches are always in the first tier."""
+    scores = [r["rel"] for r in results if r.get("rel") is not None]
+    if not scores:
+        return results
+    # a place or an exact file name is a sure answer (logit 0): other files are measured against it
+    sure = any(r["match"] == "place" or r.get("exact") for r in results)
+    top = max(scores + ([0.0] if sure else []))
+    tier1 = top - TIER1_GAP
+    shown = max(top - SHOW_GAP, SHOW_FLOOR)
+    out = []
+    for r in results:
+        if r["match"] == "place" or r.get("exact"):
+            r["tier"] = 1
+        elif r.get("rel") is None or r["rel"] < shown:
+            continue  # not among the reranked candidates, or too weak
+        else:
+            r["tier"] = 1 if r["rel"] >= tier1 else 2
+        out.append(r)
+    return sorted(out, key=lambda r: r["tier"])  # stable: keeps the order within each tier
 
 
 def _group_by_folder(results, max_group=30):
