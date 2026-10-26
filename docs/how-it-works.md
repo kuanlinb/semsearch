@@ -17,7 +17,7 @@ Every search runs these steps:
 Where each part lives in the code:
 
 ```
-indexer.py   walk folders → extract text → chunk → embed (bge-m3 on MPS) → SQLite
+indexer.py   walk folders → extract text → chunk → embed (bge-m3, int8 on ONNX Runtime) → SQLite
              phase 1: every name (fast)   phase 2: document contents (resumable)
              phase 3: OCR of images and scanned PDFs (time-boxed, resumable)
 search.py    query → name vectors ┐
@@ -44,6 +44,13 @@ the first result.
 | Qwen3-Embedding-0.6B | 17/25 | 51 ms | ~17× |
 
 The small model fails exactly on cross-lingual queries (“房租多少” → *Document (3).txt*). Qwen3 was one query better but twice as slow to index, so bge-m3 is the default.
+
+bge-m3 runs quantized to int8 on ONNX Runtime by default (`tools/export_onnx.py` makes it), so the
+install needs no PyTorch: about 170 MB of Python packages instead of 1 GB, and a 590 MB model
+instead of 2.2 GB. On [`eval/lookalike`](../eval/lookalike) it finds the same files as PyTorch
+(Hit@1 60 vs 61 of 76, Hit@3 69 for both), searches in 36 ms instead of 27 ms and uses about
+150 MB less memory, but builds the index about 3× slower because it runs on the CPU. Set
+`"embed_backend": "torch"` to index on the Apple GPU instead.
 A cross-encoder reranker (bge-reranker-v2-m3) adds a few more hits but costs 2–4 s per query on
 an M4, so it is off by default (set `"reranker": "BAAI/bge-reranker-v2-m3"` to enable it; the
 panel then shows fast results first and swaps in the reranked order after you pause).

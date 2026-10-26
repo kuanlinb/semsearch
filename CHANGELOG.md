@@ -1,5 +1,13 @@
 # Changelog
 
+## Unreleased
+
+- No PyTorch by default: bge-m3 runs quantized to int8 on ONNX Runtime. The install is about 170 MB
+  of Python packages instead of 1 GB and the model 590 MB instead of 2.2 GB; search quality is the
+  same, the service starts in about a second, but the first index build is about 3× slower.
+  Existing installs keep PyTorch and their index; `"embed_backend": "onnx"` switches.
+- A reranker on this Mac still needs PyTorch: `install.sh` adds it when the config has one.
+
 ## 0.1.2 (2026-10-26)
 
 - Homebrew installs no longer need the Xcode Command Line Tools on macOS 14 or later: the app

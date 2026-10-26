@@ -175,11 +175,15 @@ class Searcher:
         embed.get_model(self.cfg["model"])
         self.reranker = None
         if self.cfg.get("reranker"):
-            from sentence_transformers import CrossEncoder
-            dev = config.device()
-            self.reranker = CrossEncoder(self.cfg["reranker"], device=dev, max_length=256)
-            if dev == "mps":
-                self.reranker.model.half()
+            try:
+                from sentence_transformers import CrossEncoder
+            except ImportError:  # the light install has no PyTorch: install.sh adds it for a reranker
+                print("reranker needs PyTorch: run install.sh again to add it", flush=True)
+            else:
+                dev = config.device()
+                self.reranker = CrossEncoder(self.cfg["reranker"], device=dev, max_length=256)
+                if dev == "mps":
+                    self.reranker.model.half()
         self.remote = self.cfg.get("remote_reranker", "")
         self.remote_down_until = 0.0
         self.recent = {}

@@ -95,3 +95,31 @@ def test_only_web_page_asset_folders_are_skipped():
     assert not skip_dir("tax_files", {"tax_files", "notes.txt"})
     assert not skip_dir("client_files")
     assert skip_dir("node_modules") and skip_dir(".git")
+
+
+def test_switching_backend_rebuilds_the_index(index_env, monkeypatch):
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DB_PATH)
+    assert db.execute("SELECT v FROM meta WHERE k='backend'").fetchone() == ("onnx",)
+    db.execute("UPDATE files SET name='stale' WHERE name='kitchen_renovation_plan.md'")
+    db.commit()
+    monkeypatch.setenv("SEMSEARCH_EMBED_BACKEND", "torch")
+    indexer.run(workers=1)
+    assert "stale" not in names() and "kitchen_renovation_plan.md" in names()
+
+
+def test_model_download_is_checked(tmp_path, monkeypatch):
+    import hashlib
+
+    import pytest
+    from semsearch import embed
+    src = tmp_path / "src"
+    src.mkdir()
+    (src / "model.onnx").write_bytes(b"weights")
+    monkeypatch.setattr(config, "MODELS_DIR", tmp_path / "models")
+    good = hashlib.sha256(b"weights").hexdigest()
+    folder = embed._fetch("m", src.as_uri() + "/", {"model.onnx": good})
+    assert (folder / "model.onnx").read_bytes() == b"weights"
+    with pytest.raises(RuntimeError):
+        embed._fetch("bad", src.as_uri() + "/", {"model.onnx": "0" * 64})
+    assert not list((tmp_path / "models" / "bad").iterdir())

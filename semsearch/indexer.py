@@ -382,10 +382,16 @@ def run(full=False, limit=None, workers=4, quick=False):
     embed.get_model(cfg["model"])
     db = connect()
     old_model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
-    if full or (old_model and old_model[0] != cfg["model"]):
+    # The two backends give slightly different vectors, so one index holds one kind
+    # (indexes from before the ONNX backend were all built with PyTorch)
+    old_backend = db.execute("SELECT v FROM meta WHERE k='backend'").fetchone()
+    backend = config.embed_backend()
+    if full or (old_model and (old_model[0] != cfg["model"]
+                               or (old_backend[0] if old_backend else "torch") != backend)):
         log("clearing the old index")
         db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts;")
     db.execute("INSERT OR REPLACE INTO meta VALUES('model', ?)", (cfg["model"],))
+    db.execute("INSERT OR REPLACE INTO meta VALUES('backend', ?)", (backend,))
     # Unique and increasing even when two runs start within the same second
     last = db.execute("SELECT max(seen) FROM files").fetchone()[0] or 0
     scan_id = max(int(time.time() * 1000), last + 1)

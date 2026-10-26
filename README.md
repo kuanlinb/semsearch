@@ -32,7 +32,7 @@ on your Mac: your files and searches never leave it.
 
 ## Install
 
-**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 4 GB of free space.
+**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 2 GB of free space.
 
 **With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 14 or later):
 

@@ -41,11 +41,31 @@ if [[ ! -x .venv/bin/python ]]; then
     python3 -m venv .venv
   fi
 fi
-echo "Installing Python packages…"
+# PyTorch only when the config asks for it ("embed_backend": "torch", or a reranker on this Mac).
+# An index built before the ONNX backend stays on PyTorch, so an update does not rebuild it.
+REQS="$(.venv/bin/python - "${SEMSEARCH_DATA:-$HOME/.semsearch}" <<'PY'
+import json, os, sqlite3, sys
+data = sys.argv[1]
+path = os.path.join(data, "config.json")
+cfg = json.load(open(path)) if os.path.exists(path) else {}
+if "embed_backend" not in cfg and os.path.exists(os.path.join(data, "index.db")):
+    try:
+        db = sqlite3.connect(os.path.join(data, "index.db"))
+        meta = dict(db.execute("SELECT k, v FROM meta WHERE k IN ('model', 'backend')"))
+    except sqlite3.Error:
+        meta = {}
+    if "model" in meta and "backend" not in meta:
+        cfg["embed_backend"] = "torch"
+        json.dump(cfg, open(path, "w"), indent=2)
+        print('Keeping PyTorch for your index ("embed_backend": "onnx" in the config switches).', file=sys.stderr)
+print("requirements.txt" if cfg.get("embed_backend") == "torch" or cfg.get("reranker") else "requirements-onnx.txt")
+PY
+)"
+echo "Installing Python packages ($REQS)…"
 if command -v uv >/dev/null; then
-  uv pip install -q -p .venv/bin/python -r requirements.txt
+  uv pip install -q -p .venv/bin/python -r "$REQS"
 else
-  .venv/bin/pip install -q -r requirements.txt
+  .venv/bin/pip install -q -r "$REQS"
 fi
 
 echo "Building the app…"
