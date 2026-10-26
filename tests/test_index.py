@@ -1,8 +1,10 @@
 import os
 import sqlite3
 
+import numpy as np
+
 from semsearch import config, indexer
-from semsearch.search import Searcher
+from semsearch.search import Searcher, _scores
 
 
 def names():
@@ -20,6 +22,22 @@ def test_index_and_search(index_env):
     assert top[0]["name"] == "kitchen_renovation_plan.md"
     top = s.search("bank statement", n=3)["results"]
     assert top[0]["name"] == "bank_statement_2026.txt"
+
+
+def test_search_without_pytorch(index_env, monkeypatch):
+    """embed_backend "onnx" keeps the vectors in NumPy; results match the PyTorch path."""
+    indexer.run(workers=1)
+    monkeypatch.setenv("SEMSEARCH_EMBED_BACKEND", "onnx")
+    s = Searcher()
+    assert isinstance(s.mat, np.ndarray)
+    top = s.search("kitchen renovation plan", n=3)["results"]
+    assert top[0]["name"] == "kitchen_renovation_plan.md"
+
+
+def test_blocked_scores_match_matmul():
+    mat = np.random.default_rng(0).standard_normal((20000, 16)).astype(np.float16)
+    q = mat[123]
+    assert np.allclose(_scores(mat, q, block=4096), mat.astype(np.float32) @ q.astype(np.float32), atol=1e-3)
 
 
 def test_incremental_update_and_deletion(index_env):

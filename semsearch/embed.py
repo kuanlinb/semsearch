@@ -1,7 +1,13 @@
-"""Text → vectors. The model is loaded once; e5 models need "query: " / "passage: " prefixes."""
+"""Text → vectors. The model is loaded once; e5 models need "query: " / "passage: " prefixes.
+
+Two runtimes (config "embed_backend"):
+  "torch"  sentence-transformers on PyTorch (Apple GPU through MPS), any Hugging Face model
+  "onnx"   ONNX Runtime with an int8 export of bge-m3: no PyTorch needed, runs on the CPU
+"""
 import os
 import re
 import threading
+import urllib.request
 
 import numpy as np
 
@@ -14,14 +20,81 @@ _lock = threading.Lock()
 _name = None
 
 
+# ONNX exports: model name -> (Hugging Face repo, model file, tokenizer file). The config key
+# "onnx_model" can instead name a local folder with model.onnx (+ model.onnx_data) and tokenizer.json.
+ONNX_MODELS = {
+    "BAAI/bge-m3": ("Xenova/bge-m3", "onnx/model_int8.onnx", "tokenizer.json"),
+}
+MAX_TOKENS = 256
+
+
+def _fetch(repo, path):
+    """A file from a Hugging Face repo, downloaded once into config.MODELS_DIR."""
+    dest = config.MODELS_DIR / repo.replace("/", "--") / path
+    if not dest.exists():
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        tmp = dest.with_suffix(dest.suffix + ".part")
+        urllib.request.urlretrieve(f"https://huggingface.co/{repo}/resolve/main/{path}", tmp)
+        tmp.rename(dest)
+    return str(dest)
+
+
+class OnnxModel:
+    """CLS-pooled, normalized embeddings from an ONNX export (what sentence-transformers does for bge-m3)."""
+
+    def __init__(self, name):
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+        local = config.load().get("onnx_model")
+        if local:
+            local = os.path.expanduser(local)
+            model_path, tok_path = os.path.join(local, "model.onnx"), os.path.join(local, "tokenizer.json")
+        elif name in ONNX_MODELS:
+            repo, model_file, tok_file = ONNX_MODELS[name]
+            model_path, tok_path = _fetch(repo, model_file), _fetch(repo, tok_file)
+        else:
+            raise ValueError(f"no ONNX export known for {name}; use embed_backend \"torch\"")
+        self.tok = Tokenizer.from_file(tok_path)
+        self.tok.enable_truncation(MAX_TOKENS)
+        self.tok.enable_padding(pad_id=self.tok.token_to_id("<pad>") or 0)
+        so = ort.SessionOptions()
+        so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        # Weights in a separate model.onnx_data file are memory-mapped instead of copied; without
+        # the arena, memory used for a batch is given back afterwards
+        so.enable_cpu_mem_arena = False
+        # Leave cores free for whatever else is running
+        so.intra_op_num_threads = int(os.environ.get("SEMSEARCH_THREADS", max(1, (os.cpu_count() or 4) // 2)))
+        self.sess = ort.InferenceSession(model_path, so, providers=["CPUExecutionProvider"])
+        self.inputs = {i.name for i in self.sess.get_inputs()}
+
+    def encode(self, texts, batch_size=8):
+        out = np.empty((len(texts), 0), np.float32)
+        order = np.argsort([-len(t) for t in texts], kind="stable")  # similar lengths → little padding
+        parts = []
+        for i in range(0, len(texts), batch_size):
+            enc = self.tok.encode_batch([texts[j] for j in order[i:i + batch_size]])
+            ids = np.array([e.ids for e in enc], dtype=np.int64)
+            feed = {"input_ids": ids, "attention_mask": np.array([e.attention_mask for e in enc], dtype=np.int64)}
+            if "token_type_ids" in self.inputs:
+                feed["token_type_ids"] = np.zeros_like(ids)
+            cls = self.sess.run(None, feed)[0][:, 0].astype(np.float32)
+            parts.append(cls / np.linalg.norm(cls, axis=1, keepdims=True))
+        if parts:
+            out = np.empty((len(texts), parts[0].shape[1]), np.float32)
+            out[order] = np.concatenate(parts)
+        return out
+
+
 def get_model(name: str):
     global _model, _name
     with _lock:
+        if _model is None and config.embed_backend() == "onnx":
+            _model, _name = OnnxModel(name), name
         if _model is None:
             from sentence_transformers import SentenceTransformer
             device = config.device()
             _model = SentenceTransformer(name, device=device)
-            _model.max_seq_length = 256
+            _model.max_seq_length = MAX_TOKENS
             if device == "mps":
                 _model.half()  # ~50% faster on MPS; vectors are stored as float16 anyway
             _name = name
@@ -48,6 +121,8 @@ def _prefix(kind: str) -> str:
 def encode(texts, kind="passage", batch_size=64) -> np.ndarray:
     m = get_model(_name or "intfloat/multilingual-e5-small")
     p = _prefix(kind)
+    if isinstance(m, OnnxModel):
+        return m.encode([p + t for t in texts]).astype(np.float16)
     vecs = m.encode([p + t for t in texts], batch_size=batch_size,
                     normalize_embeddings=True, convert_to_numpy=True,
                     show_progress_bar=False)

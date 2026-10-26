@@ -1,7 +1,8 @@
 """Hybrid search: semantic vectors + keywords (names and contents), fused with RRF.
 
-All vectors live in memory (a float16 tensor on MPS); a few hundred thousand chunks
-take tens of milliseconds. The service reloads them after the indexer updates the DB.
+All vectors live in memory (a float16 tensor on MPS, or a float16 NumPy array without
+PyTorch); a few hundred thousand chunks take tens of milliseconds. The service reloads
+them after the indexer updates the DB.
 """
 import os
 import re
@@ -151,6 +152,23 @@ def is_lookup(q: str) -> bool:
     return bool(terms) and all(_code_like(t) for t in terms)
 
 
+_pool = None
+
+
+def _scores(mat, qv, block=8192):
+    """mat @ qv for a float16 matrix without PyTorch. NumPy has no fast float16 matmul, so
+    blocks are converted to float32 and multiplied on several threads (NumPy releases the GIL)."""
+    global _pool
+    if _pool is None:
+        from concurrent.futures import ThreadPoolExecutor
+        _pool = ThreadPoolExecutor(max(1, min(8, (os.cpu_count() or 4) - 2)))
+    q = qv.astype(np.float32)
+    if len(mat) <= block:
+        return mat.astype(np.float32) @ q
+    return np.concatenate(list(_pool.map(lambda i: mat[i:i + block].astype(np.float32) @ q,
+                                         range(0, len(mat), block))))
+
+
 class Searcher:
     def __init__(self):
         self.cfg = config.load()
@@ -167,6 +185,7 @@ class Searcher:
         self.recent = {}
         self.lock = threading.Lock()
         self.gpu = threading.Lock()  # PyTorch MPS is not thread-safe: one GPU op at a time
+        self.torch = config.embed_backend() == "torch"
         self.version = None
         self.mat = None
         self.chunk_ids = None
@@ -190,7 +209,6 @@ class Searcher:
         v = self.current_version()
         if not force and v == self.version:
             return False
-        import torch
         db = self._db()
         model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
         rows = db.execute("SELECT id, file_id, kind, vec FROM chunks").fetchall()
@@ -205,12 +223,16 @@ class Searcher:
             fids = np.fromiter((r[1] for r in rows), dtype=np.int64, count=len(rows))
             kinds = np.fromiter((r[2] for r in rows), dtype=np.int8, count=len(rows))
             vecs = np.frombuffer(b"".join(r[3] for r in rows), dtype=np.float16).reshape(len(rows), -1)
-            dev = config.device()
-            cpu = torch.from_numpy(vecs.copy())
-            with self.gpu:
-                mat = cpu.to(dev)
-            if dev == "cpu":
-                mat = mat.float()
+            if self.torch:
+                import torch
+                dev = config.device()
+                cpu = torch.from_numpy(vecs.copy())
+                with self.gpu:
+                    mat = cpu.to(dev)
+                if dev == "cpu":
+                    mat = mat.float()
+            else:
+                mat = vecs.copy()  # stays float16; _scores converts one block at a time
         else:
             ids = fids = np.zeros(0, dtype=np.int64)
             kinds = np.zeros(0, dtype=np.int8)
@@ -290,22 +312,30 @@ class Searcher:
     # ---- retrieval channels ----
     def _vector(self, q, k=2500):
         """Return [(chunk id, file id, kind, score)], best first."""
-        import torch
         with self.lock:
             mat, ids, fids, kinds = self.mat, self.chunk_ids, self.chunk_file, self.chunk_kind
         if mat is None:
             return []
-        with self.gpu:
-            qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device)
-            if mat.dtype != qv.dtype:
-                qv = qv.to(mat.dtype)
+        if self.torch:
+            import torch
+            with self.gpu:
+                qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device).to(mat.dtype)
+                if qv.shape[1] != mat.shape[1]:
+                    raise RuntimeError("index and query model differ; wait for the rebuild to finish")
+                scores = (mat @ qv[0]).float()
+                k = min(k, scores.shape[0])
+                top = torch.topk(scores, k)
+                s = top.values.cpu().numpy()
+                idx = top.indices.cpu().numpy()
+        else:
+            qv = embed.encode([q], kind="query")
             if qv.shape[1] != mat.shape[1]:
                 raise RuntimeError("index and query model differ; wait for the rebuild to finish")
-            scores = (mat @ qv[0]).float()
-            k = min(k, scores.shape[0])
-            top = torch.topk(scores, k)
-            s = top.values.cpu().numpy()
-            idx = top.indices.cpu().numpy()
+            scores = _scores(mat, qv[0])
+            k = min(k, len(scores))
+            idx = np.argpartition(-scores, k - 1)[:k]
+            idx = idx[np.argsort(-scores[idx], kind="stable")]
+            s = scores[idx]
         return [(int(ids[i]), int(fids[i]), int(kinds[i]), float(sc)) for i, sc in zip(idx, s)]
 
     def _usage_boost(self, fused, q):
@@ -338,14 +368,17 @@ class Searcher:
 
     def _app_vector(self, q):
         """All apps ranked by how well their name or description matches the query; returns file ids."""
-        import torch
         with self.lock:
             mat, fids, rows = self.mat, self.chunk_file, self.app_rows
         if mat is None or rows is None or len(rows) == 0:
             return []
-        with self.gpu:
-            qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device).to(mat.dtype)
-            sc = (mat[torch.as_tensor(rows, device=mat.device)] @ qv[0]).float().cpu().numpy()
+        if self.torch:
+            import torch
+            with self.gpu:
+                qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device).to(mat.dtype)
+                sc = (mat[torch.as_tensor(rows, device=mat.device)] @ qv[0]).float().cpu().numpy()
+        else:
+            sc = _scores(mat[rows], embed.encode([q], kind="query")[0])
         best = {}
         for i in np.argsort(-sc):
             best.setdefault(int(fids[rows[i]]), None)

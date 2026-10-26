@@ -11,6 +11,8 @@ HOME = Path.home()
 DATA_DIR = Path(os.environ.get("SEMSEARCH_DATA", HOME / ".semsearch"))
 DB_PATH = DATA_DIR / "index.db"
 USER_CONFIG = DATA_DIR / "config.json"
+# Models downloaded by SemSearch itself (the ONNX runtime); PyTorch models use the Hugging Face cache
+MODELS_DIR = Path(os.environ.get("SEMSEARCH_MODELS", HOME / ".semsearch" / "models"))
 
 
 def cloud_drives():
@@ -47,6 +49,8 @@ DEFAULTS = {
     "exclude_substrings": [],
     "port": 8799,
     "model": "BAAI/bge-m3",
+    # "torch" (PyTorch, Apple GPU) or "onnx" (ONNX Runtime int8 on the CPU, no PyTorch needed)
+    "embed_backend": "torch",
     # Optional second-stage cross-encoder; "" disables it (slow on laptops)
     "reranker": "",
     "rerank_top": 40,
@@ -95,6 +99,11 @@ MAX_CHARS_PER_FILE = 40_000
 CHUNK_CHARS = 450
 CHUNK_OVERLAP = 80
 MAX_CHUNKS_PER_FILE = int(os.environ.get("SEMSEARCH_MAX_CHUNKS", 30))
+
+
+def embed_backend():
+    """"torch" or "onnx"; SEMSEARCH_EMBED_BACKEND overrides the config file."""
+    return os.environ.get("SEMSEARCH_EMBED_BACKEND") or load().get("embed_backend", "torch")
 
 
 def device():
