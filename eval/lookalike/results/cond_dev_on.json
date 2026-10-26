@@ -1,0 +1,776 @@
+{
+ "summary": {
+  "tag": "beat_cond",
+  "model": "BAAI/bge-m3",
+  "reranker": null,
+  "n": 33,
+  "hit1": 31,
+  "hit3": 33,
+  "panel_hit1": 31,
+  "panel_hit3": 33,
+  "mrr": 0.97,
+  "mean_ms": 15.2,
+  "median_ms": 16,
+  "index_s": 32.8,
+  "searcher_load_s": 0.9,
+  "index_peak_rss_mb": 858,
+  "search_peak_rss_mb": 764,
+  "index_db_mb": 3.03
+ },
+ "queries": [
+  {
+   "q": "上個月的水電費",
+   "expect": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.2,
+   "reranked": false,
+   "conditions": {
+    "time": "上個月",
+    "source": null,
+    "matched": 20
+   },
+   "top": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt",
+    "Downloads/報價單 (2).pdf",
+    "Finance/IMG_5203.png",
+    "Notes/misc/24_想法_81.md",
+    "Home/washing_machine_warranty.txt"
+   ]
+  },
+  {
+   "q": "this month's utility bill",
+   "expect": [
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.5,
+   "reranked": false,
+   "conditions": {
+    "time": "this month",
+    "source": null,
+    "matched": 26
+   },
+   "top": [
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt",
+    "Finance/IMG_5310.png",
+    "Downloads/receipt.pdf",
+    "Downloads/報價單.pdf",
+    "Notes/misc/43_draft_165.txt"
+   ]
+  },
+  {
+   "q": "上個月的信用卡帳單",
+   "expect": [
+    "Finance/Statements/Statement_2026-05.pdf"
+   ],
+   "tag": "time",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 13,
+   "wall_ms": 13.1,
+   "reranked": false,
+   "conditions": {
+    "time": "上個月",
+    "source": null,
+    "matched": 20
+   },
+   "top": [
+    "Finance/IMG_5203.png",
+    "Finance/Statements/Statement_2026-05.pdf",
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt",
+    "Home/washing_machine_warranty.txt",
+    "Downloads/報價單 (2).pdf"
+   ]
+  },
+  {
+   "q": "去年的健檢報告",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.4,
+   "reranked": false,
+   "conditions": {
+    "time": "去年",
+    "source": null,
+    "matched": 100
+   },
+   "top": [
+    "Health/健檢報告_2025.pdf",
+    "Work/年終檢討.docx",
+    "Notes/misc/13_記事_215.md",
+    "Notes/misc/21_草稿_137.md",
+    "Car/保養紀錄.md"
+   ]
+  },
+  {
+   "q": "最近的健檢報告",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.7,
+   "reranked": false,
+   "conditions": {
+    "time": "最近",
+    "source": null,
+    "matched": 34
+   },
+   "top": [
+    "Health/健檢報告_2026.pdf",
+    "Health/IMG_7002.png",
+    "Downloads/receipt.pdf",
+    "Notes/journal/2026-06-15.md",
+    "Work/meeting_notes_0612.md"
+   ]
+  },
+  {
+   "q": "yesterday's roadmap",
+   "expect": [
+    "Work/Q4_roadmap_draft.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.6,
+   "reranked": false,
+   "conditions": {
+    "time": "yesterday",
+    "source": null,
+    "matched": 3
+   },
+   "top": [
+    "Work/Q4_roadmap_draft.md",
+    "Travel/eticket_SIN.pdf",
+    "Downloads/receipt.pdf"
+   ]
+  },
+  {
+   "q": "roadmap from last week",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.7,
+   "reranked": false,
+   "conditions": {
+    "time": "last week",
+    "source": null,
+    "matched": 11
+   },
+   "top": [
+    "Work/Q3_roadmap.md",
+    "Work/meeting_notes_0612.md",
+    "Notes/misc/03_草稿_289.md",
+    "Travel/護照換發.md",
+    "Health/健檢報告_2026.pdf"
+   ]
+  },
+  {
+   "q": "上週的會議記錄",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.9,
+   "reranked": false,
+   "conditions": {
+    "time": "上週",
+    "source": null,
+    "matched": 11
+   },
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Notes/misc/03_草稿_289.md",
+    "Work/Q3_roadmap.md",
+    "Downloads/報價單 (1).pdf",
+    "Finance/Statements/Statement_2026-06.pdf"
+   ]
+  },
+  {
+   "q": "meeting notes from 3 weeks ago",
+   "expect": [
+    "Work/meetings/meeting_notes_0529.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.5,
+   "reranked": false,
+   "conditions": {
+    "time": "3 weeks ago",
+    "source": null,
+    "matched": 5
+   },
+   "top": [
+    "Work/meetings/meeting_notes_0529.md",
+    "Notes/books_2026.md",
+    "Study/線性代數筆記.md",
+    "Finance/scan_0042.pdf",
+    "Home/washing_machine_warranty.txt"
+   ]
+  },
+  {
+   "q": "今天的會議記錄",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.3,
+   "reranked": false,
+   "conditions": {
+    "time": "今天",
+    "source": null,
+    "matched": 1
+   },
+   "top": [
+    "Work/meeting_notes_0619.md"
+   ]
+  },
+  {
+   "q": "這週的旅遊行程",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.9,
+   "reranked": false,
+   "conditions": {
+    "time": "這週",
+    "source": null,
+    "matched": 12
+   },
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Travel/eticket_SIN.pdf",
+    "Work/Q4_roadmap_draft.md",
+    "Notes/journal/2026-06-15.md",
+    "Health/IMG_7002.png"
+   ]
+  },
+  {
+   "q": "last year's flight booking",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.2,
+   "reranked": false,
+   "conditions": {
+    "time": "last year",
+    "source": null,
+    "matched": 100
+   },
+   "top": [
+    "Travel/flight_confirmation (1).txt",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Notes/misc/37_misc_297.txt",
+    "Notes/misc/15_misc_288.md",
+    "Travel/packing_list.md"
+   ]
+  },
+  {
+   "q": "the screenshot from last month",
+   "expect": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 16.0,
+   "reranked": false,
+   "conditions": {
+    "time": "last month",
+    "source": null,
+    "matched": 20
+   },
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Finance/IMG_5203.png",
+    "Notes/misc/24_想法_81.md",
+    "Work/meetings/meeting_notes_0501.md",
+    "Work/meetings/meeting_notes_0515.md"
+   ]
+  },
+  {
+   "q": "去年的租約",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.5,
+   "reranked": false,
+   "conditions": {
+    "time": "去年",
+    "source": null,
+    "matched": 100
+   },
+   "top": [
+    "Home/Lease_storage_unit.pdf",
+    "Finance/Bills/telecom/電信帳單_202506.txt",
+    "Finance/Bills/telecom/電信帳單_202509.txt",
+    "Finance/Bills/telecom/電信帳單_202507.txt",
+    "Finance/Bills/telecom/電信帳單_202505.txt"
+   ]
+  },
+  {
+   "q": "最近改的車險",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "time",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 16,
+   "wall_ms": 16.2,
+   "reranked": false,
+   "conditions": {
+    "time": "最近",
+    "source": null,
+    "matched": 34
+   },
+   "top": [
+    "Downloads/receipt.pdf",
+    "Finance/scan_0042.pdf",
+    "Finance/機車強制險.pdf",
+    "Home/車位租約.docx",
+    "Work/Q4_roadmap_draft.md"
+   ]
+  },
+  {
+   "q": "LINE 傳來的報價單",
+   "expect": [
+    "Downloads/報價單.pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.7,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "LINE",
+    "matched": 7
+   },
+   "top": [
+    "Downloads/報價單.pdf",
+    "Travel/IMG_6020.png",
+    "Finance/IMG_5203.png",
+    "Home/車位租約.docx",
+    "Finance/IMG_5310.png"
+   ]
+  },
+  {
+   "q": "Gmail 附件的報價單",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.8,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Gmail",
+    "matched": 13
+   },
+   "top": [
+    "Downloads/報價單 (1).pdf",
+    "Downloads/document.pdf",
+    "Finance/Statements/Statement_2026-01.pdf",
+    "Finance/Statements/Statement_2026-03.pdf",
+    "Finance/Statements/Statement_2026-02.pdf"
+   ]
+  },
+  {
+   "q": "the quote from Slack",
+   "expect": [
+    "Downloads/報價單 (2).pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.6,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Slack",
+    "matched": 3
+   },
+   "top": [
+    "Downloads/報價單 (2).pdf",
+    "Work/headcount_plan.xlsx",
+    "Work/Pricing_review.pptx"
+   ]
+  },
+  {
+   "q": "AirDrop 傳來的截圖",
+   "expect": [
+    "Downloads/IMG_8850.png",
+    "Travel/IMG_6012.png"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 1,
+   "wall_ms": 1.5,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "AirDrop",
+    "matched": 2
+   },
+   "top": [
+    "Downloads/IMG_8850.png",
+    "Travel/IMG_6012.png"
+   ]
+  },
+  {
+   "q": "LINE 收到的好市多收據",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "LINE",
+    "matched": 7
+   },
+   "top": [
+    "Finance/IMG_5203.png",
+    "Finance/IMG_5310.png",
+    "Downloads/IMG_8841.png",
+    "Downloads/報價單.pdf",
+    "Home/車位租約.docx"
+   ]
+  },
+  {
+   "q": "the PDF from Google Drive",
+   "expect": [
+    "Downloads/document (1).pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.8,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Google Drive",
+    "matched": 3
+   },
+   "top": [
+    "Downloads/document (1).pdf",
+    "Work/年終檢討.docx",
+    "Work/OKR_2026H1.md"
+   ]
+  },
+  {
+   "q": "從 ChatGPT 下載的筆記",
+   "expect": [
+    "Study/rag_paper_notes.md"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "ChatGPT",
+    "matched": 1
+   },
+   "top": [
+    "Study/rag_paper_notes.md"
+   ]
+  },
+  {
+   "q": "Telegram 傳的考試複習",
+   "expect": [
+    "Study/ML_midterm_review.pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 20.0,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Telegram",
+    "matched": 1
+   },
+   "top": [
+    "Study/ML_midterm_review.pdf"
+   ]
+  },
+  {
+   "q": "Safari 下載的收據",
+   "expect": [
+    "Downloads/receipt.pdf"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.2,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Safari",
+    "matched": 3
+   },
+   "top": [
+    "Downloads/receipt.pdf",
+    "Finance/機車強制險.pdf",
+    "Finance/旅平險.pdf"
+   ]
+  },
+  {
+   "q": "the reminder someone sent on iMessage",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "source",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.4,
+   "reranked": false,
+   "conditions": {
+    "time": null,
+    "source": "Messages",
+    "matched": 1
+   },
+   "top": [
+    "Health/IMG_7002.png"
+   ]
+  },
+  {
+   "q": "上週 Gmail 寄來的報價",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "both",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.8,
+   "reranked": false,
+   "conditions": {
+    "time": "上週",
+    "source": "Gmail",
+    "matched": 4
+   },
+   "top": [
+    "Downloads/報價單 (1).pdf",
+    "Downloads/document.pdf",
+    "Finance/Statements/Statement_2026-06.pdf",
+    "Health/健檢報告_2026.pdf"
+   ]
+  },
+  {
+   "q": "上個月 Slack 上的檔案",
+   "expect": [
+    "Downloads/報價單 (2).pdf",
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "both",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 1,
+   "wall_ms": 1.0,
+   "reranked": false,
+   "conditions": {
+    "time": "上個月",
+    "source": "Slack",
+    "matched": 2
+   },
+   "top": [
+    "Downloads/報價單 (2).pdf",
+    "Work/headcount_plan.xlsx"
+   ]
+  },
+  {
+   "q": "LINE 這週傳來的合約",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "both",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.5,
+   "reranked": false,
+   "conditions": {
+    "time": "這週",
+    "source": "LINE",
+    "matched": 3
+   },
+   "top": [
+    "Home/車位租約.docx",
+    "Downloads/報價單.pdf",
+    "Downloads/IMG_8841.png"
+   ]
+  },
+  {
+   "q": "去年 Google Drive 的檢討",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "both",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.1,
+   "reranked": false,
+   "conditions": {
+    "time": "去年",
+    "source": null,
+    "matched": 100
+   },
+   "top": [
+    "Work/年終檢討.docx",
+    "Notes/misc/41_清單_287.txt",
+    "Car/行照影本.pdf",
+    "Notes/misc/65_idea_261.md",
+    "Notes/misc/40_清單_29.md"
+   ]
+  },
+  {
+   "q": "airdrop photo from this week",
+   "expect": [
+    "Downloads/IMG_8850.png"
+   ],
+   "tag": "both",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.5,
+   "reranked": false,
+   "conditions": {
+    "time": "this week",
+    "source": "AirDrop",
+    "matched": 1
+   },
+   "top": [
+    "Downloads/IMG_8850.png"
+   ]
+  },
+  {
+   "q": "先月の水道光熱費",
+   "expect": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.6,
+   "reranked": false,
+   "conditions": {
+    "time": "先月",
+    "source": null,
+    "matched": 20
+   },
+   "top": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt",
+    "Downloads/報價單 (2).pdf",
+    "Finance/IMG_5203.png",
+    "Finance/scan_0042.pdf",
+    "Home/washing_machine_warranty.txt"
+   ]
+  },
+  {
+   "q": "지난주 회의록",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "time",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.2,
+   "reranked": false,
+   "conditions": {
+    "time": "지난주",
+    "source": null,
+    "matched": 11
+   },
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Notes/misc/03_草稿_289.md",
+    "Work/Q3_roadmap.md",
+    "Downloads/報價單 (1).pdf",
+    "Work/Pricing_review.pptx"
+   ]
+  },
+  {
+   "q": "drive to Kyoto hotel booking",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "control",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.6,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/Kansai_2026.md",
+    "Travel/flight_confirmation.txt",
+    "Travel/Tokyo_2025.md"
+   ]
+  }
+ ]
+}

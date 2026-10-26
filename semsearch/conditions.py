@@ -268,7 +268,7 @@ def parse(q, t=None):
         return q, None
     rest = re.sub(r"\s+", " ", rest).strip(" 的,，")
     edge = r"(?:(?:from|on|in|at|via|by|of|sent|got)\b|の|的|에서|から|で)"
-    rest = re.sub(rf"^(?:{edge}\s*)+|(?:\s*{edge})+$", "", rest, flags=re.I).strip()
+    rest = re.sub(rf"^(?:{edge}\s*)+|(?:(?<![a-z]){edge})+$", "", rest.strip(), flags=re.I).strip()
     if _GLUE.match(rest or " "):
         rest = ""
     return rest, cond

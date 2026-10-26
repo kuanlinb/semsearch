@@ -697,6 +697,8 @@ def _tiers(results, judged=TIER_SPAN):
         else:
             r["tier"] = 1 if r["rel"] >= tier1 else 2
         out.append(r)
+    if not out and results:  # never an empty list: conditions can leave only weak matches
+        out = [dict(results[0], tier=2)]
     return sorted(out, key=lambda r: r["tier"])  # stable: keeps the order within each tier
 
 
