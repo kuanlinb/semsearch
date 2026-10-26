@@ -6,9 +6,9 @@
 
 Spotlight 要記得檔名裡的字才找得到。SemSearch 看得懂意思，就算完全不記得檔案叫什麼也找得到。全部在你的 Mac 上執行，檔案和搜尋內容都不會上傳。
 
-*🔊 影片預設靜音，請點播放器上的喇叭圖示打開聲音。*
+[![SemSearch 示範：「our Japan trip plan」Spotlight 找不到，SemSearch 找到 Kansai_2026.md](docs/demo-video.jpg)](https://youtu.be/FPExL5MBMQY)
 
-https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
+**[▶ 在 YouTube 看示範影片](https://youtu.be/FPExL5MBMQY)**（有聲音）
 
 ## 它能做什麼
 

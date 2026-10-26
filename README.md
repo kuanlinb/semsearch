@@ -10,9 +10,9 @@ Spotlight only finds a file when you remember words from its name. SemSearch und
 you mean, so you can find a file even when you have no idea what it is called. Everything runs
 on your Mac: your files and searches never leave it.
 
-*🔊 The video starts muted: click the speaker icon in the player to turn on sound.*
+[![SemSearch demo: Spotlight finds nothing for “our Japan trip plan”, SemSearch finds Kansai_2026.md](docs/demo-video.jpg)](https://youtu.be/FPExL5MBMQY)
 
-https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
+**[▶ Watch the demo on YouTube](https://youtu.be/FPExL5MBMQY)** (with sound)
 
 ## What it can do
 
