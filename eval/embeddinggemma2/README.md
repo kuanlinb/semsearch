@@ -45,3 +45,36 @@ list needs a cut-off.
     imgtest.py <dir> mps [70]   image encoder speed and text → image matches (images in <dir>/imgs)
     imgtime.py <dir> <device> <dtype> <tokens>   time per image
     both.py                     memory and query time with bge-m3 and Gemma loaded together
+
+## llama.cpp: EmbeddingGemma 2 GGUF (Q8_0) for text and photos
+
+`llama-server` from Homebrew (`brew install llama.cpp`, 0.7.0) with `embeddinggemma-2-Q8_0.gguf`
+(310 MB) and `mmproj-embeddinggemma-2-Q8_0.gguf` (555 MB) from ggml-org/embeddinggemma-2-GGUF; the
+command is in `semsearch/imagevec.py`. Text vectors match PyTorch (cos 1.00), image vectors are
+close (cos 0.96-0.99). One photo takes 0.2-0.55 s against 1.5-1.9 s in PyTorch.
+
+Test set: the look-alike corpus plus 29 photos (macOS wallpaper thumbnails renamed
+`IMG_8001.jpg`…, so only what they show can find them) and 38 questions about them, 19 English
+and 19 Chinese (`queries_photos.json`; many are near-identical seascapes).
+
+| | Text Hit@1 / @3 (76) | Photos Hit@1 / @3 (38) | Search median |
+|---|---|---|---|
+| bge-m3, no image search | 59 / 69 | 0 / 0 | 44 ms |
+| A: bge-m3 + Gemma image list (RRF weight 1) | 58 / 68 | 0 / 0 | 66 ms |
+| A: weight 3 | 28 / 45 | 28 / 38 | 66 ms |
+| A: weight 3, z-gate 2.7 | 52 / 66 | 21 / 23 | |
+| B: Gemma GGUF for text, no images | 56 / 69 | 0 / 0 | 14 ms |
+| **B: Gemma GGUF for text and photos, one space** | **58 / 67** | **33 / 37** | 12 ms |
+
+Among images alone the right photo ranks first 35/38 times and in the top three 38/38. With a
+separate image list (A) photos only surface when the list outweighs the text lists, and then
+photos crowd out documents. In one space (B) a photo competes with text chunks on similarity
+directly, and no tuning was needed (offset 0).
+
+Memory: llama-server 760-970 MB with both encoders loaded; the search process with B 49 MB,
+with bge-m3 about 920 MB. Speed, interleaved on a busy machine: text chunks 6-17/s for both,
+query vector 24 ms (Gemma GGUF) vs 37 ms (bge-m3).
+
+    image_scores.py <corpus>   image-only ranks, top scores and z-scores per question type
+    summary.py <tag>…          text and photo Hit@1/@3 from eval/lookalike/results
+    speed.py <index.db>        bge-m3 vs llama-server speed, interleaved

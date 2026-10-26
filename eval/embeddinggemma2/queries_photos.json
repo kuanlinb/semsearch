@@ -1,0 +1,840 @@
+{
+ "about": "eval/lookalike questions plus 38 about the content of 29 photos (macOS wallpaper thumbnails renamed IMG_8001-8029.jpg; the files come with macOS in /System/Library/Desktop Pictures/.thumbnails)",
+ "queries": [
+  {
+   "q": "how much rent do I pay now",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "rent at my old Xinyi flat",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "storage unit access hours",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "car insurance premium for 2026 to 2027",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "what was the excess on my old car policy",
+   "expect": [
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "washing machine motor warranty",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "hospital cash benefit per day",
+   "expect": [
+    "Finance/health_insurance_summary.docx"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "who owns the SSO migration",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "pricing page A/B test launch date",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "checkout latency goal",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "what caused the login outage",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "proposal to raise the Team plan price",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "how many backend engineers by end of 2026",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "return flight time from Narita",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "hotel confirmation number for Kyoto",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "how long to steep cold brew",
+   "expect": [
+    "Recipes/cold_brew.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "oven temperature for sourdough bread",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "self-attention formula",
+   "expect": [
+    "Study/transformer_notes.md"
+   ],
+   "tag": "content"
+  },
+  {
+   "q": "房租多少",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "舊房子的押金退了沒",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "車險續約保費多少",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "去成田的回程班機幾點",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "新加坡機票訂位代號",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "京都飯店住幾晚",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "酸種麵包要烤幾度",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "登入當機的原因",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "單一登入誰負責",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "洗衣機馬達保固幾年",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "倉庫租金多少",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "紅酒燉牛肉要燉多久",
+   "expect": [
+    "Recipes/beef_stew.md"
+   ],
+   "tag": "zh→en"
+  },
+  {
+   "q": "parking space monthly rent",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "beef noodle soup with chili bean paste",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "clear broth beef noodle soup",
+   "expect": [
+    "Recipes/清燉牛肉麵.md"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "how long is the air conditioner compressor covered",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "fridge compressor warranty",
+   "expect": [
+    "Home/冰箱保固書.pdf"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "electricity bill for August 2025",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "utility bill March 2026",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "scooter compulsory insurance",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "travel insurance for the Japan trip",
+   "expect": [
+    "Finance/旅平險.pdf"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "cholesterol in my 2025 health check",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "year-end review what went wrong",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "tax refund amount",
+   "expect": [
+    "Finance/2025 報稅整理.xlsx"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "when do I need to renew my passport",
+   "expect": [
+    "Travel/護照換發.md"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "mileage at the last car oil change",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "when is the next car inspection",
+   "expect": [
+    "Car/行照影本.pdf"
+   ],
+   "tag": "en→zh"
+  },
+  {
+   "q": "壓縮機保固十年的是哪個",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "zh→zh"
+  },
+  {
+   "q": "2025 年 8 月電費",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "zh→zh"
+  },
+  {
+   "q": "番茄燉牛肉",
+   "expect": [
+    "Recipes/番茄牛腩.md"
+   ],
+   "tag": "zh→zh"
+  },
+  {
+   "q": "汽車下次保養是什麼時候",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "zh→zh"
+  },
+  {
+   "q": "車位遙控器遺失要賠多少",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "zh→zh"
+  },
+  {
+   "q": "NT$18,600",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "Q7XK2P",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "ZT4M9L",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "58210377",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "Kestrel Logistics invoice",
+   "expect": [
+    "Work/invoices/INV-20260124.pdf"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "B2-17",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "MXV-2291",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "1,718",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "豆瓣醬",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/麻婆豆腐.md"
+   ],
+   "tag": "exact"
+  },
+  {
+   "q": "房屋稅繳款期限",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "房屋稅多少錢",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "停水通知",
+   "expect": [
+    "Home/IMG_4471.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "Costco receipt total",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "好市多買了什麼",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "高鐵車票 左營",
+   "expect": [
+    "Travel/IMG_6020.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "boarding pass to Hong Kong seat number",
+   "expect": [
+    "Travel/IMG_6012.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "牙醫預約時間",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "2026 健檢膽固醇",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "502 bad gateway error screenshot",
+   "expect": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "四月管理費繳費",
+   "expect": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "6月房租轉帳紀錄",
+   "expect": [
+    "Finance/IMG_5310.png"
+   ],
+   "tag": "ocr"
+  },
+  {
+   "q": "car insurance pdf",
+   "expect": [
+    "Finance/scan_0042.pdf",
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "type-hint"
+  },
+  {
+   "q": "pricing slides",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "type-hint"
+  },
+  {
+   "q": "headcount spreadsheet",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "type-hint"
+  },
+  {
+   "q": "Kansai",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "name"
+  },
+  {
+   "q": "鳳梨酥",
+   "expect": [
+    "Recipes/鳳梨酥.md"
+   ],
+   "tag": "name"
+  },
+  {
+   "q": "a winding road through the hills",
+   "expect": [
+    "Photos/IMG_8017.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "山間蜿蜒的公路",
+   "expect": [
+    "Photos/IMG_8017.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "glowing blue grass at night",
+   "expect": [
+    "Photos/IMG_8028.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "夜裡發藍光的草",
+   "expect": [
+    "Photos/IMG_8028.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "red spiky plants in the dark",
+   "expect": [
+    "Photos/IMG_8002.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "暗處的紅色多肉植物",
+   "expect": [
+    "Photos/IMG_8002.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "layers of misty mountain ridges",
+   "expect": [
+    "Photos/IMG_8022.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "霧中一層層的山稜",
+   "expect": [
+    "Photos/IMG_8022.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "a single white rock in purple water",
+   "expect": [
+    "Photos/IMG_8005.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "紫色海水裡的一塊白石頭",
+   "expect": [
+    "Photos/IMG_8005.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "pink rock cliff above turquoise water",
+   "expect": [
+    "Photos/IMG_8009.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "粉紅色岩壁和綠松色海水",
+   "expect": [
+    "Photos/IMG_8009.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "black and white maze pattern",
+   "expect": [
+    "Photos/IMG_8016.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "黑白迷宮圖案",
+   "expect": [
+    "Photos/IMG_8016.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "colorful abstract ribbons",
+   "expect": [
+    "Photos/IMG_8014.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "彩色的抽象緞帶圖案",
+   "expect": [
+    "Photos/IMG_8014.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "green rolling hills illustration",
+   "expect": [
+    "Photos/IMG_8011.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "綠色山丘的插畫",
+   "expect": [
+    "Photos/IMG_8011.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "illustrated desert dunes with a cactus",
+   "expect": [
+    "Photos/IMG_8010.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "有仙人掌的沙漠插畫",
+   "expect": [
+    "Photos/IMG_8010.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "cartoon beach with a cypress tree",
+   "expect": [
+    "Photos/IMG_8003.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "有柏樹的海灘插畫",
+   "expect": [
+    "Photos/IMG_8003.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "a lone tree on a rock",
+   "expect": [
+    "Photos/IMG_8006.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "岩石上的一棵樹",
+   "expect": [
+    "Photos/IMG_8006.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "white and orange sandstone formations",
+   "expect": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "橘白色的砂岩地形",
+   "expect": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "dark rocks in a calm grey sea",
+   "expect": [
+    "Photos/IMG_8024.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "平靜灰色海面上的黑色礁石",
+   "expect": [
+    "Photos/IMG_8024.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "sunset over a sea of clouds",
+   "expect": [
+    "Photos/IMG_8018.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "雲海上的夕陽",
+   "expect": [
+    "Photos/IMG_8018.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "aerial view of a bay with low clouds",
+   "expect": [
+    "Photos/IMG_8007.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "從空中俯瞰海灣和低雲",
+   "expect": [
+    "Photos/IMG_8007.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "striped layered rock by the sea",
+   "expect": [
+    "Photos/IMG_8013.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "海邊有條紋的岩層",
+   "expect": [
+    "Photos/IMG_8013.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "diagonal gradient stripes from blue to orange",
+   "expect": [
+    "Photos/IMG_8026.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "斜的藍橘漸層色帶",
+   "expect": [
+    "Photos/IMG_8026.jpg"
+   ],
+   "tag": "photo-zh"
+  },
+  {
+   "q": "dark island under stormy clouds",
+   "expect": [
+    "Photos/IMG_8015.jpg",
+    "Photos/IMG_8029.jpg"
+   ],
+   "tag": "photo-en"
+  },
+  {
+   "q": "烏雲下的島嶼剪影",
+   "expect": [
+    "Photos/IMG_8015.jpg",
+    "Photos/IMG_8029.jpg"
+   ],
+   "tag": "photo-zh"
+  }
+ ],
+ "photo_map": {
+  "Valley": "Photos/IMG_8001.jpg",
+  "Big Sur Night Succulents": "Photos/IMG_8002.jpg",
+  "The Beach": "Photos/IMG_8003.jpg",
+  "Big Sur": "Photos/IMG_8004.jpg",
+  "Big Sur Shore Rocks": "Photos/IMG_8005.jpg",
+  "Tree": "Photos/IMG_8006.jpg",
+  "Big Sur Aerial": "Photos/IMG_8007.jpg",
+  "The Lake": "Photos/IMG_8008.jpg",
+  "Big Sur Waters Edge": "Photos/IMG_8009.jpg",
+  "The Desert": "Photos/IMG_8010.jpg",
+  "Sonoma": "Photos/IMG_8011.jpg",
+  "Catalina Shoreline": "Photos/IMG_8012.jpg",
+  "Catalina Rock": "Photos/IMG_8013.jpg",
+  "Studio Color": "Photos/IMG_8014.jpg",
+  "Catalina Silhouette": "Photos/IMG_8015.jpg",
+  "Pro Black": "Photos/IMG_8016.jpg",
+  "Big Sur Road": "Photos/IMG_8017.jpg",
+  "Catalina Sunset": "Photos/IMG_8018.jpg",
+  "The Cliffs": "Photos/IMG_8019.jpg",
+  "Peak": "Photos/IMG_8020.jpg",
+  "Catalina Coast": "Photos/IMG_8021.jpg",
+  "Big Sur Mountains": "Photos/IMG_8022.jpg",
+  "Catalina": "Photos/IMG_8023.jpg",
+  "Big Sur Horizon": "Photos/IMG_8024.jpg",
+  "Big Sur Coastline": "Photos/IMG_8025.jpg",
+  "Solar Gradients": "Photos/IMG_8026.jpg",
+  "Catalina Evening": "Photos/IMG_8027.jpg",
+  "Big Sur Night Grasses": "Photos/IMG_8028.jpg",
+  "Catalina Clouds": "Photos/IMG_8029.jpg"
+ }
+}

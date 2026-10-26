@@ -1,0 +1,2194 @@
+{
+ "summary": {
+  "tag": "eg2_A_w3_z2.5_g0.05",
+  "model": "BAAI/bge-m3",
+  "reranker": null,
+  "n": 114,
+  "hit1": 73,
+  "hit3": 89,
+  "panel_hit1": 92,
+  "panel_hit3": 102,
+  "mrr": 0.724,
+  "mean_ms": 82.0,
+  "median_ms": 60,
+  "index_s": null,
+  "searcher_load_s": 8.1,
+  "index_peak_rss_mb": 0,
+  "search_peak_rss_mb": 918,
+  "index_db_mb": 3.2
+ },
+ "queries": [
+  {
+   "q": "how much rent do I pay now",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "content",
+   "rank": 8,
+   "panel_rank": 3,
+   "ms": 34,
+   "wall_ms": 34.8,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Finance/IMG_5310.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "rent at my old Xinyi flat",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "content",
+   "rank": 6,
+   "panel_rank": 3,
+   "ms": 35,
+   "wall_ms": 35.3,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5310.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "storage unit access hours",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 31,
+   "wall_ms": 31.8,
+   "reranked": false,
+   "top": [
+    "Home/Lease_storage_unit.pdf",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Work/incident_2026-03-04.md",
+    "Notes/misc/64_plan_249.txt",
+    "Notes/misc/06_想法_279.txt"
+   ]
+  },
+  {
+   "q": "car insurance premium for 2026 to 2027",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "content",
+   "rank": 3,
+   "panel_rank": 1,
+   "ms": 35,
+   "wall_ms": 35.2,
+   "reranked": false,
+   "top": [
+    "Finance/budget_2026.md",
+    "Finance/health_insurance_summary.docx",
+    "Finance/scan_0042.pdf",
+    "Travel/Kansai_2026.md",
+    "Finance/機車強制險.pdf"
+   ]
+  },
+  {
+   "q": "what was the excess on my old car policy",
+   "expect": [
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 51,
+   "wall_ms": 51.7,
+   "reranked": false,
+   "top": [
+    "Finance/scan_0017.pdf",
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0042.pdf",
+    "Car",
+    "Car/保養紀錄.md"
+   ]
+  },
+  {
+   "q": "washing machine motor warranty",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 36,
+   "wall_ms": 36.6,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Car/保養紀錄.md",
+    "Car/scooter_maintenance.md",
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf"
+   ]
+  },
+  {
+   "q": "hospital cash benefit per day",
+   "expect": [
+    "Finance/health_insurance_summary.docx"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 32,
+   "wall_ms": 33.0,
+   "reranked": false,
+   "top": [
+    "Finance/health_insurance_summary.docx",
+    "Health/workout_plan.md",
+    "Notes/gift_ideas.md",
+    "Finance/火險保單.txt",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "who owns the SSO migration",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "content",
+   "rank": 10,
+   "panel_rank": 3,
+   "ms": 31,
+   "wall_ms": 32.0,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5310.png",
+    "Travel/IMG_6012.png",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Travel/IMG_6020.png"
+   ]
+  },
+  {
+   "q": "pricing page A/B test launch date",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 37,
+   "wall_ms": 37.1,
+   "reranked": false,
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Work/Pricing_review.pptx",
+    "Work/Q3_roadmap.md",
+    "Work/Q2_roadmap.md",
+    "Work/Q1_roadmap.md"
+   ]
+  },
+  {
+   "q": "checkout latency goal",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 32,
+   "wall_ms": 32.1,
+   "reranked": false,
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Work/Q3_roadmap.md",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "what caused the login outage",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 34,
+   "wall_ms": 34.7,
+   "reranked": false,
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Work/incident_2026-03-04.md",
+    "Study/作業系統_排程.md",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Work/meetings/meeting_notes_0327.md"
+   ]
+  },
+  {
+   "q": "proposal to raise the Team plan price",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 37,
+   "wall_ms": 37.1,
+   "reranked": false,
+   "top": [
+    "Work/Pricing_review.pptx",
+    "Work/headcount_plan.xlsx",
+    "Health/workout_plan.md",
+    "Notes/misc/64_plan_249.txt",
+    "Notes/misc/58_plan_182.md"
+   ]
+  },
+  {
+   "q": "how many backend engineers by end of 2026",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 41,
+   "wall_ms": 41.3,
+   "reranked": false,
+   "top": [
+    "Work/headcount_plan.xlsx",
+    "Finance/budget_2026.md",
+    "Work/OKR_2026H1.md",
+    "Finance/Bills/2026",
+    "Finance/Bills/2026/2026-02 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "return flight time from Narita",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "content",
+   "rank": 3,
+   "panel_rank": 1,
+   "ms": 39,
+   "wall_ms": 39.2,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6020.png",
+    "Travel/IMG_6012.png",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/flight_confirmation.txt",
+    "Travel/eticket_SIN.pdf"
+   ]
+  },
+  {
+   "q": "hotel confirmation number for Kyoto",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 36,
+   "wall_ms": 36.9,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/Kansai_2026.md"
+   ]
+  },
+  {
+   "q": "how long to steep cold brew",
+   "expect": [
+    "Recipes/cold_brew.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 37,
+   "wall_ms": 37.2,
+   "reranked": false,
+   "top": [
+    "Recipes/cold_brew.md",
+    "Recipes/beef_stew.md",
+    "Notes/journal/2026-04-19.md",
+    "Recipes/珍珠奶茶.md",
+    "Recipes/chicken_soup.md"
+   ]
+  },
+  {
+   "q": "oven temperature for sourdough bread",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 40,
+   "wall_ms": 40.1,
+   "reranked": false,
+   "top": [
+    "Recipes/sourdough_loaf.md",
+    "Recipes/banana_bread.md",
+    "Recipes/sourdough_starter.md",
+    "Recipes/granola.md",
+    "Recipes/cold_brew.md"
+   ]
+  },
+  {
+   "q": "self-attention formula",
+   "expect": [
+    "Study/transformer_notes.md"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 42,
+   "wall_ms": 42.4,
+   "reranked": false,
+   "top": [
+    "Finance/投資筆記.md",
+    "Study/transformer_notes.md",
+    "Notes/misc/14_idea_171.md",
+    "Notes/misc/68_想法_151.md",
+    "Health/workout_plan.md"
+   ]
+  },
+  {
+   "q": "房租多少",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 18,
+   "panel_rank": 1,
+   "ms": 43,
+   "wall_ms": 43.5,
+   "reranked": false,
+   "top": [
+    "Home/Lease_storage_unit.pdf",
+    "Home/車位租約.docx",
+    "Finance/IMG_5310.png",
+    "Finance/Bills/telecom/電信帳單_202508.txt",
+    "Finance/Bills/telecom/電信帳單_202509.txt"
+   ]
+  },
+  {
+   "q": "舊房子的押金退了沒",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 55,
+   "wall_ms": 55.4,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5310.png",
+    "Home/搬家清單.md",
+    "Home/車位租約.docx",
+    "Home/Document (5).txt",
+    "Notes/misc/30_untitled_248.md"
+   ]
+  },
+  {
+   "q": "車險續約保費多少",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 59,
+   "wall_ms": 60.0,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0042.pdf",
+    "Finance/火險保單.txt",
+    "Finance/旅平險.pdf",
+    "Finance/scan_0017.pdf"
+   ]
+  },
+  {
+   "q": "去成田的回程班機幾點",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 4,
+   "panel_rank": 1,
+   "ms": 57,
+   "wall_ms": 57.9,
+   "reranked": false,
+   "top": [
+    "Travel/eticket_SIN.pdf",
+    "Travel/flight_confirmation.txt",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ]
+  },
+  {
+   "q": "新加坡機票訂位代號",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 56.5,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Travel/eticket_SIN.pdf",
+    "Travel/新加坡筆記.md",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt"
+   ]
+  },
+  {
+   "q": "京都飯店住幾晚",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 55,
+   "wall_ms": 55.4,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/Tokyo_2025.md",
+    "Travel/Kansai_2026.md",
+    "Recipes/japanese_curry.md"
+   ]
+  },
+  {
+   "q": "酸種麵包要烤幾度",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "zh→en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 65,
+   "wall_ms": 65.6,
+   "reranked": false,
+   "top": [
+    "Recipes/banana_bread.md",
+    "Recipes/sourdough_loaf.md",
+    "Recipes/鳳梨酥.md",
+    "Recipes/beef_stew.md",
+    "Recipes/cold_brew.md"
+   ]
+  },
+  {
+   "q": "登入當機的原因",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 57.0,
+   "reranked": false,
+   "top": [
+    "Work/incident_2026-03-04.md",
+    "Study/作業系統_排程.md",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Notes/misc/31_想法_91.txt",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "單一登入誰負責",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "zh→en",
+   "rank": 20,
+   "panel_rank": 1,
+   "ms": 76,
+   "wall_ms": 76.9,
+   "reranked": false,
+   "top": [
+    "Work/1on1_notes.md",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Work/incident_2026-03-04.md",
+    "Work/Q4_roadmap_draft.md",
+    "Work/meetings/meeting_notes_0515.md"
+   ]
+  },
+  {
+   "q": "洗衣機馬達保固幾年",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 89,
+   "wall_ms": 89.3,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf",
+    "Car/保養紀錄.md",
+    "Home/除濕機使用說明.md"
+   ]
+  },
+  {
+   "q": "倉庫租金多少",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 82,
+   "wall_ms": 82.5,
+   "reranked": false,
+   "top": [
+    "Home/Lease_storage_unit.pdf",
+    "Home/車位租約.docx",
+    "Finance/Bills/telecom/電信帳單_202507.txt",
+    "Finance/Bills/telecom/電信帳單_202509.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt"
+   ]
+  },
+  {
+   "q": "紅酒燉牛肉要燉多久",
+   "expect": [
+    "Recipes/beef_stew.md"
+   ],
+   "tag": "zh→en",
+   "rank": 4,
+   "panel_rank": 1,
+   "ms": 391,
+   "wall_ms": 391.6,
+   "reranked": false,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/番茄牛腩.md",
+    "Recipes/beef_stew.md",
+    "Recipes/滷肉飯.md"
+   ]
+  },
+  {
+   "q": "parking space monthly rent",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "en→zh",
+   "rank": 6,
+   "panel_rank": 3,
+   "ms": 185,
+   "wall_ms": 185.7,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Finance/IMG_5310.png"
+   ]
+  },
+  {
+   "q": "beef noodle soup with chili bean paste",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 7,
+   "panel_rank": 1,
+   "ms": 1044,
+   "wall_ms": 1044.4,
+   "reranked": false,
+   "top": [
+    "Recipes/chicken_soup.md",
+    "Recipes/beef_stew.md",
+    "Recipes/miso_soup.md",
+    "Recipes/pad_thai.md",
+    "Recipes/番茄牛腩.md"
+   ]
+  },
+  {
+   "q": "clear broth beef noodle soup",
+   "expect": [
+    "Recipes/清燉牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 16,
+   "panel_rank": 1,
+   "ms": 333,
+   "wall_ms": 334.1,
+   "reranked": false,
+   "top": [
+    "Recipes/chicken_soup.md",
+    "Finance/IMG_5203.png",
+    "Health/IMG_7002.png",
+    "Travel/IMG_6012.png",
+    "Recipes/beef_stew.md"
+   ]
+  },
+  {
+   "q": "how long is the air conditioner compressor covered",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 318,
+   "wall_ms": 318.9,
+   "reranked": false,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Home/washing_machine_warranty.txt",
+    "Home/冰箱保固書.pdf",
+    "Home/除濕機使用說明.md",
+    "Car/保養紀錄.md"
+   ]
+  },
+  {
+   "q": "fridge compressor warranty",
+   "expect": [
+    "Home/冰箱保固書.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 143,
+   "wall_ms": 143.9,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Home/冰箱保固書.pdf",
+    "Home/冷氣保固卡.txt",
+    "Home/除濕機使用說明.md",
+    "Home/Lease_storage_unit.pdf"
+   ]
+  },
+  {
+   "q": "electricity bill for August 2025",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 252,
+   "wall_ms": 252.3,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt",
+    "Finance/Bills/2025/2025-05 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-07 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-09 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "utility bill March 2026",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 5,
+   "panel_rank": 2,
+   "ms": 101,
+   "wall_ms": 101.8,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "scooter compulsory insurance",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 66,
+   "wall_ms": 66.2,
+   "reranked": false,
+   "top": [
+    "Car/scooter_maintenance.md",
+    "Finance/機車強制險.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Finance/scan_0017.pdf",
+    "Work/invoices/INV-20260166.pdf"
+   ]
+  },
+  {
+   "q": "travel insurance for the Japan trip",
+   "expect": [
+    "Finance/旅平險.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 64,
+   "wall_ms": 64.1,
+   "reranked": false,
+   "top": [
+    "Finance/旅平險.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/Tokyo_2025.md",
+    "Recipes/japanese_curry.md"
+   ]
+  },
+  {
+   "q": "cholesterol in my 2025 health check",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 77,
+   "wall_ms": 77.7,
+   "reranked": false,
+   "top": [
+    "Health/健檢報告_2025.pdf",
+    "Health/健檢報告_2026.pdf",
+    "Finance/2025 報稅整理.xlsx",
+    "Finance/health_insurance_summary.docx",
+    "Finance/Bills/2025/2025-05 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "year-end review what went wrong",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "en→zh",
+   "rank": 4,
+   "panel_rank": 1,
+   "ms": 61,
+   "wall_ms": 61.3,
+   "reranked": false,
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Study/ML_midterm_review.pdf",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Work/年終檢討.docx",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "tax refund amount",
+   "expect": [
+    "Finance/2025 報稅整理.xlsx"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 56.9,
+   "reranked": false,
+   "top": [
+    "Finance/2025 報稅整理.xlsx",
+    "Home/Scan_20260211.pdf",
+    "Work/invoices/INV-20260138.pdf",
+    "Work/invoices/INV-20260117.pdf",
+    "Work/invoices/INV-20260166.pdf"
+   ]
+  },
+  {
+   "q": "when do I need to renew my passport",
+   "expect": [
+    "Travel/護照換發.md"
+   ],
+   "tag": "en→zh",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 54,
+   "wall_ms": 55.0,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Travel/護照換發.md",
+    "Health/IMG_7002.png",
+    "Photos/IMG_8023.jpg",
+    "Finance/IMG_5310.png"
+   ]
+  },
+  {
+   "q": "mileage at the last car oil change",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 108,
+   "wall_ms": 109.0,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Car/scooter_maintenance.md",
+    "Car",
+    "Car/行照影本.pdf",
+    "Home/washing_machine_warranty.txt"
+   ]
+  },
+  {
+   "q": "when is the next car inspection",
+   "expect": [
+    "Car/行照影本.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 60,
+   "wall_ms": 60.5,
+   "reranked": false,
+   "top": [
+    "Health/IMG_7002.png",
+    "Car/保養紀錄.md",
+    "Car/行照影本.pdf",
+    "Car/scooter_maintenance.md",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "壓縮機保固十年的是哪個",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 63,
+   "wall_ms": 63.2,
+   "reranked": false,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf",
+    "Home/washing_machine_warranty.txt",
+    "Car/保養紀錄.md",
+    "Home/除濕機使用說明.md"
+   ]
+  },
+  {
+   "q": "2025 年 8 月電費",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 58,
+   "wall_ms": 58.2,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt",
+    "Finance/Bills/2025/2025-09 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-05 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-07 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "番茄燉牛肉",
+   "expect": [
+    "Recipes/番茄牛腩.md"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 54,
+   "wall_ms": 54.8,
+   "reranked": false,
+   "top": [
+    "Recipes/番茄牛腩.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/滷肉飯.md",
+    "Recipes/japanese_curry.md"
+   ]
+  },
+  {
+   "q": "汽車下次保養是什麼時候",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 60,
+   "wall_ms": 60.3,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Car/scooter_maintenance.md",
+    "Car/行照影本.pdf",
+    "Home/冷氣保固卡.txt",
+    "Finance/機車強制險.pdf"
+   ]
+  },
+  {
+   "q": "車位遙控器遺失要賠多少",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 56.7,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Finance/機車強制險.pdf",
+    "Finance/火險保單.txt",
+    "Finance/旅平險.pdf",
+    "Finance/Bills/telecom/電信帳單_202501.txt"
+   ]
+  },
+  {
+   "q": "NT$18,600",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 35,
+   "wall_ms": 35.4,
+   "reranked": false,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Finance/IMG_5310.png",
+    "Finance/Statements/Statement_2026-06.pdf",
+    "Finance/Statements/Statement_2026-02.pdf",
+    "Work/Pricing_review.pptx"
+   ]
+  },
+  {
+   "q": "Q7XK2P",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 36,
+   "wall_ms": 36.4,
+   "reranked": false,
+   "top": [
+    "Travel/flight_confirmation (1).txt",
+    "Work/Q2_roadmap.md",
+    "Work/Q3_roadmap.md",
+    "Work/meetings/meeting_notes_0227.md",
+    "Work/Q4_roadmap_draft.md"
+   ]
+  },
+  {
+   "q": "ZT4M9L",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 33,
+   "wall_ms": 34.0,
+   "reranked": false,
+   "top": [
+    "Travel/eticket_SIN.pdf",
+    "Work/Q4_roadmap_draft.md",
+    "Finance/Bills/telecom/電信帳單_202509.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Study/ML_midterm_review.pdf"
+   ]
+  },
+  {
+   "q": "58210377",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 55,
+   "wall_ms": 56.0,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Notes/misc/58_plan_182.md",
+    "Notes/misc/15_misc_288.md",
+    "Notes/misc/08_notes_174.txt",
+    "Notes/misc/55_list_299.md"
+   ]
+  },
+  {
+   "q": "Kestrel Logistics invoice",
+   "expect": [
+    "Work/invoices/INV-20260124.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 73,
+   "wall_ms": 74.0,
+   "reranked": false,
+   "top": [
+    "Work/invoices/INV-20260124.pdf",
+    "Work/invoices",
+    "Work/invoices/INV-20260117.pdf",
+    "Work/invoices/INV-20260152.pdf",
+    "Work/invoices/INV-20260159.pdf"
+   ]
+  },
+  {
+   "q": "B2-17",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 54,
+   "wall_ms": 54.6,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Work/meetings/meeting_notes_0227.md",
+    "Work/meetings/meeting_notes_0417.md",
+    "Notes/journal/2026-02-17.md",
+    "Notes/misc/02_misc_174.md"
+   ]
+  },
+  {
+   "q": "MXV-2291",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 46,
+   "wall_ms": 46.4,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Notes/misc/52_notes_161.md",
+    "Notes/misc/44_idea_91.md",
+    "Notes/misc/38_misc_246.txt",
+    "Work/invoices/INV-20260131.pdf"
+   ]
+  },
+  {
+   "q": "1,718",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 50,
+   "wall_ms": 50.5,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt",
+    "Notes/misc/14_idea_171.md",
+    "Notes/misc/35_記事_182.txt",
+    "Notes/misc/58_plan_182.md",
+    "Finance/Statements/Statement_2026-07.pdf"
+   ]
+  },
+  {
+   "q": "豆瓣醬",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/麻婆豆腐.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 58,
+   "wall_ms": 59.0,
+   "reranked": false,
+   "top": [
+    "Recipes/麻婆豆腐.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/三杯雞.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/pad_thai.md"
+   ]
+  },
+  {
+   "q": "房屋稅繳款期限",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 63,
+   "wall_ms": 63.8,
+   "reranked": false,
+   "top": [
+    "Home/Scan_20260211.pdf",
+    "Finance/Bills/2025/2025-07 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-03 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-06 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-01 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "房屋稅多少錢",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 71,
+   "wall_ms": 72.0,
+   "reranked": false,
+   "top": [
+    "Home/Scan_20260211.pdf",
+    "Finance/2025 報稅整理.xlsx",
+    "Finance/Bills/2025/2025-10 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-01 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "停水通知",
+   "expect": [
+    "Home/IMG_4471.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 70,
+   "wall_ms": 70.5,
+   "reranked": false,
+   "top": [
+    "Home/IMG_4471.png",
+    "Notes/misc/37_misc_297.txt",
+    "Notes/misc/14_idea_171.md",
+    "Notes/misc/40_清單_29.md",
+    "Notes/misc/55_list_299.md"
+   ]
+  },
+  {
+   "q": "Costco receipt total",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 200,
+   "wall_ms": 200.9,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5203.png",
+    "Work/invoices/INV-20260124.pdf",
+    "Work/invoices/INV-20260152.pdf",
+    "Work/invoices/INV-20260103.pdf",
+    "Work/invoices/INV-20260110.pdf"
+   ]
+  },
+  {
+   "q": "好市多買了什麼",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 99,
+   "wall_ms": 100.1,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5203.png",
+    "Notes/gift_ideas.md",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/22_清單_168.txt",
+    "Home/冰箱保固書.pdf"
+   ]
+  },
+  {
+   "q": "高鐵車票 左營",
+   "expect": [
+    "Travel/IMG_6020.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 78,
+   "wall_ms": 78.7,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6020.png",
+    "Finance/Bills/telecom/電信帳單_202506.txt",
+    "Finance/Bills/telecom/電信帳單_202503.txt",
+    "Finance/Bills/telecom/電信帳單_202502.txt",
+    "Finance/Bills/telecom/電信帳單_202507.txt"
+   ]
+  },
+  {
+   "q": "boarding pass to Hong Kong seat number",
+   "expect": [
+    "Travel/IMG_6012.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 70,
+   "wall_ms": 71.0,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Travel/eticket_SIN.pdf",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "牙醫預約時間",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 70,
+   "wall_ms": 70.3,
+   "reranked": false,
+   "top": [
+    "Health/IMG_7002.png",
+    "Notes/待辦.md",
+    "Car/保養紀錄.md",
+    "Notes/misc/19_list_297.md",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "2026 健檢膽固醇",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 70,
+   "wall_ms": 70.2,
+   "reranked": false,
+   "top": [
+    "Health/健檢報告_2026.pdf",
+    "Health/健檢報告_2025.pdf",
+    "Finance/budget_2026.md",
+    "Notes/journal/2026-06-15.md",
+    "Finance/Statements/Statement_2026-03.pdf"
+   ]
+  },
+  {
+   "q": "502 bad gateway error screenshot",
+   "expect": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 59,
+   "wall_ms": 59.2,
+   "reranked": false,
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Finance/IMG_5203.png",
+    "Finance/IMG_5310.png",
+    "Photos/IMG_8002.jpg",
+    "Health/IMG_7002.png"
+   ]
+  },
+  {
+   "q": "四月管理費繳費",
+   "expect": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 60,
+   "wall_ms": 60.4,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Finance/Bills/2026/2026-04 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "6月房租轉帳紀錄",
+   "expect": [
+    "Finance/IMG_5310.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 73,
+   "wall_ms": 73.5,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5310.png",
+    "Finance/Bills/telecom/電信帳單_202506.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt",
+    "Finance/Bills/telecom/電信帳單_202507.txt",
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "car insurance pdf",
+   "expect": [
+    "Finance/scan_0042.pdf",
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "type-hint",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 45,
+   "wall_ms": 45.1,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0042.pdf",
+    "Finance/scan_0017.pdf",
+    "Finance/旅平險.pdf",
+    "Home/冰箱保固書.pdf"
+   ]
+  },
+  {
+   "q": "pricing slides",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 47,
+   "wall_ms": 47.2,
+   "reranked": false,
+   "top": [
+    "Work/Pricing_review.pptx",
+    "Work/meeting_notes_0612.md",
+    "Work/invoices/INV-20260166.pdf",
+    "Finance/scan_0017.pdf",
+    "Study/ML_midterm_review.pdf"
+   ]
+  },
+  {
+   "q": "headcount spreadsheet",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 42,
+   "wall_ms": 42.4,
+   "reranked": false,
+   "top": [
+    "Work/headcount_plan.xlsx",
+    "Finance/2025 報稅整理.xlsx",
+    "Study/sql_cheatsheet.md",
+    "Work/Q4_roadmap_draft.md",
+    "Health/workout_plan.md"
+   ]
+  },
+  {
+   "q": "Kansai",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 65,
+   "wall_ms": 65.9,
+   "reranked": false,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Travel/Tokyo_2025.md",
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Notes/misc/31_想法_91.txt",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ]
+  },
+  {
+   "q": "鳳梨酥",
+   "expect": [
+    "Recipes/鳳梨酥.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 72,
+   "wall_ms": 72.1,
+   "reranked": false,
+   "top": [
+    "Recipes/鳳梨酥.md",
+    "Recipes/pancakes.md",
+    "Recipes/煎餃.md",
+    "Recipes/蔥油餅.md",
+    "Recipes/banana_bread.md"
+   ]
+  },
+  {
+   "q": "a winding road through the hills",
+   "expect": [
+    "Photos/IMG_8017.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 64,
+   "wall_ms": 64.8,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8017.jpg",
+    "Photos/IMG_8019.jpg",
+    "Notes/journal/2026-01-10.md",
+    "Work/Q4_roadmap_draft.md",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "山間蜿蜒的公路",
+   "expect": [
+    "Photos/IMG_8017.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 56.6,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8017.jpg",
+    "Photos/IMG_8019.jpg",
+    "Notes/journal/2026-01-10.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "glowing blue grass at night",
+   "expect": [
+    "Photos/IMG_8028.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 56,
+   "wall_ms": 56.1,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8028.jpg",
+    "Travel/新加坡筆記.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/43_draft_165.txt",
+    "Notes/misc/52_notes_161.md"
+   ]
+  },
+  {
+   "q": "夜裡發藍光的草",
+   "expect": [
+    "Photos/IMG_8028.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 86,
+   "wall_ms": 87.0,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8028.jpg",
+    "Notes/misc/27_untitled_220.md",
+    "Notes/misc/43_draft_165.txt",
+    "Notes/misc/42_清單_220.txt",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "red spiky plants in the dark",
+   "expect": [
+    "Photos/IMG_8002.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 71,
+   "wall_ms": 71.9,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8002.jpg",
+    "Notes/misc/27_untitled_220.md",
+    "Home/plant_care.md",
+    "Notes/misc/43_draft_165.txt",
+    "Notes/misc/00_notes_100.txt"
+   ]
+  },
+  {
+   "q": "暗處的紅色多肉植物",
+   "expect": [
+    "Photos/IMG_8002.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 55,
+   "wall_ms": 55.6,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8002.jpg",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/27_untitled_220.md",
+    "Notes/misc/00_notes_100.txt",
+    "Notes/misc/52_notes_161.md"
+   ]
+  },
+  {
+   "q": "layers of misty mountain ridges",
+   "expect": [
+    "Photos/IMG_8022.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 58,
+   "wall_ms": 58.5,
+   "reranked": false,
+   "top": [
+    "Study/rag_paper_notes.md",
+    "Study/ML_midterm_review.pdf",
+    "Notes/misc/39_misc_38.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/33_idea_255.txt"
+   ]
+  },
+  {
+   "q": "霧中一層層的山稜",
+   "expect": [
+    "Photos/IMG_8022.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 53,
+   "wall_ms": 53.2,
+   "reranked": false,
+   "top": [
+    "Notes/journal/2026-04-13.md",
+    "Study/ML_midterm_review.pdf",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/39_misc_38.md",
+    "Notes/misc/23_idea_127.md"
+   ]
+  },
+  {
+   "q": "a single white rock in purple water",
+   "expect": [
+    "Photos/IMG_8005.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 56,
+   "wall_ms": 56.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/02_misc_174.md",
+    "Notes/misc/47_idea_254.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/10_project_291.txt"
+   ]
+  },
+  {
+   "q": "紫色海水裡的一塊白石頭",
+   "expect": [
+    "Photos/IMG_8005.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 58,
+   "wall_ms": 58.1,
+   "reranked": false,
+   "top": [
+    "Notes/misc/34_想法_49.txt",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/journal/2026-01-10.md",
+    "Notes/misc/47_idea_254.md",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "pink rock cliff above turquoise water",
+   "expect": [
+    "Photos/IMG_8009.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 58,
+   "wall_ms": 59.0,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8009.jpg",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/47_idea_254.md",
+    "Notes/misc/34_想法_49.txt",
+    "Notes/journal/2026-04-13.md"
+   ]
+  },
+  {
+   "q": "粉紅色岩壁和綠松色海水",
+   "expect": [
+    "Photos/IMG_8009.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 61,
+   "wall_ms": 62.1,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8009.jpg",
+    "Notes/misc/02_misc_174.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/journal/2026-01-10.md",
+    "Notes/journal/2026-04-13.md"
+   ]
+  },
+  {
+   "q": "black and white maze pattern",
+   "expect": [
+    "Photos/IMG_8016.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 53,
+   "wall_ms": 53.5,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8016.jpg",
+    "Notes/misc/33_idea_255.txt",
+    "Study/rag_paper_notes.md",
+    "Study/ML_midterm_review.pdf",
+    "Study/sql_cheatsheet.md"
+   ]
+  },
+  {
+   "q": "黑白迷宮圖案",
+   "expect": [
+    "Photos/IMG_8016.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 63,
+   "wall_ms": 63.8,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8016.jpg",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/10_project_291.txt",
+    "Notes/misc/43_draft_165.txt",
+    "Notes/misc/20_清單_15.txt"
+   ]
+  },
+  {
+   "q": "colorful abstract ribbons",
+   "expect": [
+    "Photos/IMG_8014.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 65,
+   "wall_ms": 65.2,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8014.jpg",
+    "Photos/IMG_8011.jpg",
+    "Photos/IMG_8026.jpg",
+    "Study/rag_paper_notes.md",
+    "Notes/misc/27_untitled_220.md"
+   ]
+  },
+  {
+   "q": "彩色的抽象緞帶圖案",
+   "expect": [
+    "Photos/IMG_8014.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 69,
+   "wall_ms": 69.8,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8011.jpg",
+    "Photos/IMG_8014.jpg",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/31_想法_91.txt",
+    "Notes/misc/18_idea_166.txt"
+   ]
+  },
+  {
+   "q": "green rolling hills illustration",
+   "expect": [
+    "Photos/IMG_8011.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 78,
+   "wall_ms": 78.4,
+   "reranked": false,
+   "top": [
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/misc/31_想法_91.txt",
+    "Notes/misc/15_misc_288.md"
+   ]
+  },
+  {
+   "q": "綠色山丘的插畫",
+   "expect": [
+    "Photos/IMG_8011.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 69,
+   "wall_ms": 69.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/59_草稿_283.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "illustrated desert dunes with a cactus",
+   "expect": [
+    "Photos/IMG_8010.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 61,
+   "wall_ms": 61.1,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8010.jpg",
+    "Notes/misc/59_草稿_283.txt",
+    "Photos/IMG_8006.jpg",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/misc/28_草稿_142.txt"
+   ]
+  },
+  {
+   "q": "有仙人掌的沙漠插畫",
+   "expect": [
+    "Photos/IMG_8010.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 76,
+   "wall_ms": 76.5,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8010.jpg",
+    "Photos/IMG_8003.jpg",
+    "Photos/IMG_8008.jpg",
+    "Photos/IMG_8020.jpg",
+    "Notes/misc/59_草稿_283.txt"
+   ]
+  },
+  {
+   "q": "cartoon beach with a cypress tree",
+   "expect": [
+    "Photos/IMG_8003.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 55,
+   "wall_ms": 55.7,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8003.jpg",
+    "Notes/misc/31_想法_91.txt",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "有柏樹的海灘插畫",
+   "expect": [
+    "Photos/IMG_8003.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 58,
+   "wall_ms": 58.6,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8003.jpg",
+    "Photos/IMG_8008.jpg",
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/33_idea_255.txt"
+   ]
+  },
+  {
+   "q": "a lone tree on a rock",
+   "expect": [
+    "Photos/IMG_8006.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 89,
+   "wall_ms": 89.3,
+   "reranked": false,
+   "top": [
+    "Notes/misc/01_untitled_183.txt",
+    "Notes/misc/59_草稿_283.txt",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/31_想法_91.txt",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "岩石上的一棵樹",
+   "expect": [
+    "Photos/IMG_8006.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 60,
+   "wall_ms": 60.3,
+   "reranked": false,
+   "top": [
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/34_想法_49.txt",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/31_想法_91.txt",
+    "Notes/misc/56_draft_21.txt"
+   ]
+  },
+  {
+   "q": "white and orange sandstone formations",
+   "expect": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 64,
+   "wall_ms": 64.5,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg",
+    "Recipes/granola.md",
+    "Notes/misc/15_misc_288.md",
+    "Notes/misc/45_project_60.md"
+   ]
+  },
+  {
+   "q": "橘白色的砂岩地形",
+   "expect": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 55,
+   "wall_ms": 55.6,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8001.jpg",
+    "Photos/IMG_8020.jpg",
+    "Photos/IMG_8006.jpg",
+    "Finance/IMG_5203.png",
+    "Notes/journal/2026-04-13.md"
+   ]
+  },
+  {
+   "q": "dark rocks in a calm grey sea",
+   "expect": [
+    "Photos/IMG_8024.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 63,
+   "wall_ms": 63.6,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8024.jpg",
+    "Notes/misc/34_想法_49.txt",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/24_想法_81.md",
+    "Notes/journal/2026-01-10.md"
+   ]
+  },
+  {
+   "q": "平靜灰色海面上的黑色礁石",
+   "expect": [
+    "Photos/IMG_8024.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 63,
+   "wall_ms": 63.9,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8029.jpg",
+    "Photos/IMG_8024.jpg",
+    "Photos/IMG_8025.jpg",
+    "Notes/misc/34_想法_49.txt",
+    "Notes/misc/33_idea_255.txt"
+   ]
+  },
+  {
+   "q": "sunset over a sea of clouds",
+   "expect": [
+    "Photos/IMG_8018.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 59,
+   "wall_ms": 59.7,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8018.jpg",
+    "Travel/新加坡筆記.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/33_idea_255.txt"
+   ]
+  },
+  {
+   "q": "雲海上的夕陽",
+   "expect": [
+    "Photos/IMG_8018.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 65,
+   "wall_ms": 65.5,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8018.jpg",
+    "Travel/新加坡筆記.md",
+    "Travel/Tokyo_2025.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "aerial view of a bay with low clouds",
+   "expect": [
+    "Photos/IMG_8007.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 48,
+   "panel_rank": null,
+   "ms": 71,
+   "wall_ms": 72.0,
+   "reranked": false,
+   "top": [
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/33_idea_255.txt",
+    "Study/ML_midterm_review.pdf",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/journal/2026-04-13.md"
+   ]
+  },
+  {
+   "q": "從空中俯瞰海灣和低雲",
+   "expect": [
+    "Photos/IMG_8007.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 213,
+   "wall_ms": 213.2,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8007.jpg",
+    "Travel/新加坡筆記.md",
+    "Photos/IMG_8004.jpg",
+    "Photos/IMG_8018.jpg",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "striped layered rock by the sea",
+   "expect": [
+    "Photos/IMG_8013.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 99,
+   "wall_ms": 99.4,
+   "reranked": false,
+   "top": [
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/24_想法_81.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/journal/2026-01-10.md"
+   ]
+  },
+  {
+   "q": "海邊有條紋的岩層",
+   "expect": [
+    "Photos/IMG_8013.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 73,
+   "wall_ms": 73.9,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8013.jpg",
+    "Travel/新加坡筆記.md",
+    "Notes/journal/2026-01-10.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/24_想法_81.md"
+   ]
+  },
+  {
+   "q": "diagonal gradient stripes from blue to orange",
+   "expect": [
+    "Photos/IMG_8026.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 63,
+   "wall_ms": 63.9,
+   "reranked": false,
+   "top": [
+    "Study/線性代數筆記.md",
+    "Photos/IMG_8026.jpg",
+    "Recipes/granola.md",
+    "Study/transformer_notes.md",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "斜的藍橘漸層色帶",
+   "expect": [
+    "Photos/IMG_8026.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 60,
+   "wall_ms": 60.3,
+   "reranked": false,
+   "top": [
+    "Photos/IMG_8026.jpg",
+    "Study/線性代數筆記.md",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/43_draft_165.txt"
+   ]
+  },
+  {
+   "q": "dark island under stormy clouds",
+   "expect": [
+    "Photos/IMG_8015.jpg",
+    "Photos/IMG_8029.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 62,
+   "wall_ms": 62.6,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Notes/journal/2026-04-13.md",
+    "Notes/misc/59_草稿_283.txt",
+    "Notes/misc/56_draft_21.txt",
+    "Notes/misc/01_untitled_183.txt"
+   ]
+  },
+  {
+   "q": "烏雲下的島嶼剪影",
+   "expect": [
+    "Photos/IMG_8015.jpg",
+    "Photos/IMG_8029.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 156,
+   "wall_ms": 156.1,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Notes/misc/23_idea_127.md",
+    "Notes/misc/34_想法_49.txt",
+    "Notes/misc/33_idea_255.txt",
+    "Notes/misc/45_project_60.md"
+   ]
+  }
+ ]
+}

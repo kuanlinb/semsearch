@@ -11,7 +11,10 @@ import sqlite3
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor
+
 from pathlib import Path
+
+import numpy as np
 
 from . import apps as appinfo, config, embed, extract
 
@@ -27,6 +30,7 @@ CREATE INDEX IF NOT EXISTS chunks_file ON chunks(file_id);
 CREATE VIRTUAL TABLE IF NOT EXISTS chunks_fts USING fts5(text, tokenize='trigram');
 CREATE TABLE IF NOT EXISTS meta(k TEXT PRIMARY KEY, v TEXT);
 CREATE TABLE IF NOT EXISTS usage(path TEXT PRIMARY KEY, last_used REAL);
+CREATE TABLE IF NOT EXISTS image_vecs(file_id INTEGER PRIMARY KEY, vec BLOB);
 """
 KIND_NAME, KIND_CONTENT = 0, 1
 # Content chunks are embedded with the file name prepended so they know which document
@@ -375,6 +379,42 @@ def run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only):
     log(f"OCR: {done} files, {found} with text, {time.time() - t0:.0f}s, {len(rows) - done} left")
 
 
+def run_images(db, cfg, bump, progress, names_only):
+    """Phase 4: one vector per image from llama-server's image encoder, at most
+    `image_minutes` per run; the rest waits for the next run."""
+    from . import imagevec
+    if not imagevec.available():
+        log("image search: llama-server not reachable at", imagevec.url())
+        return
+    q = ",".join("?" * len(config.IMAGE_EXT))
+    rows = db.execute(f"SELECT id, path FROM files WHERE is_dir=0 AND dataless=0 AND size <= ? "
+                      f"AND ext IN ({q}) AND id NOT IN (SELECT file_id FROM image_vecs)",
+                      [config.OCR_MAX_BYTES, *config.IMAGE_EXT]).fetchall()
+    rows = [r for r in rows if not _under(r[1], names_only)]
+    log("images to embed:", len(rows))
+    t0 = time.time()
+    deadline = t0 + 60 * cfg.get("image_minutes", 15)
+    done = 0
+    for fid, path in rows:
+        if time.time() > deadline:
+            log("image time is up; the rest waits for the next run")
+            break
+        try:
+            v = imagevec.image_vector(path).astype(np.float16)
+        except Exception as e:
+            log("image failed:", path, e)
+            v = np.zeros(0, np.float16)  # empty: not retried every run
+        db.execute("INSERT OR REPLACE INTO image_vecs VALUES(?,?)", (fid, v.tobytes()))
+        done += 1
+        progress[0] = time.time()
+        if done % 50 == 0:
+            bump()
+            log(f"  images {done}/{len(rows)} ({done / (time.time() - t0):.1f}/s)")
+    bump()
+    if done:
+        log(f"  images {done} in {time.time() - t0:.0f}s")
+
+
 def run(full=False, limit=None, workers=4, quick=False):
     cfg = config.load()
     WAKE.unlink(missing_ok=True)  # this run picks up the new files
@@ -384,7 +424,7 @@ def run(full=False, limit=None, workers=4, quick=False):
     old_model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
     if full or (old_model and old_model[0] != cfg["model"]):
         log("clearing the old index")
-        db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts;")
+        db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts; DELETE FROM image_vecs;")
     db.execute("INSERT OR REPLACE INTO meta VALUES('model', ?)", (cfg["model"],))
     # Unique and increasing even when two runs start within the same second
     last = db.execute("SELECT max(seen) FROM files").fetchone()[0] or 0
@@ -461,6 +501,8 @@ def run(full=False, limit=None, workers=4, quick=False):
             q = ",".join("?" * len(old))
             db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({q})", old)
             db.execute(f"DELETE FROM chunks WHERE id IN ({q})", old)
+        if not content_only:
+            db.execute("DELETE FROM image_vecs WHERE file_id=?", (fid,))
 
     def bump():
         db.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (str(time.time()),))
@@ -561,6 +603,9 @@ def run(full=False, limit=None, workers=4, quick=False):
     # Phase 3: OCR of images and scanned PDFs, at most `ocr_minutes` per run
     if not limit:
         run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only)
+    # Phase 4: what photos show, as vectors in a separate image space (optional)
+    if not limit and cfg.get("image_search"):
+        run_images(db, cfg, bump, progress, names_only)
 
     if not limit:
         # Remove entries that vanished, but only under roots scanned this time and never
@@ -578,6 +623,7 @@ def run(full=False, limit=None, workers=4, quick=False):
                 cq = ",".join("?" * len(cids[j:j + 2000]))
                 db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({cq})", cids[j:j + 2000])
                 db.execute(f"DELETE FROM chunks WHERE id IN ({cq})", cids[j:j + 2000])
+            db.execute(f"DELETE FROM image_vecs WHERE file_id IN ({q})", ids)
             db.execute(f"DELETE FROM files WHERE id IN ({q})", ids)
         log("removed vanished entries:", len(gone))
     db.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (str(time.time()),))

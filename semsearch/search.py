@@ -44,6 +44,18 @@ W_SIM = 0.4
 # so for such lookups the keyword match counts more and the vector lists less. Measured on
 # eval/lookalike: those lookups went from rank 13-20 to first, nothing else moved.
 LOOKUP_KW, LOOKUP_VEC = 3.0, 0.5
+# Optional image list (config "image_search", semsearch/imagevec.py): photos ranked by how well
+# what they show matches the query. Every photo scores something (unrelated ones about 0.6), so
+# only those near the top score and above a floor count. Prototype values; env overrides for tuning.
+W_IMAGE = float(os.environ.get("SEMSEARCH_W_IMAGE", 1.0))
+IMAGE_GAP = float(os.environ.get("SEMSEARCH_IMAGE_GAP", 0.05))
+IMAGE_FLOOR = float(os.environ.get("SEMSEARCH_IMAGE_FLOOR", 0.0))
+IMAGE_TOP = 10
+IMAGE_Z = float(os.environ.get("SEMSEARCH_IMAGE_Z", 0.0))  # the best image must stand out this much
+# When the text model is the same EmbeddingGemma ("shared" space), images compete with content
+# chunks on raw similarity instead; image-to-text similarities run lower than text-to-text
+# (modality gap), so they get IMAGE_OFFSET added.
+IMAGE_OFFSET = float(os.environ.get("SEMSEARCH_IMAGE_OFFSET", 0.0))
 
 
 # Filler words in English queries are not matched as keywords ("our" would hit "sourdough")
@@ -237,6 +249,18 @@ class Searcher:
             ids = fids = np.zeros(0, dtype=np.int64)
             kinds = np.zeros(0, dtype=np.int8)
             mat = None
+        img_ids, img_mat = np.zeros(0, dtype=np.int64), None
+        if self.cfg.get("image_search"):
+            db = self._db()
+            try:
+                img = [(f, v) for f, v in db.execute("SELECT file_id, vec FROM image_vecs") if v]
+            except sqlite3.Error:
+                img = []
+            db.close()
+            if img:
+                img_ids = np.array([f for f, _ in img], dtype=np.int64)
+                img_mat = np.frombuffer(b"".join(v for _, v in img), dtype=np.float16).reshape(len(img), -1)
+                img_mat = img_mat.astype(np.float32)
         db = self._db()
         try:
             recent = dict(db.execute("SELECT f.id, u.last_used FROM usage u JOIN files f ON f.path = u.path"))
@@ -251,6 +275,7 @@ class Searcher:
             self.app_rows = app_rows
             self.mat, self.chunk_ids, self.chunk_file, self.version = mat, ids, fids, v
             self.chunk_kind = kinds
+            self.img_ids, self.img_mat = img_ids, img_mat
             self.names = names
             self.recent = recent
         return True
@@ -413,6 +438,31 @@ class Searcher:
                     hits[fid] = (hits[fid][0], cid, hits[fid][2])
         return hits
 
+    def _image_scores(self, q):
+        """[(image file id, similarity)], best first."""
+        with self.lock:
+            ids, mat = getattr(self, "img_ids", None), getattr(self, "img_mat", None)
+        if mat is None:
+            return []
+        from . import imagevec
+        try:
+            qv = imagevec.query_vector(q)
+        except OSError:
+            return []
+        sc = mat @ qv
+        if IMAGE_Z and len(sc) > 2 and (sc.max() - sc.mean()) / (sc.std() or 1) < IMAGE_Z:
+            return []
+        top = np.argsort(-sc)[:IMAGE_TOP * 5]
+        return [(int(ids[i]), float(sc[i])) for i in top]
+
+    def _images(self, scores):
+        """Separate image list: only photos close to the best match and above the floor."""
+        if not scores:
+            return []
+        top = scores[0][1]
+        keep = [f for f, s in scores if s >= max(top - IMAGE_GAP, IMAGE_FLOOR)]
+        return keep[:IMAGE_TOP]
+
     def search(self, q, n=20, kind=None, rerank=True, group=True):
         """group=True folds lower-ranked files from the same folder into the best one's
         "group" list (the app expands it with Tab)."""
@@ -434,10 +484,21 @@ class Searcher:
                 if ckind == 1:
                     best_chunk[fid] = cid
             vec_score[fid] = max(vec_score.get(fid, sc), sc)
+        lookup = is_lookup(kw_q)
+        images = []
+        if self.cfg.get("image_search") and not lookup and (not want_types or want_types & config.IMAGE_EXT):
+            images = self._image_scores(q)
+        shared = embed._name and "embeddinggemma" in embed._name.lower()
+        if images and shared:
+            for fid, sc in images[:IMAGE_TOP]:
+                sc += IMAGE_OFFSET
+                if sc > content_score.get(fid, -1.0):
+                    content_score[fid] = sc
+                    vec_score[fid] = max(vec_score.get(fid, sc), sc)
+            content_score = dict(sorted(content_score.items(), key=lambda x: -x[1]))
         kw_sorted = sorted(kw.items(), key=lambda x: -x[1][0])
         kw_rank = {fid: r for r, (fid, _) in enumerate(kw_sorted)}
 
-        lookup = is_lookup(kw_q)
         vec_w, kw_w = (LOOKUP_VEC, LOOKUP_KW) if lookup else (1.0, 1.0)
         fused = {}
         for bucket, w in ((name_score, W_NAME), (content_score, W_CONTENT)):
@@ -453,6 +514,9 @@ class Searcher:
             fused[fid] = fused.get(fid, 0) + w / (RRF_K + r)
             if fid not in best_chunk and cid:
                 best_chunk[fid] = cid
+        if images and not shared:
+            for r, fid in enumerate(self._images(images)):
+                fused[fid] = fused.get(fid, 0) + W_IMAGE / (RRF_K + r)
         if want_types and ".app" in want_types:
             # Explicitly asked for an app: list apps only, re-ranking all of them by name
             app_scores = self._app_vector(q)

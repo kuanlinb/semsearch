@@ -4,6 +4,7 @@ EmbeddingGemma "task: search result | query: " / "title: … | text: ".
 Two runtimes (config "embed_backend"):
   "torch"  sentence-transformers on PyTorch (Apple GPU through MPS), any Hugging Face model
   "onnx"   ONNX Runtime with an int8 export of bge-m3: no PyTorch needed, runs on the CPU
+  "llama"  a running llama.cpp llama-server (config "image_url"), e.g. EmbeddingGemma 2 GGUF
 """
 import os
 import re
@@ -86,9 +87,23 @@ class OnnxModel:
         return out
 
 
+class LlamaModel:
+    """Embeddings from llama-server (see semsearch/imagevec.py for the command)."""
+
+    def encode(self, texts, batch_size=32):
+        from . import imagevec
+        if len(texts) == 1 and texts[0].startswith(imagevec.QUERY_PROMPT):
+            # a search query: the image list asks for the same vector, so it is cached there
+            return imagevec.query_vector(texts[0][len(imagevec.QUERY_PROMPT):])[None]
+        parts = [imagevec.embed_texts(texts[i:i + batch_size]) for i in range(0, len(texts), batch_size)]
+        return np.concatenate(parts) if parts else np.empty((0, 768), np.float32)
+
+
 def get_model(name: str):
     global _model, _name
     with _lock:
+        if _model is None and config.embed_backend() == "llama":
+            _model, _name = LlamaModel(), name
         if _model is None and config.embed_backend() == "onnx":
             _model, _name = OnnxModel(name), name
         if _model is None:
@@ -151,7 +166,7 @@ def encode(texts, kind="passage", batch_size=64) -> np.ndarray:
 
 
 def _encode(m, texts, batch_size):
-    if isinstance(m, OnnxModel):
+    if isinstance(m, (OnnxModel, LlamaModel)):
         return m.encode(texts).astype(np.float16)
     vecs = m.encode(texts, batch_size=batch_size,
                     normalize_embeddings=True, convert_to_numpy=True,

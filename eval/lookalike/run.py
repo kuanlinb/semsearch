@@ -31,6 +31,7 @@ def main():
     ap.add_argument("--reranker", default="")
     ap.add_argument("--reindex", action="store_true")
     ap.add_argument("--queries", default=os.path.join(HERE, "queries.json"))
+    ap.add_argument("--config", default="{}", help='extra config keys as JSON, e.g. \'{"image_search": true}\'')
     a = ap.parse_args()
     corpus = os.path.abspath(os.path.expanduser(a.corpus))
 
@@ -38,8 +39,8 @@ def main():
     if a.reindex:  # start empty: an index of another --corpus would keep its files
         shutil.rmtree(data, ignore_errors=True)
     os.makedirs(data, exist_ok=True)
-    json.dump({"roots": [corpus], "hot_roots": [], "model": a.model, "reranker": a.reranker},
-              open(f"{data}/config.json", "w"))
+    json.dump({"roots": [corpus], "hot_roots": [], "model": a.model, "reranker": a.reranker,
+               **json.loads(a.config)}, open(f"{data}/config.json", "w"))
     os.environ["SEMSEARCH_DATA"] = data
     index_s = None
     if a.reindex or not os.path.exists(f"{data}/index.db"):
