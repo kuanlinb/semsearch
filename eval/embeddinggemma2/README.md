@@ -124,3 +124,30 @@ C ×6 offset 0 60/70 text, 34/36 photos; offset 0.03 59/68, 33/37.
 
 C costs both models: about 1.7 GB of memory (bge-m3 920 MB + llama-server 760-970 MB), every
 chunk embedded twice, search median 44-72 ms.
+
+## Fusion weights tuned per model (Gemma only, llama.cpp)
+
+The fusion weights were tuned with bge-m3. `tune.py` runs the same 192-point grid (`W_NAME`,
+`W_CONTENT`, `RRF_K`, `W_SIM`) for both models on the 76 look-alike questions (Crossmodal-3600
+index, 500 photos, image offset 0.03); `cv.py` picks weights on a random half and scores the
+other half, 500 times; `check.py` scores chosen weights on other sets.
+
+| | default weights | best on all 76 | held-out (picked on the other half) |
+|---|---|---|---|
+| bge-m3 | 61 | 63 | 61.9 |
+| Gemma | 57 | 66 | 63.4 |
+
+Best for Gemma: `W_NAME 1.0, W_CONTENT 0.5, RRF_K 40, W_SIM 1.2` (W_SIM 1.6–3.0 is no better).
+Hit@1 / @3 with those weights:
+
+| Set | bge-m3 default | bge-m3, these weights | Gemma default | Gemma, these weights |
+|---|---|---|---|---|
+| Text, Crossmodal corpus (76) | 61 / 69 | – | 57 / 68 | 66 / 71 |
+| Photos zh / en (100 each) | – | – | 57 / 69 | 83 / 75 |
+| Text, wallpaper corpus (76) | 59 / 69 | 62 / 70 | 57 / 66 | 67 / 70 |
+| Wallpaper photos (38, never tuned on) | – | – | 33 | 36 |
+| `demo/`, 28 questions in 4 languages (never tuned on) | 28 / 28 | 28 / 28 | 25 / 28 | 24 / 28 |
+
+The wallpaper text rows reuse the same 76 questions over another corpus, so only the held-out
+column and the last two rows are independent. Gemma's three `demo/` misses are one confusion
+asked in three languages (the Osaka flight confirmation ranked second behind the Kansai trip plan).
