@@ -17,8 +17,8 @@ Optional `~/.semsearch/config.json` (any subset of these keys):
 |---|---|---|
 | `roots` | Documents, Desktop, Downloads, File Provider drives, iCloud Drive, Applications folders | Folders to index. Setting it **replaces** the default list. |
 | `extra_roots` | `[]` | Added to `roots`; the easy way to add a folder. |
-| `hot_roots` | Downloads, Desktop | Rescanned every 30 min. Must also be in `roots`. |
-| `names_only_roots` | `[]` | Index file names only, never read contents. |
+| `hot_roots` | Downloads, Desktop | Rescanned every 30 min, besides the file watcher (every folder in `roots` is watched and a change is indexed within about a minute). Must also be in `roots`. |
+| `names_only_roots` | `[]` | Index file names only, never read contents. Not watched (code changes all the time): rescanned every 30 min. |
 | `exclude_substrings` | `[]` | Skip files and folders whose full path contains any of these. |
 | `model` | `BAAI/bge-m3` | Embedding model. **Changing it rebuilds the whole index.** |
 | `embed_backend` | `"onnx"` | `"onnx"`: bge-m3 quantized to int8 on ONNX Runtime, no PyTorch needed (smaller install, starts faster, indexes about 3× slower). `"torch"`: PyTorch on the Apple GPU; run `install.sh` again to add PyTorch. Indexes built before 0.1.3 keep `"torch"`. **Changing it rebuilds the whole index.** |

@@ -123,3 +123,27 @@ def test_model_download_is_checked(tmp_path, monkeypatch):
     with pytest.raises(RuntimeError):
         embed._fetch("bad", src.as_uri() + "/", {"model.onnx": "0" * 64})
     assert not list((tmp_path / "models" / "bad").iterdir())
+
+
+def test_watched_changes_map_to_folders_to_rescan(tmp_path):
+    root = str(tmp_path)
+    t = indexer.change_target
+    assert t(f"{root}/Notes/a.txt", [root]) == f"{root}/Notes"
+    assert t(f"{root}/a.txt", [root]) == root
+    assert t(f"{root}/New folder", [root]) == root          # a new folder: its parent finds what it holds
+    assert t(f"{root}/Apps/Foo.app/Contents/Info.plist", [root]) == f"{root}/Apps"
+    assert t(f"{root}/proj/node_modules/x/index.js", [root]) is None
+    assert t(f"{root}/proj/.git/index", [root]) is None
+    assert t(f"{root}/Notes/.DS_Store", [root]) is None
+    assert t("/elsewhere/a.txt", [root]) is None
+
+
+def test_rescanning_changed_folders_adds_and_removes_files(index_env):
+    indexer.run(workers=1)
+    home = index_env / "home"
+    (home / "garden_plan.md").write_text("Plant tomatoes and basil along the south fence. " * 3)
+    (home / "kitchen_renovation_plan.md").unlink()
+    indexer.run(workers=1, paths=[str(home)])
+    n = names()
+    assert "garden_plan.md" in n and "kitchen_renovation_plan.md" not in n
+    assert "home" in n and "bank_statement_2026.txt" in n  # the folder itself and other folders stay

@@ -900,7 +900,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         menu.addItem(.separator())
         menu.addItem(statusLine)
         menu.addItem(NSMenuItem(title: L("Update Index Now"), action: #selector(reindex), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: L("Open Web Version"), action: #selector(openWeb), keyEquivalent: ""))
         shortcutItem.submenu = NSMenu()
         menu.addItem(shortcutItem)
         showShortcut()
@@ -1031,7 +1030,6 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         showShortcut()
     }
 
-    @objc func openWeb() { NSWorkspace.shared.open(URL(string: serverURL)!) }
     @objc func reindex() {
         var r = URLRequest(url: URL(string: serverURL + "/reindex")!)
         r.httpMethod = "POST"

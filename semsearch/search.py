@@ -20,6 +20,8 @@ USAGE_DAYS = 90
 W_RECENT, W_OPENS, W_SAME_QUERY = 0.15, 0.3, 0.6
 REMOTE_TIMEOUT = 3     # seconds to wait for a remote reranker
 REMOTE_BACKOFF = 15    # after a failure, don't try the remote reranker again for this long
+REMOTE_PROBE = 0.5     # seconds a health check may take; searches use the remote only after one passes
+REMOTE_PROBE_EVERY = 5  # while it is down, check again this often (in the background, not in a search)
 RRF_K = 20  # tuned with eval/tune.py
 W_NAME, W_CONTENT = 1.0, 1.0
 # Also count how far ahead a file's content similarity is, so a clear content match is not
@@ -185,7 +187,12 @@ class Searcher:
                 if dev == "mps":
                     self.reranker.model.half()
         self.remote = self.cfg.get("remote_reranker", "")
-        self.remote_down_until = 0.0
+        self.remote_ok, self.remote_down_until = False, 0.0
+        if self.remote:
+            # Check now and keep checking in the background, so a search never waits on a link that
+            # is not up yet (the SSH tunnel after login or wake) or has gone away
+            self._remote_probe()
+            threading.Thread(target=self._remote_watch, daemon=True).start()
         self.recent = {}
         self.lock = threading.Lock()
         self.gpu = threading.Lock()  # PyTorch MPS is not thread-safe: one GPU op at a time
@@ -295,12 +302,31 @@ class Searcher:
         ranked = sorted(zip(top, scores), key=lambda x: -(float(x[1]) + bonus[x[0]]))
         return [f for f, _ in ranked] + order[len(top):], True, {f: float(sc) for f, sc in zip(top, scores)}
 
+    def _remote_probe(self):
+        """Whether the remote reranker answers at all (any HTTP reply counts); searches use it only then."""
+        import urllib.error
+        import urllib.request
+        try:
+            urllib.request.urlopen(self.remote.rstrip("/") + "/health", timeout=REMOTE_PROBE).close()
+            self.remote_ok = True
+        except urllib.error.HTTPError:
+            self.remote_ok = True
+        except Exception:
+            self.remote_ok = False
+
+    def _remote_watch(self):
+        while True:
+            time.sleep(REMOTE_PROBE_EVERY)
+            if not self.remote_ok and time.time() >= self.remote_down_until:
+                self._remote_probe()
+
     def _remote_scores(self, q, texts):
-        """Scores from the remote reranker (remote/rerank_server.py), or None when it is
-        unreachable; after a failure it is not tried again for REMOTE_BACKOFF seconds."""
+        """Scores from the remote reranker (remote/rerank_server.py), or None when it is down;
+        after a failure it is not tried again for REMOTE_BACKOFF seconds, then only once a
+        background health check passes."""
         import json
         import urllib.request
-        if time.time() < self.remote_down_until:
+        if not self.remote_ok:
             return None
         try:
             req = urllib.request.Request(self.remote.rstrip("/") + "/rerank",
@@ -310,7 +336,7 @@ class Searcher:
                 return [float(x) for x in json.load(r)["scores"]]
         except Exception as e:
             print("remote rerank failed:", repr(e), flush=True)
-            self.remote_down_until = time.time() + REMOTE_BACKOFF
+            self.remote_ok, self.remote_down_until = False, time.time() + REMOTE_BACKOFF
             return None
 
     # ---- retrieval channels ----

@@ -133,6 +133,26 @@ def _under(path, dirs):
     return any(path == d or path.startswith(d.rstrip("/") + "/") for d in dirs)
 
 
+def change_target(path, roots):
+    """The folder to rescan when the file watcher reports `path`, or None when the index never
+    looks there (outside the roots, hidden, packages, build output, excluded). A change inside
+    an app or other bundle counts as the bundle changing."""
+    root = next((r for r in roots if _under(path, [r])), None)
+    if root is None or path == root or _excluded(path):
+        return None
+    parts = path[len(root.rstrip("/")) + 1:].split("/")
+    for i, name in enumerate(parts[:-1]):
+        if skip_dir(name):
+            return None
+        if os.path.splitext(name)[1].lower() in config.BUNDLE_EXT:
+            parts = parts[:i + 1]
+            break
+    if parts[-1].startswith("."):
+        return None
+    # The parent: a recursive scan of it also finds what a new or moved-in folder holds
+    return os.path.join(root, *parts[:-1]) if len(parts) > 1 else root
+
+
 def _dedupe_roots(roots):
     """Drop duplicate or nested roots so no file is processed twice."""
     out = []
@@ -375,7 +395,8 @@ def run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only):
     log(f"OCR: {done} files, {found} with text, {time.time() - t0:.0f}s, {len(rows) - done} left")
 
 
-def run(full=False, limit=None, workers=4, quick=False):
+def run(full=False, limit=None, workers=4, quick=False, paths=None):
+    """paths: rescan only these folders (what the file watcher saw change), like a quick run."""
     cfg = config.load()
     WAKE.unlink(missing_ok=True)  # this run picks up the new files
     _exclude_substrings[:] = cfg.get("exclude_substrings", [])
@@ -403,10 +424,17 @@ def run(full=False, limit=None, workers=4, quick=False):
     unchanged = []
     n = 0
     last_full = db.execute("SELECT v FROM meta WHERE k='last_full'").fetchone()
-    if quick and (not last_full or time.time() - float(last_full[0]) > config.FULL_EVERY):
-        log("last full scan is over 6 hours old; doing a full scan")
-        quick = False
-    roots = _dedupe_roots([r for r in cfg["roots"] if not quick or r in cfg["hot_roots"]])
+    if paths:
+        quick = True  # never counts as a full scan
+        roots = _dedupe_roots([p for p in paths if os.path.isdir(p) and _under(p, cfg["roots"])])
+        log("rescanning changed folders:", ", ".join(roots[:5]) + (f" and {len(roots) - 5} more" if len(roots) > 5 else ""))
+    else:
+        if quick and (not last_full or time.time() - float(last_full[0]) > config.FULL_EVERY):
+            log("last full scan is over 6 hours old; doing a full scan")
+            quick = False
+        # A quick run: hot_roots, plus names_only_roots (cheap, and not watched as they churn)
+        roots = _dedupe_roots([r for r in cfg["roots"] if not quick or r in cfg["hot_roots"]
+                               or _under(r, cfg["names_only_roots"])])
     failed = []
     progress = [time.time()]
 
@@ -575,7 +603,8 @@ def run(full=False, limit=None, workers=4, quick=False):
         if failed:
             log(f"{len(failed)} folders could not be read; keeping their entries:", ", ".join(failed[:5]))
         gone = [fid for fid, path in db.execute("SELECT id, path FROM files WHERE seen != ?", (scan_id,))
-                if _under(path, ok_roots) and not _under(path, failed)]
+                if _under(path, ok_roots) and not _under(path, failed)
+                and path not in roots]  # a scanned folder is not listed by its own scan
         for i in range(0, len(gone), 2000):
             ids = gone[i:i + 2000]
             q = ",".join("?" * len(ids))
@@ -607,6 +636,7 @@ def main():
     ap.add_argument("--limit", type=int, help="process only the first N entries (testing)")
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--quick", action="store_true", help="scan only hot_roots (Downloads, Desktop)")
+    ap.add_argument("--paths", nargs="+", help="rescan only these folders (from the file watcher)")
     a = ap.parse_args()
     lock = config.DATA_DIR / "indexer.lock"
     config.DATA_DIR.mkdir(exist_ok=True)
@@ -617,7 +647,7 @@ def main():
     except BlockingIOError:
         log("another indexer is running; skipping")
         sys.exit(0)
-    run(full=a.full, limit=a.limit, workers=a.workers, quick=a.quick)
+    run(full=a.full, limit=a.limit, workers=a.workers, quick=a.quick, paths=a.paths)
 
 
 if __name__ == "__main__":

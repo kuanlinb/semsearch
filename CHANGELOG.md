@@ -7,6 +7,12 @@
   same, the service starts in about a second, but the first index build is about 3× slower.
   Existing installs keep PyTorch and their index; `"embed_backend": "onnx"` switches.
 - A reranker on this Mac still needs PyTorch: `install.sh` adds it when the config has one.
+- Every indexed folder updates on its own: new, edited, moved and deleted files show up in about
+  a minute, not only in Downloads and Desktop (other folders used to wait for the 6-hour scan).
+  Only the folders that changed are rescanned.
+- The first searches after login or wake no longer wait on a remote reranker that is not
+  reachable yet: it is used once a background check sees it answer.
+- The menu no longer has "Open Web Version".
 
 ## 0.1.2 (2026-10-26)
 
