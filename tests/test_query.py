@@ -1,4 +1,11 @@
-from semsearch.search import match_places, parse_types
+from semsearch.search import is_lookup, match_places, parse_types
+
+
+def test_codes_and_numbers_are_lookups():
+    for q in ["58210377", "NT$18,600", "1,718", "Q7XK2P", "MXV-2291", "B2-17", "INV-20260124"]:
+        assert is_lookup(q), q
+    for q in ["Q3 roadmap", "seat 32A", "2025 年 8 月電費", "HARUKA", "Q3", "豆瓣醬", "how much is my rent"]:
+        assert not is_lookup(q), q
 
 
 def test_type_words_become_preferences():

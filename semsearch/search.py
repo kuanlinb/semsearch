@@ -39,6 +39,10 @@ TIER_SPAN = 40
 TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
 SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
 W_SIM = 0.4
+# Codes, IDs and long numbers ("58210377", "NT$18,600", "MXV-2291") mean nothing to an embedding,
+# so for such lookups the keyword match counts more and the vector lists less. Measured on
+# eval/lookalike: those lookups went from rank 13-20 to first, nothing else moved.
+LOOKUP_KW, LOOKUP_VEC = 3.0, 0.5
 
 
 # Filler words in English queries are not matched as keywords ("our" would hit "sourdough")
@@ -133,6 +137,18 @@ def parse_types(q: str):
             want |= exts
             low = re.sub(pat, " ", low)
     return (re.sub(r"\s+", " ", low).strip() or q.lower()), (want or None)
+
+
+def _code_like(term: str) -> bool:
+    """A number or an ID: has digits, no CJK, and is long enough not to be a version like "Q3"."""
+    digits = sum(c.isdigit() for c in term)
+    return digits > 0 and term.isascii() and (digits >= 3 or len(term) >= 4)
+
+
+def is_lookup(q: str) -> bool:
+    """Every word of the query is a code or a number ("58210377", "Q7XK2P", "B2-17")."""
+    terms = _terms(q)
+    return bool(terms) and all(_code_like(t) for t in terms)
 
 
 class Searcher:
@@ -388,17 +404,19 @@ class Searcher:
         kw_sorted = sorted(kw.items(), key=lambda x: -x[1][0])
         kw_rank = {fid: r for r, (fid, _) in enumerate(kw_sorted)}
 
+        lookup = is_lookup(kw_q)
+        vec_w, kw_w = (LOOKUP_VEC, LOOKUP_KW) if lookup else (1.0, 1.0)
         fused = {}
         for bucket, w in ((name_score, W_NAME), (content_score, W_CONTENT)):
             for r, fid in enumerate(bucket):
-                fused[fid] = fused.get(fid, 0) + w / (RRF_K + r)
+                fused[fid] = fused.get(fid, 0) + vec_w * w / (RRF_K + r)
         if W_SIM and content_score:
             top = max(content_score.values())
             for fid, sc in content_score.items():
-                fused[fid] = fused.get(fid, 0) + W_SIM * max(0.0, sc - top + 0.15)
+                fused[fid] = fused.get(fid, 0) + vec_w * W_SIM * max(0.0, sc - top + 0.15)
         for fid, r in kw_rank.items():
             score, cid, full_name = kw[fid]
-            w = 1.6 if full_name else 1.0
+            w = kw_w * (1.6 if full_name else 1.0)
             fused[fid] = fused.get(fid, 0) + w / (RRF_K + r)
             if fid not in best_chunk and cid:
                 best_chunk[fid] = cid
