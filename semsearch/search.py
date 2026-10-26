@@ -27,10 +27,16 @@ W_NAME, W_CONTENT = 1.0, 1.0
 # similarity alone cannot tell relevant from irrelevant. Only the distance from the top score
 # counts, never the raw score: the same model gives a correct but indirect match as little as
 # -6.7 ("flight to osaka" for a TPE-KIX booking) while a question with no answer can top at -0.2.
-# Measured on real queries: every correct file stayed visible. Ranked list truncation by the gap
-# from the top score, calibrated on our own data (Arampatzis 2009; Meng 2024).
+# Calibrated for bge-reranker-v2-m3 on 50 real queries, 28 demo queries in four languages and 30
+# with no answer: every correct file stayed visible, and a query with no answer shows about 10
+# files instead of 22. Other rerankers score on another scale and need their own values.
+# Ranked list truncation by the gap from the top score (Arampatzis 2009; Meng 2024).
+# Files the reranker did not see are judged by their fast-search rank instead: with rerank_top
+# below TIER_SPAN, the unseen files up to rank TIER_SPAN stay in the second tier (a correct file
+# ranked 21-40 would otherwise vanish unjudged), the rest are dropped.
+TIER_SPAN = 40
 TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
-SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
+SHOW_GAP, SHOW_FLOOR = 4.5, -7.5      # second tier ("less related"); further or below -7.5 (unrelated) is hidden
 W_SIM = 0.4
 
 
@@ -453,7 +459,7 @@ class Searcher:
                 seen[key] = results[-1]
         db.close()
         if reranked:
-            results = _tiers(results)
+            results = _tiers(results, len(rel))
         places = {r["path"] for r in results if r["match"] == "place"}
         results = [r for r in results if r["match"] == "place" or r["path"] not in places]
         if group:
@@ -529,9 +535,10 @@ class _NameIndex:
         return out
 
 
-def _tiers(results):
+def _tiers(results, judged=TIER_SPAN):
     """Tier by reranker score: 1 = best matches, 2 = less related; drop the weak rest.
-    Places and exact file-name matches are always in the first tier."""
+    Places and exact file-name matches are always in the first tier. `judged` is how many
+    files the reranker scored; unscored files come after them in fast-search order."""
     scores = [r["rel"] for r in results if r.get("rel") is not None]
     if not scores:
         return results
@@ -540,12 +547,18 @@ def _tiers(results):
     top = max(scores + ([0.0] if sure else []))
     tier1 = top - TIER1_GAP
     shown = max(top - SHOW_GAP, SHOW_FLOOR)
+    unjudged = TIER_SPAN - judged  # unscored files still kept, to rank TIER_SPAN
     out = []
     for r in results:
         if r["match"] == "place" or r.get("exact"):
             r["tier"] = 1
-        elif r.get("rel") is None or r["rel"] < shown:
-            continue  # not among the reranked candidates, or too weak
+        elif r.get("rel") is None:
+            if unjudged <= 0:
+                continue  # beyond the candidates a full reranker window would have judged
+            unjudged -= 1
+            r["tier"] = 2
+        elif r["rel"] < shown:
+            continue  # too weak
         else:
             r["tier"] = 1 if r["rel"] >= tier1 else 2
         out.append(r)
