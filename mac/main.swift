@@ -333,6 +333,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let width: CGFloat = 680
     let barH: CGFloat = 56
     let gap: CGFloat = 10
+    // Transparent margin around the glass: the glass draws its own shadow, and a window cut tight
+    // around it clips that shadow into a visible square edge
+    let pad: CGFloat = 36
     let rowH: CGFloat = 50
     let maxRows = 8
     let hints = NSTextField(labelWithString: L("↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand"))
@@ -340,7 +343,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     var glassParts: [(outer: NSView, content: NSView)] = []  // for --snapshot
 
     override init() {
-        panel = KeyPanel(contentRect: NSRect(x: 0, y: 0, width: 680, height: 56),
+        panel = KeyPanel(contentRect: NSRect(x: 0, y: 0, width: 680 + 2 * 36, height: 56 + 2 * 36),
                          styleMask: [.borderless, .nonactivatingPanel, .fullSizeContentView],
                          backing: .buffered, defer: false)
         super.init()
@@ -417,14 +420,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         cardHeight = cardView.heightAnchor.constraint(equalToConstant: 100)
         NSLayoutConstraint.activate([
-            bar.topAnchor.constraint(equalTo: root.topAnchor),
-            bar.leadingAnchor.constraint(equalTo: root.leadingAnchor),
-            bar.trailingAnchor.constraint(equalTo: root.trailingAnchor),
+            bar.topAnchor.constraint(equalTo: root.topAnchor, constant: pad),
+            bar.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: pad),
+            bar.trailingAnchor.constraint(equalTo: root.trailingAnchor, constant: -pad),
             bar.heightAnchor.constraint(equalToConstant: barH),
             bar.widthAnchor.constraint(equalToConstant: width),
             cardView.topAnchor.constraint(equalTo: bar.bottomAnchor, constant: gap),
-            cardView.leadingAnchor.constraint(equalTo: root.leadingAnchor),
-            cardView.trailingAnchor.constraint(equalTo: root.trailingAnchor),
+            cardView.leadingAnchor.constraint(equalTo: root.leadingAnchor, constant: pad),
+            cardView.trailingAnchor.constraint(equalTo: root.trailingAnchor, constant: -pad),
             cardHeight,
             glyph.leadingAnchor.constraint(equalTo: barContent.leadingAnchor, constant: 20),
             glyph.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
@@ -468,7 +471,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         let rows = min(hits.count, maxRows)
         let ch = 8 + CGFloat(max(rows, 1)) * rowH + 4 + 30
         cardHeight.constant = ch
-        let h: CGFloat = on ? barH + gap + ch : barH
+        let h: CGFloat = (on ? barH + gap + ch : barH) + 2 * pad
         let top = panel.frame.maxY
         var f = panel.frame
         f.size.height = h
@@ -480,9 +483,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         if panel.isVisible && panel.isKeyWindow { hide(); return }
         if let screen = NSScreen.main {
             let vf = screen.visibleFrame
-            let x = vf.midX - width / 2
-            let top = vf.maxY - vf.height * 0.18
-            panel.setFrame(NSRect(x: x, y: top - panel.frame.height, width: width, height: panel.frame.height), display: false)
+            let x = vf.midX - width / 2 - pad
+            let top = vf.maxY - vf.height * 0.18 + pad  // the visible bar stays where it was
+            panel.setFrame(NSRect(x: x, y: top - panel.frame.height, width: width + 2 * pad, height: panel.frame.height), display: false)
         }
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
