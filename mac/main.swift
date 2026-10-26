@@ -68,7 +68,7 @@ struct Shortcut: Equatable {
     }
 }
 // Offered in the menu (a different "hotkey" from config.json is listed too)
-let shortcutChoices = ["option+space", "option+shift+space", "cmd+shift+space", "control+shift+space"]
+let shortcutChoices = ["cmd+space", "option+space", "option+shift+space", "cmd+shift+space", "control+shift+space"]
 let configuredHotkey = (userConfig["hotkey"] as? String).flatMap { Shortcut($0) == nil ? nil : $0 } ?? "option+space"
 var shortcut = Shortcut(configuredHotkey) ?? Shortcut()
 
@@ -287,6 +287,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let scroll = NSScrollView()
     let footer = NSTextField(labelWithString: "")
     let gear = NSButton()
+    let placeholder = L("SemSearch: describe the file or app you are looking for")
     var settingsMenu: NSMenu?  // the menu-bar icon's menu
     var hits: [Hit] = []          // rows on screen, including expanded same-folder files
     var heads: [Hit] = []         // results from the service (one per folder)
@@ -376,7 +377,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         gear.target = self
         gear.action = #selector(showSettingsMenu)
 
-        field.placeholderString = L("SemSearch: describe the file or app you are looking for")
+        field.placeholderString = placeholder
         field.font = .systemFont(ofSize: 21, weight: .regular)
         field.isBordered = false
         field.drawsBackground = false
@@ -501,6 +502,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     // While typing show fast results (tens of ms); after a 0.5 s pause ask for the reranked order
     func controlTextDidChange(_ obj: Notification) {
+        field.placeholderString = placeholder  // the first-launch tip is done once typing starts
         pending?.cancel()
         pendingFine?.cancel()
         fineTask?.cancel()
@@ -833,6 +835,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         for i in menu.items where i.action != nil && i.action != #selector(NSApplication.terminate(_:)) { i.target = self }
         status.menu = menu
         controller.settingsMenu = menu
+        // First launch: open the search box right away, with the shortcut in the hint (new users
+        // would not know which key opens it)
+        if !UserDefaults.standard.bool(forKey: "onboarded") {
+            UserDefaults.standard.set(true, forKey: "onboarded")
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.controller.field.placeholderString = L("Press {shortcut} anytime to search. Try it: describe a file", ["shortcut": shortcut.label])
+                if !self.controller.panel.isVisible { self.controller.toggle() }
+            }
+        }
         if CommandLine.arguments.contains("--show") {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { self.controller.toggle() }
         }

@@ -43,5 +43,6 @@
  "Cloud drive": "클라우드 드라이브",
  "Shortcut": "단축키",
  "Space": "스페이스",
- "Settings": "설정"
+ "Settings": "설정",
+ "Press {shortcut} anytime to search. Try it: describe a file": "언제든 {shortcut}를 눌러 검색하세요. 지금 파일을 설명해 보세요"
 }

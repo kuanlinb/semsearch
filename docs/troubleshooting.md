@@ -30,6 +30,15 @@ For a combination that is not in the menu, set `"hotkey"` in `~/.semsearch/confi
 [Configuration](configuration.md)), e.g. `{ "hotkey": "control+option+cmd+k" }`, then quit
 SemSearch from its menu and open it again.
 
+## Use ⌘Space instead of Spotlight
+
+⌘Space is the easiest shortcut to reach, but Spotlight owns it. To give it to SemSearch:
+
+1. System Settings › Keyboard › Keyboard Shortcuts › Spotlight: turn off **Show Spotlight search**.
+2. In SemSearch's menu (menu-bar icon or the gear in the search box), pick **Shortcut › ⌘ Space**.
+
+Spotlight still opens with the 🔍 key (F4) on Mac keyboards that have it.
+
 ## Uninstall
 
 Installed with Homebrew: `semsearch-uninstall` (add `--all` to delete the index and model too), then

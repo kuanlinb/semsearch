@@ -43,5 +43,6 @@
  "Cloud drive": "云盘",
  "Shortcut": "快捷键",
  "Space": "空格键",
- "Settings": "设置"
+ "Settings": "设置",
+ "Press {shortcut} anytime to search. Try it: describe a file": "随时按 {shortcut} 就能搜索。现在试试：描述一个文件"
 }

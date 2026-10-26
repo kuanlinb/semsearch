@@ -43,5 +43,6 @@
  "Cloud drive": "クラウドドライブ",
  "Shortcut": "ショートカット",
  "Space": "スペース",
- "Settings": "設定"
+ "Settings": "設定",
+ "Press {shortcut} anytime to search. Try it: describe a file": "{shortcut} でいつでも検索できます。試しにファイルを説明してみてください"
 }
