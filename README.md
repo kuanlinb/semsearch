@@ -34,7 +34,7 @@ https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
 
 **You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 4 GB of free space.
 
-**With [Homebrew](https://brew.sh)** (one line):
+**With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 14 or later):
 
 ```bash
 brew install kuanlinb/tap/semsearch && semsearch-install

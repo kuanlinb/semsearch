@@ -30,7 +30,7 @@ https://github.com/user-attachments/assets/2354e0be-d25c-4235-b245-920a87ae6892
 
 **需要**：M1 以後的 Mac（Apple 晶片）、macOS 13 以上、約 4 GB 空間。
 
-**用 [Homebrew](https://brew.sh) 安裝**（一行）：
+**用 [Homebrew](https://brew.sh) 安裝**（一行；macOS 14 以上不用裝 Xcode 工具）：
 
 ```bash
 brew install kuanlinb/tap/semsearch && semsearch-install

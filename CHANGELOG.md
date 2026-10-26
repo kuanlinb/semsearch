@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Homebrew installs no longer need the Xcode Command Line Tools: the app comes already compiled.
+- `install.sh` explains how to get the Command Line Tools when they are missing or only a stub.
+
 ## 0.1.1 (2026-10-26)
 
 - Install with Homebrew: `brew install kuanlinb/tap/semsearch && semsearch-install`.

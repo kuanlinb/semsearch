@@ -28,6 +28,18 @@ jobs:
           test -x "$RUNNER_TEMP/SemSearch.app/Contents/MacOS/SemSearch"
           test -x bin/semsearch-ocr && test -x bin/semsearch-fswatch
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$RUNNER_TEMP/SemSearch.app/Contents/Info.plist")" = "$(cat VERSION)"
+      - name: Install without the Command Line Tools, from prebuilt programs (as from the Homebrew bottle)
+        run: |
+          mac/build.sh prebuilt && cp VERSION prebuilt/
+          nocl="$RUNNER_TEMP/nocl" && mkdir -p "$nocl"
+          printf '#!/bin/sh\nexit 2\n' > "$nocl/xcode-select"
+          printf '#!/bin/sh\necho "$0 must not run" >&2; exit 99\n' > "$nocl/swiftc"
+          cp "$nocl/swiftc" "$nocl/xcrun" && chmod +x "$nocl"/*
+          PATH="$nocl:$PATH" SEMSEARCH_APP="$RUNNER_TEMP/SemSearch.app" SEMSEARCH_SKIP_AGENT=1 ./install.sh
+          cmp prebuilt/semsearch-ocr bin/semsearch-ocr
+          rm -rf prebuilt
+          # without prebuilt programs it stops and says to install the Command Line Tools
+          ! PATH="$nocl:$PATH" SEMSEARCH_APP="$RUNNER_TEMP/SemSearch.app" SEMSEARCH_SKIP_AGENT=1 ./install.sh
       - name: Run tests (tiny fake embedding model, no download)
         env:
           SEMSEARCH_DEVICE: cpu   # hosted runners report MPS but cannot allocate on it

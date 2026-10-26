@@ -8,9 +8,9 @@
   skips images where no line of text is detected (most photos) and files over 40 MB,
   and a large backlog of images takes several index runs (15 minutes each by default).
 - Indexing speed is bound by the Mac GPU: on an M4, about 200 file names or 8 documents per second.
-- The app is not notarized: build it yourself with `install.sh`. It is signed with a self-signed
-  certificate made on your Mac and kept in its own keychain (`semsearch-signing`), so macOS keeps
-  your folder permissions across updates. `./uninstall.sh --all` removes that keychain too.
+- The app is not notarized: `install.sh` builds it on your Mac (Homebrew ships it already compiled)
+  and signs it with a self-signed certificate made on your Mac and kept in its own keychain
+  (`semsearch-signing`), so macOS keeps your folder permissions across updates. `./uninstall.sh --all` removes that keychain too.
 - Files inside the Trash are not indexed (macOS requires Full Disk Access for that).
 - On macOS 13, iCloud Drive files that are not downloaded appear as hidden `.icloud`
   placeholders and are not indexed (macOS 14+ uses File Provider and works).

@@ -1,7 +1,8 @@
 #!/bin/zsh
 # Build and install SemSearch:
 #   1. create .venv and install Python dependencies (needs Python 3.11+; uses uv if present)
-#   2. compile the menu-bar app into /Applications/SemSearch.app and the helpers into bin/
+#   2. put the menu-bar app into /Applications/SemSearch.app and the helpers into bin/, compiled
+#      with swiftc, or taken from prebuilt/ (the Homebrew package ships them compiled)
 #   3. start it at login (LaunchAgent) and link the `ss` command
 # Usage: ./install.sh            (run again after pulling updates)
 # Testing: SEMSEARCH_APP=/tmp/SemSearch.app SEMSEARCH_SKIP_AGENT=1 ./install.sh
@@ -16,7 +17,14 @@ VERSION="$(cat VERSION)"
 
 die() { echo "Error: $*" >&2; exit 1; }
 [[ "$(uname -m)" == "arm64" ]] || die "SemSearch needs an Apple silicon Mac (arm64)."
-command -v swiftc >/dev/null || die "swiftc not found. Run: xcode-select --install"
+# Without the Command Line Tools, /usr/bin/swiftc is only a stub that offers to install them
+have_swiftc() { xcode-select -p >/dev/null 2>&1 && xcrun --find swiftc >/dev/null 2>&1; }
+if [[ -f prebuilt/VERSION && "$(cat prebuilt/VERSION)" == "$VERSION" ]]; then
+  SWIFT_BIN="$REPO/prebuilt"
+else
+  have_swiftc || die "The Xcode Command Line Tools are needed to build the app. Run: xcode-select --install"
+  SWIFT_BIN=""
+fi
 # Refuse to replace an unrelated app that happens to have the same name
 if [[ -d "$APP" ]]; then
   existing="$(/usr/libexec/PlistBuddy -c 'Print :CFBundleIdentifier' "$APP/Contents/Info.plist" 2>/dev/null || true)"
@@ -43,13 +51,17 @@ fi
 echo "Building the app…"
 BUILD="$(mktemp -d)"
 [[ -f mac/AppIcon.icns ]] || .venv/bin/python mac/make_icon.py mac/AppIcon
-swiftc -O mac/main.swift -o "$BUILD/SemSearch"
+if [[ -z "$SWIFT_BIN" ]]; then
+  SWIFT_BIN="$BUILD/bin"
+  mac/build.sh "$SWIFT_BIN"
+fi
+for exe in SemSearch semsearch-ocr semsearch-fswatch; do
+  [[ -x "$SWIFT_BIN/$exe" ]] || die "$SWIFT_BIN/$exe is missing."
+done
 # Helpers the Python service runs: OCR (Vision) and the new-file watcher (FSEvents)
-mkdir -p bin
-swiftc -O mac/ocr.swift -o bin/semsearch-ocr
-swiftc -O mac/fswatch.swift -o bin/semsearch-fswatch
-mkdir -p "$BUILD/SemSearch.app/Contents/MacOS" "$BUILD/SemSearch.app/Contents/Resources"
-mv "$BUILD/SemSearch" "$BUILD/SemSearch.app/Contents/MacOS/SemSearch"
+mkdir -p bin "$BUILD/SemSearch.app/Contents/MacOS" "$BUILD/SemSearch.app/Contents/Resources"
+cp "$SWIFT_BIN/semsearch-ocr" "$SWIFT_BIN/semsearch-fswatch" bin/
+cp "$SWIFT_BIN/SemSearch" "$BUILD/SemSearch.app/Contents/MacOS/SemSearch"
 cp mac/AppIcon.icns "$BUILD/SemSearch.app/Contents/Resources/AppIcon.icns"
 cat > "$BUILD/SemSearch.app/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
@@ -87,7 +99,7 @@ if [[ -z "$SKIP_AGENT" ]]; then
 fi
 rm -rf "$APP"
 mv "$BUILD/SemSearch.app" "$APP"
-rmdir "$BUILD" 2>/dev/null || true
+rm -rf "$BUILD"
 
 if [[ -n "$SKIP_AGENT" ]]; then
   echo "Built $APP (test mode: no login item, no ss link)."
