@@ -107,6 +107,33 @@ class OnnxModel:
         return out
 
 
+class OnnxReranker:
+    """A cross-encoder (bge-reranker-v2-m3) exported by eval/local_rerank/export_reranker.py and
+    quantized by tools/export_onnx.py: raw logits, the scale the tier cut-offs use. CPU only."""
+
+    def __init__(self, folder, max_tokens=256):
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+        folder = os.path.expanduser(folder)
+        self.tok = Tokenizer.from_file(os.path.join(folder, "tokenizer.json"))
+        self.tok.enable_truncation(max_tokens)
+        self.tok.enable_padding(pad_id=self.tok.token_to_id("<pad>") or 1)
+        so = ort.SessionOptions()
+        so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        so.enable_cpu_mem_arena = False
+        so.intra_op_num_threads = int(os.environ.get("SEMSEARCH_THREADS", max(1, (os.cpu_count() or 4) // 2)))
+        self.sess = ort.InferenceSession(os.path.join(folder, "model.onnx"), so, providers=["CPUExecutionProvider"])
+
+    def scores(self, q, texts, batch_size=8):
+        out = []
+        for i in range(0, len(texts), batch_size):
+            enc = self.tok.encode_batch([(q, t) for t in texts[i:i + batch_size]])
+            feed = {"input_ids": np.array([e.ids for e in enc], dtype=np.int64),
+                    "attention_mask": np.array([e.attention_mask for e in enc], dtype=np.int64)}
+            out.extend(self.sess.run(None, feed)[0].ravel().tolist())
+        return out
+
+
 def get_model(name: str):
     global _model, _name
     with _lock:

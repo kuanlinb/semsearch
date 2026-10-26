@@ -13,7 +13,7 @@ import time
 from concurrent.futures import ProcessPoolExecutor
 from pathlib import Path
 
-from . import apps as appinfo, config, embed, extract
+from . import apps as appinfo, conditions, config, embed, extract
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS files(
@@ -46,6 +46,8 @@ def connect():
         db.execute("ALTER TABLE files ADD COLUMN content_tries INTEGER DEFAULT 0")
     if "ocr_state" not in cols:  # 0 not needed, 1 waiting for OCR, 2 done
         db.execute("ALTER TABLE files ADD COLUMN ocr_state INTEGER DEFAULT 0")
+    if "src" not in cols:  # where a downloaded or received file came from (conditions.read_source)
+        db.execute("ALTER TABLE files ADD COLUMN src TEXT")
     return db
 
 
@@ -524,10 +526,10 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
                          and st.st_size <= config.OCR_MAX_BYTES and not _under(path, names_only))
             cur = db.execute(
                 "INSERT INTO files(path,name,parent,ext,size,mtime,is_dir,dataless,note,seen,"
-                "content_done,ocr_state) VALUES(?,?,?,?,?,?,?,?,?,?,?,?)",
+                "content_done,ocr_state,src) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)",
                 (path, name, str(p.parent), ext, 0 if is_dir else st.st_size,
                  st.st_mtime, int(is_dir), dataless, note, scan_id, 0 if wants_content else 1,
-                 1 if wants_ocr else 0))
+                 1 if wants_ocr else 0, "" if is_dir else conditions.read_source(path)))
             text = name_text(path, is_dir, note)
             if local:
                 text = f"{local} (app / 應用程式) " + text
@@ -538,6 +540,14 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
         bump()
         done = b + len(part)
         log(f"  names {done}/{len(todo)} ({done / (time.time() - t0):.0f}/s)")
+
+    # Files indexed before sources were recorded
+    old = db.execute("SELECT id, path FROM files WHERE src IS NULL AND is_dir=0").fetchall()
+    for fid, path in old:
+        db.execute("UPDATE files SET src=? WHERE id=?", (conditions.read_source(path), fid))
+    if old:
+        db.commit()
+        log(f"sources read for {len(old)} files")
 
     # Apps: index a one-line "what it is for" description as the app's text, so a query like
     # "note-taking app" or "take a screenshot" finds it. Covers apps indexed before this existed.
