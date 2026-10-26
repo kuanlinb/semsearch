@@ -1,4 +1,5 @@
-"""Text → vectors. The model is loaded once; e5 models need "query: " / "passage: " prefixes.
+"""Text → vectors. The model is loaded once; e5 models need "query: " / "passage: " prefixes,
+EmbeddingGemma "task: search result | query: " / "title: … | text: ".
 
 Two runtimes (config "embed_backend"):
   "torch"  sentence-transformers on PyTorch (Apple GPU through MPS), any Hugging Face model
@@ -93,9 +94,18 @@ def get_model(name: str):
         if _model is None:
             from sentence_transformers import SentenceTransformer
             device = config.device()
-            _model = SentenceTransformer(name, device=device)
+            if _is_gemma(name):
+                # EmbeddingGemma 2 overflows float16 (NaN or silently worse vectors): bfloat16 on the
+                # GPU, and only the text encoder (the image and audio encoders add ~470M parameters)
+                import torch
+                _model = SentenceTransformer(
+                    name, device=device,
+                    model_kwargs={"dtype": torch.bfloat16 if device == "mps" else torch.float32},
+                    config_kwargs={"vision_config": None, "audio_config": None})
+            else:
+                _model = SentenceTransformer(name, device=device)
             _model.max_seq_length = MAX_TOKENS
-            if device == "mps":
+            if device == "mps" and not _is_gemma(name):
                 _model.half()  # ~50% faster on MPS; vectors are stored as float16 anyway
             _name = name
     return _model
@@ -107,7 +117,13 @@ def reset():
         _model, _name = None, None
 
 
+def _is_gemma(name) -> bool:
+    return bool(name) and "embeddinggemma" in name.lower()
+
+
 def _prefix(kind: str) -> str:
+    if _is_gemma(_name):
+        return "task: search result | query: " if kind == "query" else "title: none | text: "
     if _name and "qwen3-embedding" in _name.lower():
         return ("Instruct: Given a search query, retrieve the user's file that matches it\nQuery: "
                 if kind == "query" else "")
@@ -118,12 +134,26 @@ def _prefix(kind: str) -> str:
     return ""
 
 
+def content_text(title: str, text: str) -> str:
+    """A content chunk as it is embedded: the file's readable name, then the text."""
+    if _is_gemma(_name):
+        return f"title: {title} | text: {text}"  # EmbeddingGemma's format for titled documents
+    return f"{title}: {text}"
+
+
 def encode(texts, kind="passage", batch_size=64) -> np.ndarray:
     m = get_model(_name or "intfloat/multilingual-e5-small")
     p = _prefix(kind)
+    if p and kind != "query" and _is_gemma(_name):
+        # chunks already in "title: … | text: …" form keep their own title
+        return _encode(m, [t if t.startswith("title: ") else p + t for t in texts], batch_size)
+    return _encode(m, [p + t for t in texts], batch_size)
+
+
+def _encode(m, texts, batch_size):
     if isinstance(m, OnnxModel):
-        return m.encode([p + t for t in texts]).astype(np.float16)
-    vecs = m.encode([p + t for t in texts], batch_size=batch_size,
+        return m.encode(texts).astype(np.float16)
+    vecs = m.encode(texts, batch_size=batch_size,
                     normalize_embeddings=True, convert_to_numpy=True,
                     show_progress_bar=False)
     return vecs.astype(np.float16)

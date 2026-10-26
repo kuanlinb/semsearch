@@ -446,7 +446,7 @@ def run(full=False, limit=None, workers=4, quick=False):
     def flush():
         if not pending:
             return
-        vecs = embed.encode([f"{ctx[f]}: {t}" if k == KIND_CONTENT else t for f, k, t in pending])
+        vecs = embed.encode([embed.content_text(ctx[f], t) if k == KIND_CONTENT else t for f, k, t in pending])
         for (fid, kind, text), v in zip(pending, vecs):
             cur = db.execute("INSERT INTO chunks(file_id, kind, text, vec) VALUES(?,?,?,?)",
                              (fid, kind, text, v.tobytes()))
