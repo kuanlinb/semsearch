@@ -27,16 +27,17 @@ W_NAME, W_CONTENT = 1.0, 1.0
 # similarity alone cannot tell relevant from irrelevant. Only the distance from the top score
 # counts, never the raw score: the same model gives a correct but indirect match as little as
 # -6.7 ("flight to osaka" for a TPE-KIX booking) while a question with no answer can top at -0.2.
-# Calibrated for bge-reranker-v2-m3 on 50 real queries, 28 demo queries in four languages and 30
-# with no answer: every correct file stayed visible, and a query with no answer shows about 10
-# files instead of 22. Other rerankers score on another scale and need their own values.
+# Checked with bge-reranker-v2-m3 on 50 real queries, 28 demo queries in four languages and 76
+# hard ones with look-alike files: every correct file stays visible. The margin is thin: correct
+# files sat 4.7 below the top and as low as -9.6 ("單一登入誰負責" for English meeting notes), so
+# tighter values (4.5 / -7.5) hid answers. Other rerankers score on another scale.
 # Ranked list truncation by the gap from the top score (Arampatzis 2009; Meng 2024).
 # Files the reranker did not see are judged by their fast-search rank instead: with rerank_top
 # below TIER_SPAN, the unseen files up to rank TIER_SPAN stay in the second tier (a correct file
 # ranked 21-40 would otherwise vanish unjudged), the rest are dropped.
 TIER_SPAN = 40
 TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
-SHOW_GAP, SHOW_FLOOR = 4.5, -7.5      # second tier ("less related"); further or below -7.5 (unrelated) is hidden
+SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
 W_SIM = 0.4
 
 
