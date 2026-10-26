@@ -8,7 +8,7 @@ import json
 import random
 import sys
 
-DEFAULT = {"W_NAME": 1.0, "W_CONTENT": 1.0, "RRF_K": 20, "W_SIM": 0.4}
+DEFAULT = {"W_NAME": 1.0, "W_CONTENT": 1.0, "RRF_K": 20, "W_SIM": 0.4, "W_GEMMA": 1.0}
 
 
 def stats(ranks, idx):
@@ -20,7 +20,7 @@ def main():
         d = json.load(open(path))
         rows, n = d["rows"], len(d["questions"])
         every = range(n)
-        default = next(r for r in rows if r["w"] == DEFAULT)
+        default = next(r for r in rows if all(r["w"].get(k, v) == v for k, v in DEFAULT.items()))
         best = max(rows, key=lambda r: stats(r["ranks"], every))
         rng = random.Random(0)
         held = []

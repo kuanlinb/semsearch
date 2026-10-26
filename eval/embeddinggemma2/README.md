@@ -151,3 +151,20 @@ Hit@1 / @3 with those weights:
 The wallpaper text rows reuse the same 76 questions over another corpus, so only the held-out
 column and the last two rows are independent. Gemma's three `demo/` misses are one confusion
 asked in three languages (the Osaka flight confirmation ranked second behind the Kansai trip plan).
+
+## Two models (bge-m3 + Gemma list) with tuned weights
+
+Same method, grid adds `W_GEMMA` (0.5–3), 216 points: default 62/76, best on all 64, held-out
+mean 62.5 (Gemma alone 63.4, bge-m3 alone 61.9). Chosen: `W_NAME 0.5, W_CONTENT 0.5, RRF_K 10,
+W_SIM 1.2, W_GEMMA 2`; with those, the photo settings were tried again (`IMAGE_MULT` 10/20,
+`IMAGE_OFFSET` 0/0.03) on Crossmodal and checked on the wallpaper set.
+
+| Hit@1 | Text (76) | Photos zh / en (100 each) | Wallpaper photos (38) | `demo/` 4 languages (28) | Memory |
+|---|---|---|---|---|---|
+| bge-m3 alone, default | 61 | – | – | 28 | 0.9 GB |
+| Gemma alone, tuned | 66 | 83 / 75 | 36 | 24–25 | 0.8 GB |
+| Both, tuned, offset 0, ×6 | 64 | 68 / 70 | 34 | 28 | 1.7 GB |
+| Both, tuned, offset 0.03, ×10 | 62 | 84 / 73 | 35 | 28 | 1.7 GB |
+
+The text differences between the three setups are within one or two questions on held-out
+halves; the `demo/` set (never tuned on) and photo recall are what separate them.

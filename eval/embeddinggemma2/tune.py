@@ -3,7 +3,8 @@ comparison can pick weights on one half of the questions and score them on the o
 
     python eval/embeddinggemma2/tune.py <tag> <corpus> <queries.json> <out.json> [tags to use, e.g. photo-zh]
 
-Only the text questions (no "photo" tag) are searched unless tags are given.
+Only the text questions (no "photo" tag) are searched unless tags are given. TUNE_GRID (JSON, same
+shape as GRID) replaces the grid, e.g. to add W_GEMMA for the two-model setup.
 """
 import itertools
 import json
@@ -13,6 +14,7 @@ import sys
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 GRID = {"W_NAME": [0.5, 1.0, 1.5], "W_CONTENT": [0.5, 1.0, 1.5, 2.0], "RRF_K": [10, 20, 40, 60],
         "W_SIM": [0.0, 0.4, 0.8, 1.2]}
+GRID = json.loads(os.environ.get("TUNE_GRID", "null")) or GRID
 
 
 def main():
