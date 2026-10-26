@@ -44,5 +44,10 @@
  "Shortcut": "快捷鍵",
  "Space": "空白鍵",
  "Settings": "設定",
- "Press {shortcut} anytime to search. Try it: describe a file": "隨時按 {shortcut} 就能搜尋。現在試試：描述一個檔案"
+ "Press {shortcut} anytime to search. Try it: describe a file": "隨時按 {shortcut} 就能搜尋。現在試試：描述一個檔案",
+ "Open": "打開",
+ "Show in Finder": "在 Finder 顯示",
+ "Quick Look": "快速查看",
+ "Copy": "拷貝",
+ "Copy Path": "拷貝路徑"
 }

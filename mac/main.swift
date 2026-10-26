@@ -280,7 +280,8 @@ final class RowView: NSTableRowView {
     }
 }
 
-final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate {
+final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSource, NSTableViewDelegate, NSWindowDelegate,
+                              NSMenuDelegate {
     let panel: KeyPanel
     let field = NSTextField()
     let table = NSTableView()
@@ -399,6 +400,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         table.delegate = self
         table.target = self
         table.doubleAction = #selector(openSelected)
+        // Like Spotlight: drag results into Finder or other apps; right-click for the usual actions
+        table.setDraggingSourceOperationMask(.copy, forLocal: false)
+        let rowMenu = NSMenu()
+        rowMenu.delegate = self
+        table.menu = rowMenu
         table.style = .plain
         scroll.documentView = table
         scroll.drawsBackground = false
@@ -454,7 +460,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             if e.modifierFlags.contains(.command) {
                 switch e.charactersIgnoringModifiers {
                 case "c" where self.field.currentEditor()?.selectedRange.length ?? 0 == 0:
-                    self.copyPath(); return nil
+                    if e.modifierFlags.contains(.option) { self.copyPathText() } else { self.copyPath() }
+                    return nil
                 case "y":
                     self.quickLook(); return nil
                 case "o":
@@ -627,7 +634,13 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         switch sel {
         case #selector(NSResponder.moveDown(_:)): move(1); return true
         case #selector(NSResponder.moveUp(_:)): move(-1); return true
-        case #selector(NSResponder.cancelOperation(_:)): hide(); return true
+        case #selector(NSResponder.cancelOperation(_:)):
+            // first clear the text, then close (like Spotlight)
+            if field.stringValue.isEmpty { hide() } else {
+                field.stringValue = ""
+                controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
+            }
+            return true
         case #selector(NSResponder.insertTab(_:)): toggleGroup(); return true
         case #selector(NSResponder.insertNewline(_:)):
             if NSApp.currentEvent?.modifierFlags.contains(.command) == true { revealSelected() } else { openSelected() }
@@ -667,21 +680,31 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         NSWorkspace.shared.open(URL(fileURLWithPath: h.path))
     }
 
-    func revealSelected() {
+    @objc func revealSelected() {
         guard let h = selected else { return }
         logOpen(h.path)
         hide()
         NSWorkspace.shared.activateFileViewerSelecting([URL(fileURLWithPath: h.path)])
     }
 
-    func copyPath() {
+    // Copy the file itself: pastes as the file in Finder and as its path in text (like Spotlight)
+    @objc func copyPath() {
+        guard let h = selected else { return }
+        let pb = NSPasteboard.general
+        pb.clearContents()
+        pb.writeObjects([URL(fileURLWithPath: h.path) as NSURL])
+        pb.setString(h.path, forType: .string)
+        footer.stringValue = L("Copied: ") + h.name
+    }
+
+    @objc func copyPathText() {
         guard let h = selected else { return }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(h.path, forType: .string)
         footer.stringValue = L("Copied: ") + h.path
     }
 
-    func quickLook() {
+    @objc func quickLook() {
         guard let h = selected else { return }
         QLHelper.shared.toggle(URL(fileURLWithPath: h.path))
     }
@@ -689,6 +712,29 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     // MARK: Table
 
     func numberOfRows(in tableView: NSTableView) -> Int { hits.count }
+
+    func tableView(_ tableView: NSTableView, pasteboardWriterForRow row: Int) -> NSPasteboardWriting? {
+        URL(fileURLWithPath: hits[row].path) as NSURL
+    }
+
+    func menuNeedsUpdate(_ menu: NSMenu) {
+        menu.removeAllItems()
+        let r = table.clickedRow
+        guard r >= 0, r < hits.count else { return }
+        table.selectRowIndexes([r], byExtendingSelection: false)
+        for (title, sel, key, mods) in [
+            (L("Open"), #selector(openSelected), "\r", NSEvent.ModifierFlags()),
+            (L("Show in Finder"), #selector(revealSelected), "\r", NSEvent.ModifierFlags.command),
+            (L("Quick Look"), #selector(quickLook), "y", NSEvent.ModifierFlags.command),
+            (L("Copy"), #selector(copyPath), "c", NSEvent.ModifierFlags.command),
+            (L("Copy Path"), #selector(copyPathText), "c", NSEvent.ModifierFlags([.command, .option])),
+        ] as [(String, Selector, String, NSEvent.ModifierFlags)] {
+            let item = NSMenuItem(title: title, action: sel, keyEquivalent: key)
+            item.keyEquivalentModifierMask = mods
+            item.target = self
+            menu.addItem(item)
+        }
+    }
 
     func tableView(_ tableView: NSTableView, viewFor tableColumn: NSTableColumn?, row: Int) -> NSView? {
         let id = NSUserInterfaceItemIdentifier("cell")
@@ -807,6 +853,30 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     var sigterm: DispatchSourceSignal?
 
+    // Standard Edit menu: ⌘A ⌘C ⌘V ⌘X ⌘Z reach the search field through it (an app without a Dock icon
+    // has no menu by default)
+    func installEditMenu() {
+        let edit = NSMenu(title: "Edit")
+        for (title, sel, key, mods) in [
+            ("Undo", Selector(("undo:")), "z", NSEvent.ModifierFlags.command),
+            ("Redo", Selector(("redo:")), "z", NSEvent.ModifierFlags([.command, .shift])),
+            ("Cut", #selector(NSText.cut(_:)), "x", NSEvent.ModifierFlags.command),
+            ("Copy", #selector(NSText.copy(_:)), "c", NSEvent.ModifierFlags.command),
+            ("Paste", #selector(NSText.paste(_:)), "v", NSEvent.ModifierFlags.command),
+            ("Select All", #selector(NSText.selectAll(_:)), "a", NSEvent.ModifierFlags.command),
+        ] as [(String, Selector, String, NSEvent.ModifierFlags)] {
+            let item = NSMenuItem(title: title, action: sel, keyEquivalent: key)
+            item.keyEquivalentModifierMask = mods
+            edit.addItem(item)
+        }
+        let main = NSMenu()
+        let editItem = NSMenuItem()
+        editItem.submenu = edit
+        main.addItem(NSMenuItem())  // the app menu slot
+        main.addItem(editItem)
+        NSApp.mainMenu = main
+    }
+
     func applicationDidFinishLaunching(_ n: Notification) {
         // On kill / launchctl stop, shut the service down too
         signal(SIGTERM, SIG_IGN)
@@ -818,6 +888,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             return
         }
         startServer()
+        installEditMenu()
         controller = SearchController()
         hotkey = HotKey { [weak self] in self?.controller.toggle() }
         hotkey.register(shortcut)

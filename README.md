@@ -73,9 +73,10 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 | ↩ | Open the file or app |
 | ⌘ ↩ | Show it in Finder |
 | ⌘ Y | Quick Look preview |
-| ⌘ C | Copy the path |
+| ⌘ C | Copy the file (paste it in Finder, or as a path in text) |
+| ⌥ ⌘ C | Copy the path |
 | Tab | Show the other matches from the same folder |
-| Esc | Close |
+| Esc | Clear the search, press again to close |
 
 **Tips**
 

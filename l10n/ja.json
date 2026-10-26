@@ -44,5 +44,10 @@
  "Shortcut": "ショートカット",
  "Space": "スペース",
  "Settings": "設定",
- "Press {shortcut} anytime to search. Try it: describe a file": "{shortcut} でいつでも検索できます。試しにファイルを説明してみてください"
+ "Press {shortcut} anytime to search. Try it: describe a file": "{shortcut} でいつでも検索できます。試しにファイルを説明してみてください",
+ "Open": "開く",
+ "Show in Finder": "Finder で表示",
+ "Quick Look": "クイックルック",
+ "Copy": "コピー",
+ "Copy Path": "パスをコピー"
 }
