@@ -1,0 +1,5268 @@
+{
+ "summary": {
+  "tag": "eg2_x_B",
+  "model": "google/embeddinggemma-2",
+  "reranker": null,
+  "n": 276,
+  "hit1": 173,
+  "hit3": 233,
+  "panel_hit1": 188,
+  "panel_hit3": 255,
+  "mrr": 0.746,
+  "mean_ms": 22.1,
+  "median_ms": 22,
+  "index_s": 480.4,
+  "searcher_load_s": 0.0,
+  "index_peak_rss_mb": 233,
+  "search_peak_rss_mb": 54,
+  "index_db_mb": 4.28
+ },
+ "queries": [
+  {
+   "q": "how much rent do I pay now",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "content",
+   "rank": 23,
+   "panel_rank": 3,
+   "ms": 23,
+   "wall_ms": 23.6,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Finance/Bills/2025/2025-09 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-04 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-10 水電費繳費單.txt",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "rent at my old Xinyi flat",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 31,
+   "wall_ms": 31.6,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Home/Document (5).txt",
+    "Home/Lease_storage_unit.pdf",
+    "Home/Document (3).txt",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "storage unit access hours",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.8,
+   "reranked": false,
+   "top": [
+    "Home/Lease_storage_unit.pdf",
+    "Home/車位租約.docx",
+    "Photos/2025-01/IMG_9078.jpg",
+    "Photos/2025-01/IMG_9085.jpg",
+    "Photos/2025-02/IMG_9189.jpg"
+   ]
+  },
+  {
+   "q": "car insurance premium for 2026 to 2027",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "content",
+   "rank": 3,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.6,
+   "reranked": false,
+   "top": [
+    "Finance/budget_2026.md",
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0042.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Finance/scan_0017.pdf"
+   ]
+  },
+  {
+   "q": "what was the excess on my old car policy",
+   "expect": [
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.7,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0017.pdf",
+    "Finance/scan_0042.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Car/保養紀錄.md"
+   ]
+  },
+  {
+   "q": "washing machine motor warranty",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.0,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf",
+    "Car/scooter_maintenance.md",
+    "Finance/機車強制險.pdf"
+   ]
+  },
+  {
+   "q": "hospital cash benefit per day",
+   "expect": [
+    "Finance/health_insurance_summary.docx"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.3,
+   "reranked": false,
+   "top": [
+    "Finance/health_insurance_summary.docx",
+    "Finance/旅平險.pdf",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Finance/budget_2026.md"
+   ]
+  },
+  {
+   "q": "who owns the SSO migration",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.1,
+   "reranked": false,
+   "top": [
+    "Work/meeting_notes_0619.md",
+    "Work/meetings/meeting_notes_0327.md",
+    "Work/incident_2026-03-04.md",
+    "Work/meetings/meeting_notes_0130.md",
+    "Work/meetings/meeting_notes_0109.md"
+   ]
+  },
+  {
+   "q": "pricing page A/B test launch date",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.4,
+   "reranked": false,
+   "top": [
+    "Work/Pricing_review.pptx",
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "checkout latency goal",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.7,
+   "reranked": false,
+   "top": [
+    "Work/Q3_roadmap.md",
+    "Work/OKR_2026H1.md",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Notes/misc/42_清單_220.txt",
+    "Notes/misc/62_misc_137.md"
+   ]
+  },
+  {
+   "q": "what caused the login outage",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.4,
+   "reranked": false,
+   "top": [
+    "Work/incident_2026-03-04.md",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Work/meeting_notes_0619.md",
+    "Notes/journal/2026-02-17.md",
+    "Work/meeting_notes_0612.md"
+   ]
+  },
+  {
+   "q": "proposal to raise the Team plan price",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.4,
+   "reranked": false,
+   "top": [
+    "Work/Pricing_review.pptx",
+    "Work/headcount_plan.xlsx",
+    "Notes/misc/64_plan_249.txt",
+    "Notes/misc/58_plan_182.md",
+    "Health/workout_plan.md"
+   ]
+  },
+  {
+   "q": "how many backend engineers by end of 2026",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "content",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.3,
+   "reranked": false,
+   "top": [
+    "Work/OKR_2026H1.md",
+    "Work/headcount_plan.xlsx",
+    "Notes/books_2026.md",
+    "Work/Q1_roadmap.md",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ]
+  },
+  {
+   "q": "return flight time from Narita",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.9,
+   "reranked": false,
+   "top": [
+    "Travel/flight_confirmation (1).txt",
+    "Travel/flight_confirmation.txt",
+    "Travel/eticket_SIN.pdf",
+    "Travel/Kansai_2026.md",
+    "Travel/IMG_6012.png"
+   ]
+  },
+  {
+   "q": "hotel confirmation number for Kyoto",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.1,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/Kansai_2026.md"
+   ]
+  },
+  {
+   "q": "how long to steep cold brew",
+   "expect": [
+    "Recipes/cold_brew.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.8,
+   "reranked": false,
+   "top": [
+    "Recipes/cold_brew.md",
+    "Notes/journal/2026-04-19.md",
+    "Recipes/sourdough_starter.md",
+    "Recipes/sourdough_loaf.md",
+    "Recipes/beef_stew.md"
+   ]
+  },
+  {
+   "q": "oven temperature for sourdough bread",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.6,
+   "reranked": false,
+   "top": [
+    "Recipes/sourdough_loaf.md",
+    "Recipes/sourdough_starter.md",
+    "Recipes/banana_bread.md",
+    "Recipes/鳳梨酥.md",
+    "Recipes/pancakes.md"
+   ]
+  },
+  {
+   "q": "self-attention formula",
+   "expect": [
+    "Study/transformer_notes.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.5,
+   "reranked": false,
+   "top": [
+    "Study/transformer_notes.md",
+    "Study/cnn_notes.md",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/misc/28_草稿_142.txt"
+   ]
+  },
+  {
+   "q": "房租多少",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 3,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Home/Lease_storage_unit.pdf",
+    "Home/Document (3).txt",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/Document (5).txt"
+   ]
+  },
+  {
+   "q": "舊房子的押金退了沒",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 6,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.5,
+   "reranked": false,
+   "top": [
+    "Home/搬家清單.md",
+    "Notes/待辦.md",
+    "Finance/火險保單.txt",
+    "Home/Scan_20260211.pdf",
+    "Finance/IMG_5310.png"
+   ]
+  },
+  {
+   "q": "車險續約保費多少",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 4,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.3,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Finance/火險保單.txt",
+    "Home/車位租約.docx",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt"
+   ]
+  },
+  {
+   "q": "去成田的回程班機幾點",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 5,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.4,
+   "reranked": false,
+   "top": [
+    "Travel/eticket_SIN.pdf",
+    "Travel/新加坡筆記.md",
+    "Travel/IMG_6012.png",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt"
+   ]
+  },
+  {
+   "q": "新加坡機票訂位代號",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.3,
+   "reranked": false,
+   "top": [
+    "Travel/eticket_SIN.pdf",
+    "Travel/新加坡筆記.md",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/IMG_6012.png",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "京都飯店住幾晚",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.6,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/Kansai_2026.md",
+    "Finance/旅平險.pdf",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "酸種麵包要烤幾度",
+   "expect": [
+    "Recipes/sourdough_loaf.md"
+   ],
+   "tag": "zh→en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.9,
+   "reranked": false,
+   "top": [
+    "Recipes/鳳梨酥.md",
+    "Recipes/sourdough_loaf.md",
+    "Recipes/酸辣湯.md",
+    "Recipes/banana_bread.md",
+    "Recipes/蔥油餅.md"
+   ]
+  },
+  {
+   "q": "登入當機的原因",
+   "expect": [
+    "Work/incident_2026-03-04.md"
+   ],
+   "tag": "zh→en",
+   "rank": 11,
+   "panel_rank": 8,
+   "ms": 18,
+   "wall_ms": 18.1,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/除濕機使用說明.md",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "單一登入誰負責",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "zh→en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 16,
+   "wall_ms": 16.4,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Finance/Bills/telecom/電信帳單_202501.txt"
+   ]
+  },
+  {
+   "q": "洗衣機馬達保固幾年",
+   "expect": [
+    "Home/washing_machine_warranty.txt"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.2,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf",
+    "Car/保養紀錄.md",
+    "Finance/機車強制險.pdf"
+   ]
+  },
+  {
+   "q": "倉庫租金多少",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 16.0,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Home/Lease_storage_unit.pdf",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "紅酒燉牛肉要燉多久",
+   "expect": [
+    "Recipes/beef_stew.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.7,
+   "reranked": false,
+   "top": [
+    "Recipes/beef_stew.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/番茄牛腩.md",
+    "Recipes/滷肉飯.md"
+   ]
+  },
+  {
+   "q": "parking space monthly rent",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.1,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Home/Lease_storage_unit.pdf",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "beef noodle soup with chili bean paste",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.6,
+   "reranked": false,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/beef_stew.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/chicken_soup.md",
+    "Recipes/miso_soup.md"
+   ]
+  },
+  {
+   "q": "clear broth beef noodle soup",
+   "expect": [
+    "Recipes/清燉牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "top": [
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/chicken_soup.md",
+    "Recipes/beef_stew.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/miso_soup.md"
+   ]
+  },
+  {
+   "q": "how long is the air conditioner compressor covered",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.5,
+   "reranked": false,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Home/washing_machine_warranty.txt",
+    "Home/冰箱保固書.pdf",
+    "Photos/2025-02/IMG_9153.jpg",
+    "Car/scooter_maintenance.md"
+   ]
+  },
+  {
+   "q": "fridge compressor warranty",
+   "expect": [
+    "Home/冰箱保固書.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 29.0,
+   "reranked": false,
+   "top": [
+    "Home/washing_machine_warranty.txt",
+    "Home/冰箱保固書.pdf",
+    "Home/冷氣保固卡.txt",
+    "Home/Lease_storage_unit.pdf",
+    "Car/scooter_maintenance.md"
+   ]
+  },
+  {
+   "q": "electricity bill for August 2025",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 24.0,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-07 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-09 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-10 水電費繳費單.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt"
+   ]
+  },
+  {
+   "q": "utility bill March 2026",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.3,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-02 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-03 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-04 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "scooter compulsory insurance",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 16,
+   "wall_ms": 16.9,
+   "reranked": false,
+   "top": [
+    "Car/scooter_maintenance.md",
+    "Finance/機車強制險.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Finance/火險保單.txt",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "travel insurance for the Japan trip",
+   "expect": [
+    "Finance/旅平險.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 17,
+   "wall_ms": 17.1,
+   "reranked": false,
+   "top": [
+    "Finance/旅平險.pdf",
+    "Finance/health_insurance_summary.docx",
+    "Travel/packing_list.md",
+    "Travel/Kansai_2026.md",
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ]
+  },
+  {
+   "q": "cholesterol in my 2025 health check",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Health/健檢報告_2025.pdf",
+    "Health/健檢報告_2026.pdf",
+    "Finance/2025 報稅整理.xlsx",
+    "Finance/health_insurance_summary.docx",
+    "Health"
+   ]
+  },
+  {
+   "q": "year-end review what went wrong",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.9,
+   "reranked": false,
+   "top": [
+    "Work/年終檢討.docx",
+    "Study/ML_midterm_review.pdf",
+    "Work/Pricing_review.pptx",
+    "Work/meetings/meeting_notes_0130.md",
+    "Work/meetings/meeting_notes_0522.md"
+   ]
+  },
+  {
+   "q": "tax refund amount",
+   "expect": [
+    "Finance/2025 報稅整理.xlsx"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "top": [
+    "Finance/2025 報稅整理.xlsx",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/Scan_20260211.pdf",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "when do I need to renew my passport",
+   "expect": [
+    "Travel/護照換發.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Travel/護照換發.md",
+    "Notes/待辦.md",
+    "Notes/misc/30_untitled_248.md",
+    "Finance/scan_0042.pdf",
+    "Car/scooter_maintenance.md"
+   ]
+  },
+  {
+   "q": "mileage at the last car oil change",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.6,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Car/scooter_maintenance.md",
+    "Finance/scan_0042.pdf",
+    "Finance/scan_0017.pdf",
+    "Car"
+   ]
+  },
+  {
+   "q": "when is the next car inspection",
+   "expect": [
+    "Car/行照影本.pdf"
+   ],
+   "tag": "en→zh",
+   "rank": 3,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.7,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Car/scooter_maintenance.md",
+    "Car/行照影本.pdf",
+    "Car",
+    "Notes/journal/2026-04-13.md"
+   ]
+  },
+  {
+   "q": "壓縮機保固十年的是哪個",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.4,
+   "reranked": false,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Home/冰箱保固書.pdf",
+    "Home/washing_machine_warranty.txt",
+    "Finance/火險保單.txt",
+    "Car/保養紀錄.md"
+   ]
+  },
+  {
+   "q": "2025 年 8 月電費",
+   "expect": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.9,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2025/2025-08 水電費繳費單.txt",
+    "Finance/Bills/telecom/電信帳單_202508.txt",
+    "Finance/Bills/2025/2025-07 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-10 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-06 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "番茄燉牛肉",
+   "expect": [
+    "Recipes/番茄牛腩.md"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.2,
+   "reranked": false,
+   "top": [
+    "Recipes/番茄牛腩.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/beef_stew.md",
+    "Recipes/滷肉飯.md"
+   ]
+  },
+  {
+   "q": "汽車下次保養是什麼時候",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 19.0,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Car/行照影本.pdf",
+    "Home/冷氣保固卡.txt",
+    "Car/scooter_maintenance.md",
+    "Home/車位租約.docx"
+   ]
+  },
+  {
+   "q": "車位遙控器遺失要賠多少",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.7,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Finance/機車強制險.pdf",
+    "Home/冷氣保固卡.txt",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "NT$18,600",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.5,
+   "reranked": false,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Finance/IMG_5310.png",
+    "Finance/IMG_5203.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Notes/journal/2026-05-14.md"
+   ]
+  },
+  {
+   "q": "Q7XK2P",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 15.0,
+   "reranked": false,
+   "top": [
+    "Travel/flight_confirmation (1).txt",
+    "Work/Q2_roadmap.md",
+    "Work/Q1_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "ZT4M9L",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.6,
+   "reranked": false,
+   "top": [
+    "Travel/eticket_SIN.pdf",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-02/IMG_9125.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-04/IMG_9391.jpg"
+   ]
+  },
+  {
+   "q": "58210377",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.2,
+   "reranked": false,
+   "top": [
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Notes/misc/37_misc_297.txt",
+    "Notes/misc/62_misc_137.md",
+    "Notes/misc/21_草稿_137.md",
+    "Notes/misc/07_untitled_10.txt"
+   ]
+  },
+  {
+   "q": "Kestrel Logistics invoice",
+   "expect": [
+    "Work/invoices/INV-20260124.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.2,
+   "reranked": false,
+   "top": [
+    "Work/invoices/INV-20260124.pdf",
+    "Work/invoices/INV-20260166.pdf",
+    "Work/invoices/INV-20260103.pdf",
+    "Work/invoices/INV-20260138.pdf",
+    "Work/invoices/INV-20260110.pdf"
+   ]
+  },
+  {
+   "q": "B2-17",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.8,
+   "reranked": false,
+   "top": [
+    "Home/車位租約.docx",
+    "Notes/journal/2026-02-17.md",
+    "Notes/misc/17_notes_53.txt",
+    "Notes/misc/14_idea_171.md",
+    "Notes/misc/02_misc_174.md"
+   ]
+  },
+  {
+   "q": "MXV-2291",
+   "expect": [
+    "Finance/機車強制險.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.3,
+   "reranked": false,
+   "top": [
+    "Finance/機車強制險.pdf",
+    "Notes/misc/10_project_291.txt",
+    "Photos/2025-02/IMG_9125.jpg",
+    "Work/invoices/INV-20260131.pdf",
+    "Work/invoices/INV-20260124.pdf"
+   ]
+  },
+  {
+   "q": "1,718",
+   "expect": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.7,
+   "reranked": false,
+   "top": [
+    "Finance/Bills/2026/2026-03 水電費繳費單.txt",
+    "Photos/2025-02/IMG_9125.jpg",
+    "Notes/misc/14_idea_171.md",
+    "Notes/journal/2026-02-17.md",
+    "Photos/2025-01/IMG_9076.jpg"
+   ]
+  },
+  {
+   "q": "豆瓣醬",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/麻婆豆腐.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.4,
+   "reranked": false,
+   "top": [
+    "Recipes/麻婆豆腐.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/綠豆湯.md",
+    "Recipes/酸辣湯.md",
+    "Recipes/滷肉飯.md"
+   ]
+  },
+  {
+   "q": "房屋稅繳款期限",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.7,
+   "reranked": false,
+   "top": [
+    "Home/Scan_20260211.pdf",
+    "Finance/Bills/2025/2025-11 水電費繳費單.txt",
+    "Notes/待辦.md",
+    "Finance/Bills/2025/2025-12 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-10 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "房屋稅多少錢",
+   "expect": [
+    "Home/Scan_20260211.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.7,
+   "reranked": false,
+   "top": [
+    "Home/Scan_20260211.pdf",
+    "Finance/2025 報稅整理.xlsx",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Finance/Bills/2025/2025-12 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "停水通知",
+   "expect": [
+    "Home/IMG_4471.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.2,
+   "reranked": false,
+   "top": [
+    "Home/IMG_4471.png",
+    "Finance/Bills/2025/2025-04 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-04 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt",
+    "Finance/Bills/2025/2025-05 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "Costco receipt total",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 15,
+   "wall_ms": 15.5,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Finance/IMG_5203.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "好市多買了什麼",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "ocr",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 15,
+   "wall_ms": 15.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/42_清單_220.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/22_清單_168.txt",
+    "Finance/IMG_5203.png",
+    "Notes/misc/57_清單_116.md"
+   ]
+  },
+  {
+   "q": "高鐵車票 左營",
+   "expect": [
+    "Travel/IMG_6020.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.6,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6020.png",
+    "Travel/eticket_SIN.pdf",
+    "Travel/新加坡筆記.md",
+    "Finance/Bills/telecom/電信帳單_202501.txt",
+    "Finance/Bills/telecom/電信帳單_202507.txt"
+   ]
+  },
+  {
+   "q": "boarding pass to Hong Kong seat number",
+   "expect": [
+    "Travel/IMG_6012.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.2,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Travel/eticket_SIN.pdf",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Travel/IMG_6020.png"
+   ]
+  },
+  {
+   "q": "牙醫預約時間",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.5,
+   "reranked": false,
+   "top": [
+    "Health/IMG_7002.png",
+    "Notes/待辦.md",
+    "Home/車位租約.docx",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "2026 健檢膽固醇",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.7,
+   "reranked": false,
+   "top": [
+    "Health/健檢報告_2026.pdf",
+    "Health/健檢報告_2025.pdf",
+    "Finance/Statements/Statement_2026-06.pdf",
+    "Notes/journal/2026-01-10.md",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "502 bad gateway error screenshot",
+   "expect": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Photos/2025-01/IMG_9072.jpg"
+   ]
+  },
+  {
+   "q": "四月管理費繳費",
+   "expect": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.6,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Finance/Bills/2025/2025-04 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "6月房租轉帳紀錄",
+   "expect": [
+    "Finance/IMG_5310.png"
+   ],
+   "tag": "ocr",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.5,
+   "reranked": false,
+   "top": [
+    "Finance/IMG_5310.png",
+    "Finance/Bills/telecom/電信帳單_202506.txt",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Finance/Bills/2025/2025-06 水電費繳費單.txt",
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "car insurance pdf",
+   "expect": [
+    "Finance/scan_0042.pdf",
+    "Finance/scan_0017.pdf"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.1,
+   "reranked": false,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Finance/機車強制險.pdf",
+    "Finance/scan_0017.pdf",
+    "Finance/旅平險.pdf",
+    "Car/行照影本.pdf"
+   ]
+  },
+  {
+   "q": "pricing slides",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 15.0,
+   "reranked": false,
+   "top": [
+    "Work/Pricing_review.pptx",
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Work/invoices/INV-20260131.pdf",
+    "Home/Lease_storage_unit.pdf"
+   ]
+  },
+  {
+   "q": "headcount spreadsheet",
+   "expect": [
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.4,
+   "reranked": false,
+   "top": [
+    "Work/headcount_plan.xlsx",
+    "Finance/2025 報稅整理.xlsx",
+    "Work/OKR_2026H1.md",
+    "Study/sql_cheatsheet.md",
+    "Work/meetings/meeting_notes_0227.md"
+   ]
+  },
+  {
+   "q": "Kansai",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.7,
+   "reranked": false,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Notes/misc/03_草稿_289.md",
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Notes/journal/2026-02-11.md",
+    "Photos/2025-05/IMG_9493.jpg"
+   ]
+  },
+  {
+   "q": "鳳梨酥",
+   "expect": [
+    "Recipes/鳳梨酥.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.2,
+   "reranked": false,
+   "top": [
+    "Recipes/鳳梨酥.md",
+    "Recipes/蔥油餅.md",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Recipes/煎餃.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "草地上停著很多車，近處兩輛一輛是寶藍色，一輛是白車紅邊，旁邊坐一桌人，遠處有房子",
+   "expect": [
+    "Photos/2025-01/IMG_9001.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 25,
+   "wall_ms": 25.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9001.jpg",
+    "Car/保養紀錄.md",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/04_清單_274.txt",
+    "Photos/2025-03/IMG_9275.jpg"
+   ]
+  },
+  {
+   "q": "A blue classic sports car in rows of cars at a car show",
+   "expect": [
+    "Photos/2025-01/IMG_9001.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 19,
+   "wall_ms": 19.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-05/IMG_9448.jpg",
+    "Photos/2025-01/IMG_9001.jpg",
+    "Car",
+    "Photos/2025-04/IMG_9395.jpg",
+    "Photos/2025-02/IMG_9171.jpg"
+   ]
+  },
+  {
+   "q": "從高處可以看到不同高低的大樓",
+   "expect": [
+    "Photos/2025-01/IMG_9002.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 6,
+   "panel_rank": 5,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-02/IMG_9168.jpg",
+    "Photos/2025-02/IMG_9144.jpg",
+    "Photos/2025-03/IMG_9268.jpg",
+    "Photos/2025-05/IMG_9478.jpg",
+    "Notes/misc/09_清單_148.txt"
+   ]
+  },
+  {
+   "q": "The city beside the river surrounded by buildings under the sky",
+   "expect": [
+    "Photos/2025-01/IMG_9002.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9002.jpg",
+    "Photos/2025-05/IMG_9478.jpg",
+    "Photos/2025-02/IMG_9183.jpg",
+    "Photos/2025-04/IMG_9322.jpg",
+    "Photos/2025-01/IMG_9079.jpg"
+   ]
+  },
+  {
+   "q": "大學生們各自拿自己的電腦做作業",
+   "expect": [
+    "Photos/2025-01/IMG_9003.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 15,
+   "panel_rank": 3,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Notes/misc/61_清單_217.md",
+    "Notes/misc/67_misc_23.txt",
+    "Notes/misc/42_清單_220.txt",
+    "Notes/misc/63_idea_118.txt",
+    "Notes/misc/26_想法_123.txt"
+   ]
+  },
+  {
+   "q": "A group of people working together in a closed room",
+   "expect": [
+    "Photos/2025-01/IMG_9003.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9003.jpg",
+    "Photos/2025-01/IMG_9016.jpg",
+    "Photos/2025-01/IMG_9058.jpg",
+    "Photos/2025-01/IMG_9008.jpg",
+    "Notes/misc/63_idea_118.txt"
+   ]
+  },
+  {
+   "q": "在房間角落裡擺著一個很大盒子裝著的手辦",
+   "expect": [
+    "Photos/2025-01/IMG_9004.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 48,
+   "panel_rank": null,
+   "ms": 25,
+   "wall_ms": 25.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/54_misc_262.md",
+    "Notes/misc/44_idea_91.md",
+    "Notes/journal/2026-05-14.md"
+   ]
+  },
+  {
+   "q": "A pinbot pinball machine beside a printer in a room",
+   "expect": [
+    "Photos/2025-01/IMG_9004.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9004.jpg",
+    "Notes/wifi_and_devices.md",
+    "Home/washing_machine_warranty.txt",
+    "Photos/2025-03/IMG_9240.jpg",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ]
+  },
+  {
+   "q": "屋前的紅色亭子和銅鈴",
+   "expect": [
+    "Photos/2025-01/IMG_9005.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9005.jpg",
+    "Notes/journal/2026-05-14.md",
+    "Notes/待辦.md",
+    "Photos/2025-01/IMG_9081.jpg",
+    "Photos/2025-03/IMG_9213.jpg"
+   ]
+  },
+  {
+   "q": "A large bell on a platform under a gazebo",
+   "expect": [
+    "Photos/2025-01/IMG_9005.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9005.jpg",
+    "Photos/2025-02/IMG_9179.jpg",
+    "Photos/2025-04/IMG_9345.jpg",
+    "Photos/2025-04/IMG_9308.jpg",
+    "Notes/journal/2026-05-14.md"
+   ]
+  },
+  {
+   "q": "太陽落山時候典型的清真式建築群特寫，路上有一些行人",
+   "expect": [
+    "Photos/2025-01/IMG_9006.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9006.jpg",
+    "Notes/misc/04_清單_274.txt",
+    "Photos/2025-04/IMG_9365.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Photos/2025-05/IMG_9453.jpg"
+   ]
+  },
+  {
+   "q": "An ancient building at sunset",
+   "expect": [
+    "Photos/2025-01/IMG_9006.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 7,
+   "panel_rank": 5,
+   "ms": 16,
+   "wall_ms": 16.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9205.jpg",
+    "Photos/2025-05/IMG_9445.jpg",
+    "Photos/2025-04/IMG_9356.jpg",
+    "Photos/2025-05/IMG_9453.jpg",
+    "Photos/2025-02/IMG_9110.jpg"
+   ]
+  },
+  {
+   "q": "藍天白雲下仰望聳入雲宵的參天大樹，樹葉正好擋住太陽",
+   "expect": [
+    "Photos/2025-01/IMG_9007.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9007.jpg",
+    "Photos/2025-05/IMG_9405.jpg",
+    "Photos/2025-02/IMG_9132.jpg",
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/05_清單_154.txt"
+   ]
+  },
+  {
+   "q": "A tree with cloudy sky",
+   "expect": [
+    "Photos/2025-01/IMG_9007.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9007.jpg",
+    "Photos/2025-05/IMG_9405.jpg",
+    "Photos/2025-05/IMG_9462.jpg",
+    "Photos/2025-03/IMG_9282.jpg",
+    "Photos/2025-02/IMG_9132.jpg"
+   ]
+  },
+  {
+   "q": "室內幾位男士座在木椅上，兩位男士站著，大家都在一間白色牆面掛著空調的房間等待",
+   "expect": [
+    "Photos/2025-01/IMG_9008.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 25.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9008.jpg",
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/09_清單_148.txt",
+    "Notes/misc/04_清單_274.txt",
+    "Photos/2025-01/IMG_9058.jpg"
+   ]
+  },
+  {
+   "q": "A group of people in a closed room",
+   "expect": [
+    "Photos/2025-01/IMG_9008.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9008.jpg",
+    "Photos/2025-01/IMG_9058.jpg",
+    "Photos/2025-05/IMG_9414.jpg",
+    "Photos/2025-05/IMG_9413.jpg",
+    "Photos/2025-01/IMG_9078.jpg"
+   ]
+  },
+  {
+   "q": "一串烤香腸放在木桌上",
+   "expect": [
+    "Photos/2025-01/IMG_9009.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9009.jpg",
+    "Notes/misc/04_清單_274.txt",
+    "Photos/2025-04/IMG_9331.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/48_清單_143.txt"
+   ]
+  },
+  {
+   "q": "The grilled sausages beside cups placed on the wooden board",
+   "expect": [
+    "Photos/2025-01/IMG_9009.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9009.jpg",
+    "Photos/2025-04/IMG_9331.jpg",
+    "Recipes/三杯雞.md",
+    "Photos/2025-04/IMG_9376.jpg",
+    "Photos/2025-01/IMG_9075.jpg"
+   ]
+  },
+  {
+   "q": "白盤子裡的煎肉、湯汁、米飯、西紅柿、黃瓜",
+   "expect": [
+    "Photos/2025-01/IMG_9010.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 20,
+   "wall_ms": 20.4,
+   "reranked": false,
+   "top": [
+    "Recipes/滷肉飯.md",
+    "Recipes/番茄牛腩.md",
+    "Recipes/煎餃.md",
+    "Photos/2025-01/IMG_9010.jpg",
+    "Recipes/清燉牛肉麵.md"
+   ]
+  },
+  {
+   "q": "The food item in a white plate",
+   "expect": [
+    "Photos/2025-01/IMG_9010.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 17,
+   "wall_ms": 17.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9265.jpg",
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Photos/2025-01/IMG_9010.jpg",
+    "Photos/2025-02/IMG_9165.jpg"
+   ]
+  },
+  {
+   "q": "藍天之下的廣場上，兩個軍人正在守衛巨大的多人石雕紀念碑，後方是城市建築物",
+   "expect": [
+    "Photos/2025-01/IMG_9011.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 25,
+   "wall_ms": 26.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9011.jpg",
+    "Photos/2025-05/IMG_9459.jpg",
+    "Photos/2025-04/IMG_9370.jpg",
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-02/IMG_9173.jpg"
+   ]
+  },
+  {
+   "q": "The monument on the street surrounded by buildings under the sky",
+   "expect": [
+    "Photos/2025-01/IMG_9011.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9011.jpg",
+    "Photos/2025-05/IMG_9459.jpg",
+    "Photos/2025-05/IMG_9485.jpg",
+    "Photos/2025-04/IMG_9305.jpg",
+    "Photos/2025-02/IMG_9169.jpg"
+   ]
+  },
+  {
+   "q": "以星空為背景的一群人",
+   "expect": [
+    "Photos/2025-01/IMG_9012.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-01/IMG_9012.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Travel/新加坡筆記.md",
+    "Notes/misc/21_草稿_137.md"
+   ]
+  },
+  {
+   "q": "A glitter vintage light background, defocused",
+   "expect": [
+    "Photos/2025-01/IMG_9012.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 16,
+   "wall_ms": 16.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9083.jpg",
+    "Photos/2025-05/IMG_9465.jpg",
+    "Photos/2025-02/IMG_9132.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-04/IMG_9364.jpg"
+   ]
+  },
+  {
+   "q": "四位老人在爬山",
+   "expect": [
+    "Photos/2025-01/IMG_9013.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 16,
+   "wall_ms": 16.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/04_清單_274.txt",
+    "Photos/2025-01/IMG_9013.jpg",
+    "Photos/2025-04/IMG_9320.jpg"
+   ]
+  },
+  {
+   "q": "A group of people hiking in the forest",
+   "expect": [
+    "Photos/2025-01/IMG_9013.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9013.jpg",
+    "Photos/2025-02/IMG_9137.jpg",
+    "Photos/2025-02/IMG_9161.jpg",
+    "Photos/2025-02/IMG_9192.jpg",
+    "Photos/2025-04/IMG_9367.jpg"
+   ]
+  },
+  {
+   "q": "開花了的扇形仙人常",
+   "expect": [
+    "Photos/2025-01/IMG_9014.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 20,
+   "wall_ms": 20.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9261.jpg",
+    "Recipes/煎餃.md",
+    "Photos/2025-01/IMG_9014.jpg",
+    "Photos/2025-04/IMG_9306.jpg",
+    "Photos/2025-01/IMG_9041.jpg"
+   ]
+  },
+  {
+   "q": "A yellow flower on a prickly pear cactus",
+   "expect": [
+    "Photos/2025-01/IMG_9014.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9014.jpg",
+    "Photos/2025-05/IMG_9432.jpg",
+    "Photos/2025-05/IMG_9499.jpg",
+    "Photos/2025-03/IMG_9260.jpg",
+    "Photos/2025-03/IMG_9213.jpg"
+   ]
+  },
+  {
+   "q": "綠樹邊的街道上一輛紅色的公共汽車特寫",
+   "expect": [
+    "Photos/2025-01/IMG_9015.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.3,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Photos/2025-01/IMG_9015.jpg",
+    "Photos/2025-04/IMG_9389.jpg",
+    "Car/保養紀錄.md",
+    "Photos/2025-01/IMG_9091.jpg"
+   ]
+  },
+  {
+   "q": "A bus on the street",
+   "expect": [
+    "Photos/2025-01/IMG_9015.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9015.jpg",
+    "Photos/2025-01/IMG_9091.jpg",
+    "Photos/2025-04/IMG_9389.jpg",
+    "Photos/2025-02/IMG_9171.jpg",
+    "Photos/2025-05/IMG_9438.jpg"
+   ]
+  },
+  {
+   "q": "桌子上有一排排手寫便籤，還有幾臺膝上型電腦，幾個人在用筆記本敲字",
+   "expect": [
+    "Photos/2025-01/IMG_9016.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 6,
+   "panel_rank": 2,
+   "ms": 25,
+   "wall_ms": 25.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/61_清單_217.md",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/17_notes_53.txt",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "A group of people working together on laptops",
+   "expect": [
+    "Photos/2025-01/IMG_9016.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 22.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9003.jpg",
+    "Photos/2025-01/IMG_9016.jpg",
+    "Work/meetings/meeting_notes_0313.md",
+    "Work/meetings/meeting_notes_0130.md",
+    "Work/meetings/meeting_notes_0306.md"
+   ]
+  },
+  {
+   "q": "激流的河上有人在體驗泛舟",
+   "expect": [
+    "Photos/2025-01/IMG_9017.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 22.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9017.jpg",
+    "Notes/journal/2026-01-10.md",
+    "Photos/2025-04/IMG_9318.jpg",
+    "Photos/2025-03/IMG_9298.jpg",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "A group of people rafting on the river",
+   "expect": [
+    "Photos/2025-01/IMG_9017.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9017.jpg",
+    "Photos/2025-04/IMG_9318.jpg",
+    "Photos/2025-03/IMG_9298.jpg",
+    "Photos/2025-04/IMG_9387.jpg",
+    "Photos/2025-05/IMG_9468.jpg"
+   ]
+  },
+  {
+   "q": "藍天下的枯樹，圓柱形建築物舊水塔，旁邊有居民區和鐵柵欄的全景",
+   "expect": [
+    "Photos/2025-01/IMG_9018.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9018.jpg",
+    "Photos/2025-03/IMG_9222.jpg",
+    "Photos/2025-03/IMG_9270.jpg",
+    "Photos/2025-04/IMG_9347.jpg",
+    "Photos/2025-04/IMG_9322.jpg"
+   ]
+  },
+  {
+   "q": "An old water tower",
+   "expect": [
+    "Photos/2025-01/IMG_9018.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9018.jpg",
+    "Photos/2025-03/IMG_9222.jpg",
+    "Photos/2025-03/IMG_9270.jpg",
+    "Photos/2025-04/IMG_9378.jpg",
+    "Photos/2025-05/IMG_9432.jpg"
+   ]
+  },
+  {
+   "q": "黑暗下灰色的牆上一個木製十字架和人偶特寫",
+   "expect": [
+    "Photos/2025-01/IMG_9019.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9019.jpg",
+    "Photos/2025-05/IMG_9476.jpg",
+    "Photos/2025-01/IMG_9087.jpg",
+    "Notes/misc/57_清單_116.md",
+    "Photos/2025-01/IMG_9057.jpg"
+   ]
+  },
+  {
+   "q": "A crucifix in a dark light",
+   "expect": [
+    "Photos/2025-01/IMG_9019.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 16,
+   "wall_ms": 16.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9019.jpg",
+    "Photos/2025-05/IMG_9476.jpg",
+    "Photos/2025-04/IMG_9374.jpg",
+    "Travel/flight_confirmation.txt",
+    "Travel/flight_confirmation (1).txt"
+   ]
+  },
+  {
+   "q": "盤裡的炸肉球中有辣椒醬",
+   "expect": [
+    "Photos/2025-01/IMG_9020.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 22,
+   "wall_ms": 22.4,
+   "reranked": false,
+   "top": [
+    "Recipes/滷肉飯.md",
+    "Recipes/三杯雞.md",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Recipes/煎餃.md",
+    "Recipes/麻婆豆腐.md"
+   ]
+  },
+  {
+   "q": "A food item and sauce on white plate",
+   "expect": [
+    "Photos/2025-01/IMG_9020.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 22,
+   "wall_ms": 22.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-02/IMG_9165.jpg",
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Photos/2025-01/IMG_9010.jpg",
+    "Photos/2025-05/IMG_9408.jpg"
+   ]
+  },
+  {
+   "q": "帶著墨鏡的女生拿著麥克風唱歌",
+   "expect": [
+    "Photos/2025-01/IMG_9021.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.8,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Photos/2025-01/IMG_9021.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "A young lady announcing at an event a laptop in front her",
+   "expect": [
+    "Photos/2025-01/IMG_9021.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9021.jpg",
+    "Photos/2025-05/IMG_9493.jpg",
+    "Photos/2025-02/IMG_9162.jpg",
+    "Work/meeting_notes_0612.md",
+    "Work/meeting_notes_0619.md"
+   ]
+  },
+  {
+   "q": "一群人站在公園裡木板鋪的路上",
+   "expect": [
+    "Photos/2025-01/IMG_9022.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9022.jpg",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/61_清單_217.md"
+   ]
+  },
+  {
+   "q": "People walking on a wooden walkway among trees in a park",
+   "expect": [
+    "Photos/2025-01/IMG_9022.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9022.jpg",
+    "Photos/2025-02/IMG_9137.jpg",
+    "Photos/2025-04/IMG_9308.jpg",
+    "Photos/2025-02/IMG_9157.jpg",
+    "Photos/2025-04/IMG_9318.jpg"
+   ]
+  },
+  {
+   "q": "同一深色色調及同一系列的小說被放置在透明櫥窗",
+   "expect": [
+    "Photos/2025-01/IMG_9023.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 23.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/09_清單_148.txt",
+    "Photos/2025-01/IMG_9023.jpg",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/54_misc_262.md"
+   ]
+  },
+  {
+   "q": "Books in display",
+   "expect": [
+    "Photos/2025-01/IMG_9023.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 5,
+   "panel_rank": 4,
+   "ms": 18,
+   "wall_ms": 18.5,
+   "reranked": false,
+   "top": [
+    "Notes/books_2026.md",
+    "Notes/misc/01_untitled_183.txt",
+    "Notes/misc/17_notes_53.txt",
+    "Photos/2025-05/IMG_9470.jpg",
+    "Photos/2025-01/IMG_9023.jpg"
+   ]
+  },
+  {
+   "q": "一個軍人穿防彈背心微笑著站著",
+   "expect": [
+    "Photos/2025-01/IMG_9024.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/57_清單_116.md",
+    "Photos/2025-01/IMG_9024.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/61_清單_217.md",
+    "Notes/misc/42_清單_220.txt"
+   ]
+  },
+  {
+   "q": "Soldier in military uniform with weapons beside a white car",
+   "expect": [
+    "Photos/2025-01/IMG_9024.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9024.jpg",
+    "Car",
+    "Photos/2025-02/IMG_9159.jpg",
+    "Photos/2025-04/IMG_9362.jpg",
+    "Photos/2025-02/IMG_9150.jpg"
+   ]
+  },
+  {
+   "q": "穿著藍色衣服的女孩抱著玩偶微笑著望向鏡頭",
+   "expect": [
+    "Photos/2025-01/IMG_9025.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 30,
+   "wall_ms": 31.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9025.jpg",
+    "Photos/2025-02/IMG_9159.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-01/IMG_9050.jpg",
+    "Photos/2025-01/IMG_9036.jpg"
+   ]
+  },
+  {
+   "q": "A girl posing with teddy toy",
+   "expect": [
+    "Photos/2025-01/IMG_9025.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9025.jpg",
+    "Photos/2025-02/IMG_9138.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-02/IMG_9174.jpg",
+    "Photos/2025-04/IMG_9316.jpg"
+   ]
+  },
+  {
+   "q": "山嶽之間有平坦的草地，遠處樹雲霧繚繞的山脈",
+   "expect": [
+    "Photos/2025-01/IMG_9026.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9026.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-03/IMG_9239.jpg",
+    "Photos/2025-02/IMG_9118.jpg",
+    "Photos/2025-05/IMG_9420.jpg"
+   ]
+  },
+  {
+   "q": "A landscape of ponds and mountains",
+   "expect": [
+    "Photos/2025-01/IMG_9026.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9026.jpg",
+    "Photos/2025-03/IMG_9239.jpg",
+    "Photos/2025-03/IMG_9213.jpg",
+    "Photos/2025-02/IMG_9131.jpg",
+    "Photos/2025-04/IMG_9322.jpg"
+   ]
+  },
+  {
+   "q": "老式遊戲機",
+   "expect": [
+    "Photos/2025-01/IMG_9027.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9027.jpg",
+    "Photos/2025-03/IMG_9263.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Photos/2025-03/IMG_9231.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "A computer monitor with keyboard,mouse and joystick",
+   "expect": [
+    "Photos/2025-01/IMG_9027.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 25,
+   "wall_ms": 26.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9027.jpg",
+    "Photos/2025-02/IMG_9136.jpg",
+    "Photos/2025-05/IMG_9473.jpg",
+    "Photos/2025-03/IMG_9236.jpg",
+    "Photos/2025-01/IMG_9004.jpg"
+   ]
+  },
+  {
+   "q": "三個獎盃",
+   "expect": [
+    "Photos/2025-01/IMG_9028.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 7,
+   "panel_rank": 4,
+   "ms": 23,
+   "wall_ms": 23.7,
+   "reranked": false,
+   "top": [
+    "Recipes/三杯雞.md",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "Three awards for a restaurant in three different years",
+   "expect": [
+    "Photos/2025-01/IMG_9028.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 37,
+   "wall_ms": 37.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9028.jpg",
+    "Photos/2025-03/IMG_9233.jpg",
+    "Photos/2025-02/IMG_9182.jpg",
+    "Photos/2025-03/IMG_9228.jpg",
+    "Recipes/三杯雞.md"
+   ]
+  },
+  {
+   "q": "米飯炸物裡有一把鋼勺",
+   "expect": [
+    "Photos/2025-01/IMG_9029.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 25,
+   "wall_ms": 25.2,
+   "reranked": false,
+   "top": [
+    "Recipes/滷肉飯.md",
+    "Notes/misc/57_清單_116.md",
+    "Photos/2025-01/IMG_9029.jpg",
+    "Recipes/蔥油餅.md",
+    "Photos/2025-03/IMG_9295.jpg"
+   ]
+  },
+  {
+   "q": "A delicious food item",
+   "expect": [
+    "Photos/2025-01/IMG_9029.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 18,
+   "wall_ms": 18.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9265.jpg",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Photos/2025-01/IMG_9029.jpg",
+    "Photos/2025-02/IMG_9139.jpg",
+    "Recipes/鳳梨酥.md"
+   ]
+  },
+  {
+   "q": "三位選手在玩袋棍球",
+   "expect": [
+    "Photos/2025-01/IMG_9030.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9030.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Recipes/三杯雞.md",
+    "Photos/2025-04/IMG_9358.jpg",
+    "Photos/2025-01/IMG_9055.jpg"
+   ]
+  },
+  {
+   "q": "Three people playing lacrosse",
+   "expect": [
+    "Photos/2025-01/IMG_9030.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9030.jpg",
+    "Photos/2025-04/IMG_9358.jpg",
+    "Photos/2025-04/IMG_9390.jpg",
+    "Home/Document (3).txt",
+    "Photos/2025-02/IMG_9161.jpg"
+   ]
+  },
+  {
+   "q": "玻璃窗裡擺著一件黑裙套在人形衣架上",
+   "expect": [
+    "Photos/2025-01/IMG_9031.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 23.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/09_清單_148.txt",
+    "Photos/2025-01/IMG_9031.jpg",
+    "Notes/misc/28_草稿_142.txt",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "A gray, white and black dress on a mannequin",
+   "expect": [
+    "Photos/2025-01/IMG_9031.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 25.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9031.jpg",
+    "Photos/2025-05/IMG_9446.jpg",
+    "Photos/2025-01/IMG_9083.jpg",
+    "Photos/2025-01/IMG_9076.jpg",
+    "Photos/2025-05/IMG_9451.jpg"
+   ]
+  },
+  {
+   "q": "石牆邊搭建的簡易帳篷外",
+   "expect": [
+    "Photos/2025-01/IMG_9032.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-01/IMG_9032.jpg",
+    "Notes/misc/54_misc_262.md",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Photos/2025-04/IMG_9331.jpg"
+   ]
+  },
+  {
+   "q": "A man on the wall beside a tent hut",
+   "expect": [
+    "Photos/2025-01/IMG_9032.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9224.jpg",
+    "Photos/2025-01/IMG_9032.jpg",
+    "Photos/2025-02/IMG_9115.jpg",
+    "Photos/2025-03/IMG_9232.jpg",
+    "Photos/2025-03/IMG_9280.jpg"
+   ]
+  },
+  {
+   "q": "珀利斯提酒店",
+   "expect": [
+    "Photos/2025-01/IMG_9033.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 19.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9033.jpg",
+    "Travel/Hotel_Tokyo_booking.pdf",
+    "Travel/Hotel_Kyoto_booking.pdf",
+    "Photos/2025-03/IMG_9287.jpg",
+    "Photos/2025-04/IMG_9394.jpg"
+   ]
+  },
+  {
+   "q": "An old town of split",
+   "expect": [
+    "Photos/2025-01/IMG_9033.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9033.jpg",
+    "Photos/2025-03/IMG_9269.jpg",
+    "Photos/2025-04/IMG_9343.jpg",
+    "Photos/2025-04/IMG_9394.jpg",
+    "Photos/2025-01/IMG_9034.jpg"
+   ]
+  },
+  {
+   "q": "義大利風格的舊建築物，位於街邊有綠植",
+   "expect": [
+    "Photos/2025-01/IMG_9034.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.4,
+   "reranked": false,
+   "top": [
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Photos/2025-01/IMG_9034.jpg",
+    "Photos/2025-05/IMG_9451.jpg"
+   ]
+  },
+  {
+   "q": "The buildings surrounded by trees under the sky",
+   "expect": [
+    "Photos/2025-01/IMG_9034.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 6,
+   "panel_rank": 2,
+   "ms": 25,
+   "wall_ms": 25.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-05/IMG_9489.jpg",
+    "Photos/2025-05/IMG_9405.jpg",
+    "Photos/2025-05/IMG_9453.jpg",
+    "Photos/2025-05/IMG_9418.jpg",
+    "Photos/2025-05/IMG_9462.jpg"
+   ]
+  },
+  {
+   "q": "空地上擺著很多不同的塑膠袋裝著的商品，一位戴著帽子的老奶奶坐在中間眼睛看向遠方",
+   "expect": [
+    "Photos/2025-01/IMG_9035.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 30,
+   "wall_ms": 30.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/48_清單_143.txt",
+    "Photos/2025-01/IMG_9035.jpg",
+    "Notes/misc/42_清單_220.txt",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Notes/misc/22_清單_168.txt"
+   ]
+  },
+  {
+   "q": "The senior woman with straw hat in the market",
+   "expect": [
+    "Photos/2025-01/IMG_9035.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9035.jpg",
+    "Photos/2025-03/IMG_9230.jpg",
+    "Photos/2025-02/IMG_9194.jpg",
+    "Photos/2025-01/IMG_9081.jpg",
+    "Photos/2025-02/IMG_9173.jpg"
+   ]
+  },
+  {
+   "q": "用韓語寫的筆記本",
+   "expect": [
+    "Photos/2025-01/IMG_9036.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 28,
+   "wall_ms": 28.5,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Notes/misc/57_清單_116.md",
+    "Study/線性代數筆記.md"
+   ]
+  },
+  {
+   "q": "The written information in spiral book",
+   "expect": [
+    "Photos/2025-01/IMG_9036.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9036.jpg",
+    "Notes/misc/07_untitled_10.txt",
+    "Notes/books_2026.md",
+    "Notes/misc/08_notes_174.txt",
+    "Notes/misc/04_清單_274.txt"
+   ]
+  },
+  {
+   "q": "一塊紅白色轉向標識的特寫，最上面是感嘆號，中間是字母標識，最下面是右轉標誌",
+   "expect": [
+    "Photos/2025-01/IMG_9037.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 30.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9037.jpg",
+    "Travel/IMG_6020.png",
+    "Photos/2025-01/IMG_9076.jpg",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Photos/2025-01/IMG_9036.jpg"
+   ]
+  },
+  {
+   "q": "Red and white road signs",
+   "expect": [
+    "Photos/2025-01/IMG_9037.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9037.jpg",
+    "Photos/2025-03/IMG_9220.jpg",
+    "Photos/2025-02/IMG_9131.jpg",
+    "Photos/2025-02/IMG_9188.jpg",
+    "Photos/2025-01/IMG_9059.jpg"
+   ]
+  },
+  {
+   "q": "挖了兩口的香草味的冰淇淋",
+   "expect": [
+    "Photos/2025-01/IMG_9038.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 18,
+   "panel_rank": 6,
+   "ms": 26,
+   "wall_ms": 26.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/22_清單_168.txt",
+    "Photos/2025-05/IMG_9439.jpg",
+    "Notes/misc/05_清單_154.txt"
+   ]
+  },
+  {
+   "q": "The dessert in the white plate with spoon",
+   "expect": [
+    "Photos/2025-01/IMG_9038.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9038.jpg",
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9098.jpg",
+    "Photos/2025-03/IMG_9295.jpg",
+    "Photos/2025-01/IMG_9051.jpg"
+   ]
+  },
+  {
+   "q": "在樹上坐著的松鼠",
+   "expect": [
+    "Photos/2025-01/IMG_9039.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9039.jpg",
+    "Photos/2025-05/IMG_9484.jpg",
+    "Notes/misc/09_清單_148.txt",
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-02/IMG_9102.jpg"
+   ]
+  },
+  {
+   "q": "A portrait view of the squirrel on a tree",
+   "expect": [
+    "Photos/2025-01/IMG_9039.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9039.jpg",
+    "Photos/2025-05/IMG_9484.jpg",
+    "Photos/2025-04/IMG_9341.jpg",
+    "Photos/2025-02/IMG_9102.jpg",
+    "Photos/2025-03/IMG_9241.jpg"
+   ]
+  },
+  {
+   "q": "有梅花圖案的盤子上放著一柄勺子，勺子內裝有一個丸子的特寫",
+   "expect": [
+    "Photos/2025-01/IMG_9040.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 30,
+   "wall_ms": 30.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-02/IMG_9142.jpg",
+    "Photos/2025-01/IMG_9051.jpg",
+    "Photos/2025-01/IMG_9075.jpg"
+   ]
+  },
+  {
+   "q": "The food item in the plate",
+   "expect": [
+    "Photos/2025-01/IMG_9040.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Photos/2025-03/IMG_9265.jpg",
+    "Photos/2025-01/IMG_9088.jpg",
+    "Photos/2025-05/IMG_9408.jpg"
+   ]
+  },
+  {
+   "q": "兩朵藍紫色花的特寫，背景是模糊的綠葉",
+   "expect": [
+    "Photos/2025-01/IMG_9041.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9041.jpg",
+    "Photos/2025-05/IMG_9440.jpg",
+    "Photos/2025-01/IMG_9086.jpg",
+    "Photos/2025-04/IMG_9361.jpg",
+    "Photos/2025-02/IMG_9198.jpg"
+   ]
+  },
+  {
+   "q": "Blue flowers on the blur background",
+   "expect": [
+    "Photos/2025-01/IMG_9041.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9041.jpg",
+    "Photos/2025-05/IMG_9440.jpg",
+    "Photos/2025-03/IMG_9261.jpg",
+    "Photos/2025-03/IMG_9257.jpg",
+    "Photos/2025-03/IMG_9274.jpg"
+   ]
+  },
+  {
+   "q": "兩個男子站立在中間，而四個人在場邊盤腳觀看",
+   "expect": [
+    "Photos/2025-01/IMG_9042.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 26,
+   "wall_ms": 26.8,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/misc/05_清單_154.txt",
+    "Photos/2025-01/IMG_9042.jpg",
+    "Notes/journal/2026-05-14.md",
+    "Notes/misc/57_清單_116.md"
+   ]
+  },
+  {
+   "q": "People practicing martial arts in a seminar",
+   "expect": [
+    "Photos/2025-01/IMG_9042.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 28,
+   "wall_ms": 28.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9225.jpg",
+    "Photos/2025-01/IMG_9042.jpg",
+    "Photos/2025-05/IMG_9414.jpg",
+    "Photos/2025-01/IMG_9003.jpg",
+    "Photos/2025-05/IMG_9493.jpg"
+   ]
+  },
+  {
+   "q": "書架上有許多書",
+   "expect": [
+    "Photos/2025-01/IMG_9043.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 19,
+   "panel_rank": 2,
+   "ms": 29,
+   "wall_ms": 30.0,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/41_清單_287.txt",
+    "Notes/misc/67_misc_23.txt",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/09_清單_148.txt"
+   ]
+  },
+  {
+   "q": "Musical CDs on the shelf",
+   "expect": [
+    "Photos/2025-01/IMG_9043.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9043.jpg",
+    "Notes/misc/52_notes_161.md",
+    "Notes/misc/39_misc_38.md",
+    "Notes/misc/67_misc_23.txt",
+    "Notes/misc/27_untitled_220.md"
+   ]
+  },
+  {
+   "q": "鐵架雙層上下鋪的近景，室內方磚背景一角",
+   "expect": [
+    "Photos/2025-01/IMG_9044.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9044.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/misc/20_清單_15.txt",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "A children's bed in a bedroom",
+   "expect": [
+    "Photos/2025-01/IMG_9044.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9044.jpg",
+    "Photos/2025-02/IMG_9174.jpg",
+    "Photos/2025-01/IMG_9094.jpg",
+    "Notes/misc/28_草稿_142.txt",
+    "Home/Lease_storage_unit.pdf"
+   ]
+  },
+  {
+   "q": "樹林背景下一個木架路標的近景",
+   "expect": [
+    "Photos/2025-01/IMG_9045.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 26,
+   "wall_ms": 27.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9232.jpg",
+    "Photos/2025-01/IMG_9045.jpg",
+    "Photos/2025-02/IMG_9179.jpg",
+    "Photos/2025-02/IMG_9125.jpg",
+    "Photos/2025-04/IMG_9398.jpg"
+   ]
+  },
+  {
+   "q": "A signboard in the middle of the trees",
+   "expect": [
+    "Photos/2025-01/IMG_9045.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9045.jpg",
+    "Photos/2025-04/IMG_9314.jpg",
+    "Photos/2025-03/IMG_9232.jpg",
+    "Photos/2025-02/IMG_9179.jpg",
+    "Photos/2025-05/IMG_9405.jpg"
+   ]
+  },
+  {
+   "q": "一個日本卡通手辦，一個紅頭髮女子，手裡拿著一根棍子，玻璃底座",
+   "expect": [
+    "Photos/2025-01/IMG_9046.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 33,
+   "wall_ms": 33.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9046.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Photos/2025-02/IMG_9111.jpg",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "The miniature toy girl",
+   "expect": [
+    "Photos/2025-01/IMG_9046.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9046.jpg",
+    "Photos/2025-05/IMG_9466.jpg",
+    "Photos/2025-02/IMG_9138.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-02/IMG_9103.jpg"
+   ]
+  },
+  {
+   "q": "學生在整理站立展示牌",
+   "expect": [
+    "Photos/2025-01/IMG_9047.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 27,
+   "wall_ms": 27.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/61_清單_217.md",
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-01/IMG_9047.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/57_清單_116.md"
+   ]
+  },
+  {
+   "q": "People are standing and having a discussion",
+   "expect": [
+    "Photos/2025-01/IMG_9047.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 22,
+   "wall_ms": 22.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9329.jpg",
+    "Photos/2025-01/IMG_9047.jpg",
+    "Photos/2025-01/IMG_9022.jpg",
+    "Photos/2025-02/IMG_9178.jpg",
+    "Photos/2025-03/IMG_9202.jpg"
+   ]
+  },
+  {
+   "q": "兩個四方形井蓋",
+   "expect": [
+    "Photos/2025-01/IMG_9048.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.4,
+   "reranked": false,
+   "top": [
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-01/IMG_9048.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/05_清單_154.txt"
+   ]
+  },
+  {
+   "q": "The drain frame on the ground",
+   "expect": [
+    "Photos/2025-01/IMG_9048.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 22,
+   "wall_ms": 22.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9253.jpg",
+    "Photos/2025-01/IMG_9048.jpg",
+    "Notes/journal/2026-02-17.md",
+    "Photos/2025-01/IMG_9094.jpg",
+    "Photos/2025-01/IMG_9036.jpg"
+   ]
+  },
+  {
+   "q": "綠葉蔬菜",
+   "expect": [
+    "Photos/2025-01/IMG_9049.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 23,
+   "panel_rank": 7,
+   "ms": 22,
+   "wall_ms": 22.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9261.jpg",
+    "Photos/2025-05/IMG_9433.jpg",
+    "Recipes/綠豆湯.md",
+    "Recipes/清燉牛肉麵.md",
+    "Notes/misc/05_清單_154.txt"
+   ]
+  },
+  {
+   "q": "Green plants in the garden",
+   "expect": [
+    "Photos/2025-01/IMG_9049.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9261.jpg",
+    "Photos/2025-01/IMG_9049.jpg",
+    "Photos/2025-03/IMG_9274.jpg",
+    "Photos/2025-05/IMG_9500.jpg",
+    "Home/plant_care.md"
+   ]
+  },
+  {
+   "q": "小女孩很開心地在操場上的一個設施玩",
+   "expect": [
+    "Photos/2025-01/IMG_9050.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9050.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/journal/2026-01-10.md",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "Little girl playing on the playground",
+   "expect": [
+    "Photos/2025-01/IMG_9050.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9050.jpg",
+    "Photos/2025-02/IMG_9138.jpg",
+    "Photos/2025-02/IMG_9174.jpg",
+    "Photos/2025-04/IMG_9316.jpg",
+    "Photos/2025-05/IMG_9488.jpg"
+   ]
+  },
+  {
+   "q": "黃色碗裡裝著湯",
+   "expect": [
+    "Photos/2025-01/IMG_9051.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 9,
+   "panel_rank": 4,
+   "ms": 23,
+   "wall_ms": 23.7,
+   "reranked": false,
+   "top": [
+    "Recipes/綠豆湯.md",
+    "Recipes/清燉牛肉麵.md",
+    "Recipes/酸辣湯.md",
+    "Photos/2025-05/IMG_9416.jpg",
+    "Recipes/三杯雞.md"
+   ]
+  },
+  {
+   "q": "A bowl with soup in it",
+   "expect": [
+    "Photos/2025-01/IMG_9051.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Recipes/chicken_soup.md",
+    "Recipes/miso_soup.md",
+    "Photos/2025-01/IMG_9051.jpg",
+    "Recipes/酸辣湯.md",
+    "Photos/2025-05/IMG_9416.jpg"
+   ]
+  },
+  {
+   "q": "三位亞洲裔女性站在一排練習瑜伽的近景，背景是湖邊的木橋，樹林和綠草",
+   "expect": [
+    "Photos/2025-01/IMG_9052.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 34,
+   "wall_ms": 34.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9052.jpg",
+    "Study/N3單字.md",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Notes/misc/13_記事_215.md",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "Three women practicing yoga outdoors",
+   "expect": [
+    "Photos/2025-01/IMG_9052.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9052.jpg",
+    "Photos/2025-03/IMG_9225.jpg",
+    "Photos/2025-03/IMG_9289.jpg",
+    "Health/workout_plan.md",
+    "Photos/2025-03/IMG_9207.jpg"
+   ]
+  },
+  {
+   "q": "黃色的taksi標識",
+   "expect": [
+    "Photos/2025-01/IMG_9053.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9053.jpg",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Travel/新加坡筆記.md",
+    "Car/行照影本.pdf",
+    "Notes/待辦.md"
+   ]
+  },
+  {
+   "q": "A taxi symbol attached to the rod",
+   "expect": [
+    "Photos/2025-01/IMG_9053.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9053.jpg",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-05/IMG_9446.jpg",
+    "Photos/2025-04/IMG_9317.jpg",
+    "Photos/2025-01/IMG_9065.jpg"
+   ]
+  },
+  {
+   "q": "牆上的塗鴉",
+   "expect": [
+    "Photos/2025-01/IMG_9054.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Photos/2025-05/IMG_9424.jpg",
+    "Photos/2025-01/IMG_9054.jpg",
+    "Photos/2025-02/IMG_9145.jpg",
+    "Notes/misc/22_清單_168.txt"
+   ]
+  },
+  {
+   "q": "A graffiti on the wall",
+   "expect": [
+    "Photos/2025-01/IMG_9054.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 21,
+   "wall_ms": 21.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-05/IMG_9424.jpg",
+    "Photos/2025-01/IMG_9054.jpg",
+    "Photos/2025-03/IMG_9244.jpg",
+    "Photos/2025-02/IMG_9145.jpg",
+    "Photos/2025-04/IMG_9344.jpg"
+   ]
+  },
+  {
+   "q": "在球場裡一位日本棒球的擊球員選手準備打擊",
+   "expect": [
+    "Photos/2025-01/IMG_9055.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9055.jpg",
+    "Notes/misc/42_清單_220.txt",
+    "Notes/misc/22_清單_168.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "A baseball game practice session on the ground",
+   "expect": [
+    "Photos/2025-01/IMG_9055.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 29.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9055.jpg",
+    "Photos/2025-04/IMG_9390.jpg",
+    "Photos/2025-01/IMG_9030.jpg",
+    "Photos/2025-04/IMG_9351.jpg",
+    "Photos/2025-01/IMG_9042.jpg"
+   ]
+  },
+  {
+   "q": "在山坡底的公路上行駛著一輛黑色的小汽車",
+   "expect": [
+    "Photos/2025-01/IMG_9056.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 27,
+   "wall_ms": 27.7,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-01/IMG_9056.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/13_記事_215.md"
+   ]
+  },
+  {
+   "q": "The branded gray car on the road",
+   "expect": [
+    "Photos/2025-01/IMG_9056.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9056.jpg",
+    "Photos/2025-04/IMG_9317.jpg",
+    "Car",
+    "Photos/2025-05/IMG_9438.jpg",
+    "Photos/2025-05/IMG_9448.jpg"
+   ]
+  },
+  {
+   "q": "一個草木屋內座滿了人，外面的土地上有一個人騎馬，兩個人座在屋外牆邊看著三匹馬的模型全景",
+   "expect": [
+    "Photos/2025-01/IMG_9057.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 33,
+   "wall_ms": 33.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9057.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Notes/misc/03_草稿_289.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "A miniature house",
+   "expect": [
+    "Photos/2025-01/IMG_9057.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 5,
+   "panel_rank": 2,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-02/IMG_9103.jpg",
+    "Photos/2025-01/IMG_9064.jpg",
+    "Photos/2025-02/IMG_9179.jpg",
+    "Photos/2025-02/IMG_9117.jpg",
+    "Photos/2025-01/IMG_9057.jpg"
+   ]
+  },
+  {
+   "q": "在辦公室工作的一群女性商務人士，大家圍在長條木桌旁，木製頂上亮著燈",
+   "expect": [
+    "Photos/2025-01/IMG_9058.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 32,
+   "wall_ms": 32.8,
+   "reranked": false,
+   "top": [
+    "Notes/misc/42_清單_220.txt",
+    "Photos/2025-01/IMG_9058.jpg",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "A group of people in the conference hall",
+   "expect": [
+    "Photos/2025-01/IMG_9058.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 27,
+   "wall_ms": 28.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9216.jpg",
+    "Photos/2025-05/IMG_9414.jpg",
+    "Photos/2025-01/IMG_9058.jpg",
+    "Photos/2025-05/IMG_9493.jpg",
+    "Photos/2025-02/IMG_9162.jpg"
+   ]
+  },
+  {
+   "q": "生產車間的配電箱",
+   "expect": [
+    "Photos/2025-01/IMG_9059.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 5,
+   "panel_rank": 5,
+   "ms": 31,
+   "wall_ms": 31.6,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Notes/misc/63_idea_118.txt",
+    "Finance/機車強制險.pdf",
+    "Photos/2025-01/IMG_9059.jpg"
+   ]
+  },
+  {
+   "q": "Maintenance equipment in an industrial plant",
+   "expect": [
+    "Photos/2025-01/IMG_9059.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 4,
+   "panel_rank": 3,
+   "ms": 32,
+   "wall_ms": 32.8,
+   "reranked": false,
+   "top": [
+    "Home/plant_care.md",
+    "Car/scooter_maintenance.md",
+    "Car/保養紀錄.md",
+    "Photos/2025-01/IMG_9059.jpg",
+    "Photos/2025-02/IMG_9153.jpg"
+   ]
+  },
+  {
+   "q": "黑色紙殼放在白色布上",
+   "expect": [
+    "Photos/2025-01/IMG_9060.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 29,
+   "wall_ms": 29.4,
+   "reranked": false,
+   "top": [
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-01/IMG_9060.jpg",
+    "Notes/misc/57_清單_116.md",
+    "Photos/2025-02/IMG_9136.jpg"
+   ]
+  },
+  {
+   "q": "A black paper on a white cloth",
+   "expect": [
+    "Photos/2025-01/IMG_9060.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9060.jpg",
+    "Study/rag_paper_notes.md",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/12_misc_232.txt"
+   ]
+  },
+  {
+   "q": "珊瑚，長滿藻類的礁石，熱帶海洋魚的近景",
+   "expect": [
+    "Photos/2025-01/IMG_9061.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9061.jpg",
+    "Photos/2025-03/IMG_9208.jpg",
+    "Photos/2025-04/IMG_9304.jpg",
+    "Photos/2025-03/IMG_9291.jpg",
+    "Notes/misc/42_清單_220.txt"
+   ]
+  },
+  {
+   "q": "Tropical sea fish",
+   "expect": [
+    "Photos/2025-01/IMG_9061.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9061.jpg",
+    "Photos/2025-03/IMG_9272.jpg",
+    "Photos/2025-04/IMG_9304.jpg",
+    "Photos/2025-02/IMG_9120.jpg",
+    "Photos/2025-03/IMG_9208.jpg"
+   ]
+  },
+  {
+   "q": "兩個中年男生",
+   "expect": [
+    "Photos/2025-01/IMG_9062.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 48,
+   "panel_rank": null,
+   "ms": 23,
+   "wall_ms": 23.5,
+   "reranked": false,
+   "top": [
+    "Notes/misc/05_清單_154.txt",
+    "Notes/misc/42_清單_220.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/journal/2026-05-14.md"
+   ]
+  },
+  {
+   "q": "A portrait of two men",
+   "expect": [
+    "Photos/2025-01/IMG_9062.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9384.jpg",
+    "Photos/2025-01/IMG_9062.jpg",
+    "Photos/2025-02/IMG_9149.jpg",
+    "Photos/2025-05/IMG_9436.jpg",
+    "Photos/2025-04/IMG_9370.jpg"
+   ]
+  },
+  {
+   "q": "山的側邊很陡峭",
+   "expect": [
+    "Photos/2025-01/IMG_9063.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 8,
+   "panel_rank": 6,
+   "ms": 24,
+   "wall_ms": 24.7,
+   "reranked": false,
+   "top": [
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/journal/2026-01-10.md",
+    "Photos/2025-05/IMG_9452.jpg",
+    "Notes/misc/13_記事_215.md"
+   ]
+  },
+  {
+   "q": "Beautiful mountain landscape",
+   "expect": [
+    "Photos/2025-01/IMG_9063.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 23.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9213.jpg",
+    "Photos/2025-03/IMG_9239.jpg",
+    "Photos/2025-03/IMG_9293.jpg",
+    "Photos/2025-01/IMG_9063.jpg",
+    "Photos/2025-01/IMG_9072.jpg"
+   ]
+  },
+  {
+   "q": "屋頂上裝著生鏽的波浪形鐵板",
+   "expect": [
+    "Photos/2025-01/IMG_9064.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 31,
+   "wall_ms": 31.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9064.jpg",
+    "Notes/misc/48_清單_143.txt",
+    "Car/保養紀錄.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "A rusted roof",
+   "expect": [
+    "Photos/2025-01/IMG_9064.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9064.jpg",
+    "Photos/2025-04/IMG_9369.jpg",
+    "Photos/2025-01/IMG_9005.jpg",
+    "Photos/2025-01/IMG_9032.jpg",
+    "Photos/2025-02/IMG_9145.jpg"
+   ]
+  },
+  {
+   "q": "共產主義標誌的雕塑",
+   "expect": [
+    "Photos/2025-01/IMG_9065.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9065.jpg",
+    "Photos/2025-01/IMG_9011.jpg",
+    "Photos/2025-02/IMG_9108.jpg",
+    "Photos/2025-05/IMG_9483.jpg",
+    "Photos/2025-04/IMG_9305.jpg"
+   ]
+  },
+  {
+   "q": "Metallic sculpture",
+   "expect": [
+    "Photos/2025-01/IMG_9065.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 24.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-05/IMG_9483.jpg",
+    "Photos/2025-01/IMG_9065.jpg",
+    "Photos/2025-02/IMG_9111.jpg",
+    "Photos/2025-05/IMG_9489.jpg",
+    "Photos/2025-02/IMG_9108.jpg"
+   ]
+  },
+  {
+   "q": "海邊有很多擺著的塑膠沙灘椅",
+   "expect": [
+    "Photos/2025-01/IMG_9066.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 2,
+   "ms": 28,
+   "wall_ms": 28.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Photos/2025-01/IMG_9066.jpg",
+    "Notes/misc/05_清單_154.txt",
+    "Travel/新加坡筆記.md"
+   ]
+  },
+  {
+   "q": "Relaxing chairs on the beach and sea",
+   "expect": [
+    "Photos/2025-01/IMG_9066.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 29.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9066.jpg",
+    "Photos/2025-03/IMG_9287.jpg",
+    "Photos/2025-03/IMG_9285.jpg",
+    "Photos/2025-05/IMG_9457.jpg",
+    "Photos/2025-04/IMG_9352.jpg"
+   ]
+  },
+  {
+   "q": "灰色背景下一個藍色眼睛，盤發的女生的側臉",
+   "expect": [
+    "Photos/2025-01/IMG_9067.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 28,
+   "wall_ms": 28.9,
+   "reranked": false,
+   "top": [
+    "Notes/misc/13_記事_215.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Photos/2025-01/IMG_9067.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Photos/2025-01/IMG_9036.jpg"
+   ]
+  },
+  {
+   "q": "A portrait of a young woman posing against a gray background",
+   "expect": [
+    "Photos/2025-01/IMG_9067.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9067.jpg",
+    "Photos/2025-03/IMG_9242.jpg",
+    "Photos/2025-04/IMG_9316.jpg",
+    "Photos/2025-04/IMG_9377.jpg",
+    "Photos/2025-02/IMG_9138.jpg"
+   ]
+  },
+  {
+   "q": "一位老人座在掛了四張畫的牆邊的餐桌和沙發上正在用餐的近景圖",
+   "expect": [
+    "Photos/2025-01/IMG_9068.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 32,
+   "wall_ms": 32.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9068.jpg",
+    "Photos/2025-02/IMG_9182.jpg",
+    "Photos/2025-04/IMG_9379.jpg",
+    "Photos/2025-03/IMG_9244.jpg",
+    "Notes/misc/54_misc_262.md"
+   ]
+  },
+  {
+   "q": "A senior man eating food at a modern restaurant",
+   "expect": [
+    "Photos/2025-01/IMG_9068.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 29.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9068.jpg",
+    "Photos/2025-01/IMG_9088.jpg",
+    "Photos/2025-02/IMG_9182.jpg",
+    "Photos/2025-01/IMG_9093.jpg",
+    "Photos/2025-03/IMG_9246.jpg"
+   ]
+  },
+  {
+   "q": "電器展櫃裡的櫃姐拿根沾巧克力的木勺給小孩",
+   "expect": [
+    "Photos/2025-01/IMG_9069.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 28,
+   "wall_ms": 28.3,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Photos/2025-01/IMG_9069.jpg",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png"
+   ]
+  },
+  {
+   "q": "A girl near a mounted mixer with a whisk on it",
+   "expect": [
+    "Photos/2025-01/IMG_9069.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9069.jpg",
+    "Photos/2025-03/IMG_9246.jpg",
+    "Photos/2025-05/IMG_9492.jpg",
+    "Recipes/pancakes.md",
+    "Notes/misc/39_misc_38.md"
+   ]
+  },
+  {
+   "q": "演唱會上的煙花",
+   "expect": [
+    "Photos/2025-01/IMG_9070.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9070.jpg",
+    "Travel/新加坡筆記.md",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png"
+   ]
+  },
+  {
+   "q": "Explosion of firecrackers in a concert",
+   "expect": [
+    "Photos/2025-01/IMG_9070.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 23,
+   "wall_ms": 23.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9070.jpg",
+    "Photos/2025-03/IMG_9247.jpg",
+    "Photos/2025-03/IMG_9251.jpg",
+    "Work/incident_2026-03-04.md",
+    "Photos/2025-05/IMG_9483.jpg"
+   ]
+  },
+  {
+   "q": "路旁草叢邊站著的一隻紅嘴鷗，紅色的腿和蹼，灰色的羽毛",
+   "expect": [
+    "Photos/2025-01/IMG_9071.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9071.jpg",
+    "Photos/2025-03/IMG_9252.jpg",
+    "Photos/2025-04/IMG_9398.jpg",
+    "Photos/2025-02/IMG_9175.jpg",
+    "Photos/2025-02/IMG_9107.jpg"
+   ]
+  },
+  {
+   "q": "A portrait shot of the seagull",
+   "expect": [
+    "Photos/2025-01/IMG_9071.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9071.jpg",
+    "Photos/2025-04/IMG_9398.jpg",
+    "Photos/2025-04/IMG_9307.jpg",
+    "Photos/2025-03/IMG_9252.jpg",
+    "Photos/2025-02/IMG_9107.jpg"
+   ]
+  },
+  {
+   "q": "站在高處俯視，看到連綿的山脈，樹木和村莊的建築",
+   "expect": [
+    "Photos/2025-01/IMG_9072.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 27.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9072.jpg",
+    "Photos/2025-03/IMG_9213.jpg",
+    "Photos/2025-05/IMG_9489.jpg",
+    "Photos/2025-05/IMG_9452.jpg",
+    "Photos/2025-02/IMG_9118.jpg"
+   ]
+  },
+  {
+   "q": "Trees and mountains at distance",
+   "expect": [
+    "Photos/2025-01/IMG_9072.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 21,
+   "wall_ms": 22.0,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9355.jpg",
+    "Photos/2025-03/IMG_9213.jpg",
+    "Photos/2025-05/IMG_9489.jpg",
+    "Photos/2025-02/IMG_9146.jpg",
+    "Photos/2025-04/IMG_9347.jpg"
+   ]
+  },
+  {
+   "q": "秋天時夕陽下無人的公園",
+   "expect": [
+    "Photos/2025-01/IMG_9073.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 29,
+   "wall_ms": 29.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9308.jpg",
+    "Photos/2025-01/IMG_9073.jpg",
+    "Travel/新加坡筆記.md",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/48_清單_143.txt"
+   ]
+  },
+  {
+   "q": "An empty road with grass and bare trees around it",
+   "expect": [
+    "Photos/2025-01/IMG_9073.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 34,
+   "wall_ms": 34.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9073.jpg",
+    "Photos/2025-04/IMG_9378.jpg",
+    "Photos/2025-03/IMG_9255.jpg",
+    "Photos/2025-05/IMG_9462.jpg",
+    "Photos/2025-05/IMG_9468.jpg"
+   ]
+  },
+  {
+   "q": "餐廳裡三位男士圍著一張小餐桌在使用自己的樂器表演歌曲",
+   "expect": [
+    "Photos/2025-01/IMG_9074.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 29.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9074.jpg",
+    "Notes/misc/04_清單_274.txt",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Notes/misc/03_草稿_289.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "Three men singing a song together by using musical instruments",
+   "expect": [
+    "Photos/2025-01/IMG_9074.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 37,
+   "wall_ms": 37.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9074.jpg",
+    "Home/Document (3).txt",
+    "Photos/2025-05/IMG_9429.jpg",
+    "Photos/2025-04/IMG_9396.jpg",
+    "Photos/2025-04/IMG_9362.jpg"
+   ]
+  },
+  {
+   "q": "陽光照耀下的棕色條紋木桌子上擺放著瓷杯裝著的咖啡，左邊還放著一個黑色的遙控器",
+   "expect": [
+    "Photos/2025-01/IMG_9075.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 32,
+   "wall_ms": 32.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9075.jpg",
+    "Photos/2025-03/IMG_9227.jpg",
+    "Photos/2025-03/IMG_9215.jpg",
+    "Photos/2025-03/IMG_9273.jpg",
+    "Notes/misc/09_清單_148.txt"
+   ]
+  },
+  {
+   "q": "A cup of coffee in a saucer beside the car keys on the table",
+   "expect": [
+    "Photos/2025-01/IMG_9075.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9075.jpg",
+    "Photos/2025-05/IMG_9498.jpg",
+    "Photos/2025-03/IMG_9227.jpg",
+    "Recipes/cold_brew.md",
+    "Photos/2025-03/IMG_9215.jpg"
+   ]
+  },
+  {
+   "q": "舊照片裡有一男一女很開心地展示手中的唱片",
+   "expect": [
+    "Photos/2025-01/IMG_9076.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9076.jpg",
+    "Photos/2025-03/IMG_9256.jpg",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-05/IMG_9493.jpg",
+    "Photos/2025-02/IMG_9167.jpg"
+   ]
+  },
+  {
+   "q": "Two young smiling couple in a room",
+   "expect": [
+    "Photos/2025-01/IMG_9076.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 24,
+   "wall_ms": 24.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-02/IMG_9178.jpg",
+    "Photos/2025-01/IMG_9076.jpg",
+    "Photos/2025-01/IMG_9058.jpg",
+    "Photos/2025-01/IMG_9044.jpg",
+    "Photos/2025-01/IMG_9025.jpg"
+   ]
+  },
+  {
+   "q": "一片燒焦的樹幹近景圖",
+   "expect": [
+    "Photos/2025-01/IMG_9077.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9077.jpg",
+    "Photos/2025-02/IMG_9132.jpg",
+    "Photos/2025-03/IMG_9260.jpg",
+    "Photos/2025-03/IMG_9282.jpg",
+    "Photos/2025-01/IMG_9007.jpg"
+   ]
+  },
+  {
+   "q": "The burnt tree trunk",
+   "expect": [
+    "Photos/2025-01/IMG_9077.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9077.jpg",
+    "Photos/2025-02/IMG_9132.jpg",
+    "Photos/2025-01/IMG_9007.jpg",
+    "Photos/2025-04/IMG_9367.jpg",
+    "Photos/2025-03/IMG_9282.jpg"
+   ]
+  },
+  {
+   "q": "緊急逃生門",
+   "expect": [
+    "Photos/2025-01/IMG_9078.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 3,
+   "ms": 21,
+   "wall_ms": 21.8,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Photos/2025-01/IMG_9078.jpg",
+    "Travel/護照換發.md"
+   ]
+  },
+  {
+   "q": "A reversed view of metallic entrances, few helmets arrangement in left side",
+   "expect": [
+    "Photos/2025-01/IMG_9078.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 29.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9078.jpg",
+    "Photos/2025-03/IMG_9270.jpg",
+    "Photos/2025-01/IMG_9076.jpg",
+    "Photos/2025-05/IMG_9483.jpg",
+    "Photos/2025-01/IMG_9059.jpg"
+   ]
+  },
+  {
+   "q": "靠岸的郵輪",
+   "expect": [
+    "Photos/2025-01/IMG_9079.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 3,
+   "panel_rank": 3,
+   "ms": 22,
+   "wall_ms": 22.1,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Photos/2025-03/IMG_9271.jpg",
+    "Photos/2025-01/IMG_9079.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-04/IMG_9346.jpg"
+   ]
+  },
+  {
+   "q": "Ship at sea port",
+   "expect": [
+    "Photos/2025-01/IMG_9079.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 4,
+   "panel_rank": 3,
+   "ms": 21,
+   "wall_ms": 21.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-03/IMG_9271.jpg",
+    "Photos/2025-04/IMG_9352.jpg",
+    "Photos/2025-04/IMG_9346.jpg",
+    "Photos/2025-01/IMG_9079.jpg",
+    "Photos/2025-03/IMG_9250.jpg"
+   ]
+  },
+  {
+   "q": "野生紅醋栗",
+   "expect": [
+    "Photos/2025-01/IMG_9080.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9080.jpg",
+    "Photos/2025-04/IMG_9342.jpg",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-05/IMG_9444.jpg",
+    "Photos/2025-04/IMG_9373.jpg"
+   ]
+  },
+  {
+   "q": "A red currant on a branch",
+   "expect": [
+    "Photos/2025-01/IMG_9080.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 21,
+   "wall_ms": 21.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9080.jpg",
+    "Photos/2025-04/IMG_9342.jpg",
+    "Photos/2025-04/IMG_9373.jpg",
+    "Photos/2025-03/IMG_9213.jpg",
+    "Photos/2025-04/IMG_9349.jpg"
+   ]
+  },
+  {
+   "q": "人們在牌樓旁邊的步行街遊玩",
+   "expect": [
+    "Photos/2025-01/IMG_9081.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 6,
+   "panel_rank": 5,
+   "ms": 26,
+   "wall_ms": 26.8,
+   "reranked": false,
+   "top": [
+    "Travel/新加坡筆記.md",
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/04_清單_274.txt",
+    "Notes/journal/2026-01-10.md",
+    "Photos/2025-03/IMG_9269.jpg"
+   ]
+  },
+  {
+   "q": "Ancient Chinese architecture surrounded by people under the sky",
+   "expect": [
+    "Photos/2025-01/IMG_9081.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 4,
+   "panel_rank": 4,
+   "ms": 28,
+   "wall_ms": 28.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-05/IMG_9445.jpg",
+    "Photos/2025-04/IMG_9310.jpg",
+    "Photos/2025-02/IMG_9110.jpg",
+    "Photos/2025-01/IMG_9081.jpg",
+    "Photos/2025-04/IMG_9390.jpg"
+   ]
+  },
+  {
+   "q": "中年日本女士",
+   "expect": [
+    "Photos/2025-01/IMG_9082.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 21,
+   "wall_ms": 21.7,
+   "reranked": false,
+   "top": [
+    "Study/N3單字.md",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Notes/待辦.md",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/06_想法_279.txt"
+   ]
+  },
+  {
+   "q": "A smiling woman standing on the sidewalk, and a small store with a few men in the background",
+   "expect": [
+    "Photos/2025-01/IMG_9082.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.9,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9082.jpg",
+    "Photos/2025-03/IMG_9214.jpg",
+    "Photos/2025-04/IMG_9374.jpg",
+    "Notes/misc/12_misc_232.txt",
+    "Photos/2025-02/IMG_9188.jpg"
+   ]
+  },
+  {
+   "q": "黑白色空無一物的單調畫面",
+   "expect": [
+    "Photos/2025-01/IMG_9083.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 3,
+   "ms": 27,
+   "wall_ms": 27.3,
+   "reranked": false,
+   "top": [
+    "Notes/misc/20_清單_15.txt",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Photos/2025-01/IMG_9083.jpg",
+    "Notes/misc/05_清單_154.txt"
+   ]
+  },
+  {
+   "q": "Black grunge background",
+   "expect": [
+    "Photos/2025-01/IMG_9083.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9083.jpg",
+    "Photos/2025-03/IMG_9290.jpg",
+    "Photos/2025-01/IMG_9060.jpg",
+    "Photos/2025-04/IMG_9343.jpg",
+    "Photos/2025-03/IMG_9288.jpg"
+   ]
+  },
+  {
+   "q": "放在盤子裡的麵包被切開後橫截面的特寫",
+   "expect": [
+    "Photos/2025-01/IMG_9084.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 26,
+   "wall_ms": 26.1,
+   "reranked": false,
+   "top": [
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Photos/2025-01/IMG_9084.jpg",
+    "Photos/2025-04/IMG_9340.jpg",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "Calzone pizza on the table",
+   "expect": [
+    "Photos/2025-01/IMG_9084.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 20,
+   "wall_ms": 20.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9392.jpg",
+    "Photos/2025-01/IMG_9084.jpg",
+    "Photos/2025-01/IMG_9020.jpg",
+    "Recipes/sourdough_loaf.md",
+    "Photos/2025-05/IMG_9408.jpg"
+   ]
+  },
+  {
+   "q": "一張蓋著紅印章的通知函",
+   "expect": [
+    "Photos/2025-01/IMG_9085.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 26,
+   "wall_ms": 26.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9085.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Notes/journal/2026-05-14.md",
+    "Notes/misc/57_清單_116.md",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "A paper with some information written on it",
+   "expect": [
+    "Photos/2025-01/IMG_9085.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 7,
+   "panel_rank": 3,
+   "ms": 25,
+   "wall_ms": 25.8,
+   "reranked": false,
+   "top": [
+    "Notes/misc/03_草稿_289.md",
+    "Study/rag_paper_notes.md",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-02/IMG_9125.jpg",
+    "Notes/misc/12_misc_232.txt"
+   ]
+  },
+  {
+   "q": "一個快開花的紫色花朵",
+   "expect": [
+    "Photos/2025-01/IMG_9086.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 25,
+   "wall_ms": 25.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9361.jpg",
+    "Photos/2025-01/IMG_9086.jpg",
+    "Photos/2025-01/IMG_9041.jpg",
+    "Photos/2025-03/IMG_9257.jpg",
+    "Photos/2025-03/IMG_9261.jpg"
+   ]
+  },
+  {
+   "q": "A macro shot of a purple flower and leaves in a garden",
+   "expect": [
+    "Photos/2025-01/IMG_9086.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9086.jpg",
+    "Photos/2025-05/IMG_9440.jpg",
+    "Photos/2025-03/IMG_9261.jpg",
+    "Photos/2025-01/IMG_9041.jpg",
+    "Photos/2025-05/IMG_9444.jpg"
+   ]
+  },
+  {
+   "q": "城堡的石壁上的雕像",
+   "expect": [
+    "Photos/2025-01/IMG_9087.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.5,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9087.jpg",
+    "Photos/2025-02/IMG_9194.jpg",
+    "Photos/2025-01/IMG_9006.jpg",
+    "Photos/2025-02/IMG_9183.jpg",
+    "Photos/2025-04/IMG_9363.jpg"
+   ]
+  },
+  {
+   "q": "Architecture",
+   "expect": [
+    "Photos/2025-01/IMG_9087.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": null,
+   "panel_rank": null,
+   "ms": 20,
+   "wall_ms": 20.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-02/IMG_9154.jpg",
+    "Photos/2025-02/IMG_9169.jpg",
+    "Photos/2025-05/IMG_9489.jpg",
+    "Photos/2025-02/IMG_9144.jpg",
+    "Photos/2025-02/IMG_9110.jpg"
+   ]
+  },
+  {
+   "q": "一盤日式料理上有起司",
+   "expect": [
+    "Photos/2025-01/IMG_9088.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 19,
+   "panel_rank": 5,
+   "ms": 25,
+   "wall_ms": 25.2,
+   "reranked": false,
+   "top": [
+    "Recipes/japanese_curry.md",
+    "Recipes/miso_soup.md",
+    "Recipes/麻婆豆腐.md",
+    "Photos/2025-03/IMG_9299.jpg",
+    "Recipes/清燉牛肉麵.md"
+   ]
+  },
+  {
+   "q": "A food item served on a plate in a restaurant",
+   "expect": [
+    "Photos/2025-01/IMG_9088.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 1,
+   "ms": 25,
+   "wall_ms": 25.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9020.jpg",
+    "Photos/2025-01/IMG_9088.jpg",
+    "Photos/2025-05/IMG_9408.jpg",
+    "Photos/2025-02/IMG_9185.jpg",
+    "Photos/2025-01/IMG_9040.jpg"
+   ]
+  },
+  {
+   "q": "一朵白色牽牛花",
+   "expect": [
+    "Photos/2025-01/IMG_9089.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 19.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9089.jpg",
+    "Photos/2025-01/IMG_9041.jpg",
+    "Photos/2025-03/IMG_9274.jpg",
+    "Photos/2025-02/IMG_9160.jpg",
+    "Photos/2025-03/IMG_9235.jpg"
+   ]
+  },
+  {
+   "q": "Tropical white morning - glory flower in the garden",
+   "expect": [
+    "Photos/2025-01/IMG_9089.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.8,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9089.jpg",
+    "Photos/2025-02/IMG_9160.jpg",
+    "Photos/2025-03/IMG_9274.jpg",
+    "Notes/journal/2026-04-13.md",
+    "Photos/2025-01/IMG_9041.jpg"
+   ]
+  },
+  {
+   "q": "一個掉了一個顆牙，牙齒不齊，露出笑容的原始部落男人",
+   "expect": [
+    "Photos/2025-01/IMG_9090.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9090.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Health/IMG_7002.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Home/管理費/Screenshot 2026-02-04 at 09.11.22.png"
+   ]
+  },
+  {
+   "q": "A portrait shot of a smiling man in black and white",
+   "expect": [
+    "Photos/2025-01/IMG_9090.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 22,
+   "wall_ms": 22.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9090.jpg",
+    "Photos/2025-04/IMG_9316.jpg",
+    "Photos/2025-01/IMG_9076.jpg",
+    "Photos/2025-01/IMG_9083.jpg",
+    "Photos/2025-04/IMG_9377.jpg"
+   ]
+  },
+  {
+   "q": "秋季樹林的路旁停著三輛車近景，有一輛紅色商務車特寫，後面跟著兩輛灰色的車",
+   "expect": [
+    "Photos/2025-01/IMG_9091.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 26,
+   "wall_ms": 26.9,
+   "reranked": false,
+   "top": [
+    "Car/保養紀錄.md",
+    "Photos/2025-01/IMG_9091.jpg",
+    "Photos/2025-04/IMG_9317.jpg",
+    "Photos/2025-04/IMG_9389.jpg",
+    "Photos/2025-01/IMG_9015.jpg"
+   ]
+  },
+  {
+   "q": "Volkswagen transporter and car parked on the road",
+   "expect": [
+    "Photos/2025-01/IMG_9091.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 28,
+   "wall_ms": 28.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9091.jpg",
+    "Photos/2025-04/IMG_9389.jpg",
+    "Car",
+    "Photos/2025-02/IMG_9188.jpg",
+    "Photos/2025-03/IMG_9275.jpg"
+   ]
+  },
+  {
+   "q": "一隻老鼠正在裝滿五穀雜糧的方形石盆內吃東西的近景，周圍有玉米和雜草",
+   "expect": [
+    "Photos/2025-01/IMG_9092.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 27,
+   "wall_ms": 28.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9092.jpg",
+    "Home/管理費/Screenshot 2026-01-03 at 09.10.22.png",
+    "Notes/misc/20_清單_15.txt",
+    "Notes/journal/2026-05-14.md",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png"
+   ]
+  },
+  {
+   "q": "A mouse eating nuts",
+   "expect": [
+    "Photos/2025-01/IMG_9092.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 18,
+   "wall_ms": 18.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9092.jpg",
+    "Photos/2025-01/IMG_9039.jpg",
+    "Photos/2025-02/IMG_9172.jpg",
+    "Photos/2025-05/IMG_9484.jpg",
+    "Photos/2025-01/IMG_9098.jpg"
+   ]
+  },
+  {
+   "q": "一間咖啡店的玻璃門",
+   "expect": [
+    "Photos/2025-01/IMG_9093.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 10,
+   "panel_rank": 4,
+   "ms": 18,
+   "wall_ms": 18.5,
+   "reranked": false,
+   "top": [
+    "Notes/misc/03_草稿_289.md",
+    "Notes/misc/20_清單_15.txt",
+    "Notes/misc/35_記事_182.txt",
+    "Notes/misc/28_草稿_142.txt",
+    "Notes/misc/04_清單_274.txt"
+   ]
+  },
+  {
+   "q": "An entrance view of a restaurant in a building",
+   "expect": [
+    "Photos/2025-01/IMG_9093.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 25,
+   "wall_ms": 25.3,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9379.jpg",
+    "Photos/2025-01/IMG_9093.jpg",
+    "Photos/2025-03/IMG_9246.jpg",
+    "Photos/2025-05/IMG_9472.jpg",
+    "Photos/2025-04/IMG_9391.jpg"
+   ]
+  },
+  {
+   "q": "四方形的木盒裡是個小溫室，土裡種著菜",
+   "expect": [
+    "Photos/2025-01/IMG_9094.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 4,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 23.1,
+   "reranked": false,
+   "top": [
+    "Notes/misc/04_清單_274.txt",
+    "Notes/misc/48_清單_143.txt",
+    "Notes/misc/03_草稿_289.md",
+    "Photos/2025-01/IMG_9094.jpg",
+    "Notes/misc/20_清單_15.txt"
+   ]
+  },
+  {
+   "q": "Greenhouse for growing vegetables",
+   "expect": [
+    "Photos/2025-01/IMG_9094.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9094.jpg",
+    "Photos/2025-03/IMG_9229.jpg",
+    "Photos/2025-04/IMG_9349.jpg",
+    "Photos/2025-05/IMG_9492.jpg",
+    "Photos/2025-01/IMG_9064.jpg"
+   ]
+  },
+  {
+   "q": "在溫室種植物的地面中央站著一位手拿籃筐的黑髮小男孩",
+   "expect": [
+    "Photos/2025-01/IMG_9095.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 25,
+   "wall_ms": 25.6,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9095.jpg",
+    "Notes/journal/2026-01-10.md",
+    "Notes/misc/42_清單_220.txt",
+    "Notes/journal/2026-04-13.md",
+    "Photos/2025-04/IMG_9316.jpg"
+   ]
+  },
+  {
+   "q": "A child holding a blue basket is surrounded by plants",
+   "expect": [
+    "Photos/2025-01/IMG_9095.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9095.jpg",
+    "Home/plant_care.md",
+    "Notes/journal/2026-04-13.md",
+    "Photos/2025-02/IMG_9137.jpg",
+    "Photos/2025-01/IMG_9049.jpg"
+   ]
+  },
+  {
+   "q": "機場人員以及後方能看到的機身和機尾",
+   "expect": [
+    "Photos/2025-01/IMG_9096.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 5,
+   "panel_rank": 3,
+   "ms": 23,
+   "wall_ms": 23.8,
+   "reranked": false,
+   "top": [
+    "Travel/IMG_6012.png",
+    "Travel/flight_confirmation.txt",
+    "Notes/misc/05_清單_154.txt",
+    "Travel/flight_confirmation (1).txt",
+    "Photos/2025-01/IMG_9096.jpg"
+   ]
+  },
+  {
+   "q": "The airplane at the airport under the sky",
+   "expect": [
+    "Photos/2025-01/IMG_9096.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 25,
+   "wall_ms": 25.2,
+   "reranked": false,
+   "top": [
+    "Travel/flight_confirmation.txt",
+    "Photos/2025-01/IMG_9096.jpg",
+    "Photos/2025-02/IMG_9191.jpg",
+    "Travel/IMG_6012.png",
+    "Photos/2025-02/IMG_9177.jpg"
+   ]
+  },
+  {
+   "q": "草莓巧克力塔",
+   "expect": [
+    "Photos/2025-01/IMG_9097.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9097.jpg",
+    "Recipes/珍珠奶茶.md",
+    "Recipes/鳳梨酥.md",
+    "Photos/2025-04/IMG_9349.jpg",
+    "Notes/misc/03_草稿_289.md"
+   ]
+  },
+  {
+   "q": "Strawberries and chocolates on pizza",
+   "expect": [
+    "Photos/2025-01/IMG_9097.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9097.jpg",
+    "Photos/2025-04/IMG_9392.jpg",
+    "Photos/2025-01/IMG_9069.jpg",
+    "Notes/misc/51_misc_24.md",
+    "Notes/gift_ideas.md"
+   ]
+  },
+  {
+   "q": "核桃水果優格",
+   "expect": [
+    "Photos/2025-01/IMG_9098.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9098.jpg",
+    "Home/管理費/Screenshot 2026-04-06 at 09.13.22.png",
+    "Home/管理費/Screenshot 2026-03-05 at 09.12.22.png",
+    "Photos/2025-01/IMG_9036.jpg",
+    "Photos/2025-01/IMG_9097.jpg"
+   ]
+  },
+  {
+   "q": "The dessert in a white bowl",
+   "expect": [
+    "Photos/2025-01/IMG_9098.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9098.jpg",
+    "Photos/2025-01/IMG_9040.jpg",
+    "Photos/2025-01/IMG_9038.jpg",
+    "Photos/2025-02/IMG_9139.jpg",
+    "Photos/2025-04/IMG_9381.jpg"
+   ]
+  },
+  {
+   "q": "一輛白馬拉的四輪馬車，車上有車伕和一對穿結婚禮服的夫婦，周圍有石板路，兩個人，樹木和教堂的牆面全景",
+   "expect": [
+    "Photos/2025-01/IMG_9099.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 29,
+   "wall_ms": 29.7,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9099.jpg",
+    "Notes/journal/2026-05-14.md",
+    "Photos/2025-05/IMG_9434.jpg",
+    "Travel/IMG_6020.png",
+    "Car/行照影本.pdf"
+   ]
+  },
+  {
+   "q": "A couple sitting in the horse drawn wedding carriage",
+   "expect": [
+    "Photos/2025-01/IMG_9099.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 24,
+   "wall_ms": 24.2,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9099.jpg",
+    "Notes/journal/2026-05-14.md",
+    "Photos/2025-03/IMG_9244.jpg",
+    "Photos/2025-01/IMG_9057.jpg",
+    "Work/Screenshot 2026-05-20 at 15.02.11.png"
+   ]
+  },
+  {
+   "q": "使用磚建的大樓有著用鐵做的門",
+   "expect": [
+    "Photos/2025-01/IMG_9100.jpg"
+   ],
+   "tag": "photo-zh",
+   "rank": 2,
+   "panel_rank": 2,
+   "ms": 23,
+   "wall_ms": 23.4,
+   "reranked": false,
+   "top": [
+    "Photos/2025-04/IMG_9366.jpg",
+    "Photos/2025-01/IMG_9100.jpg",
+    "Finance/火險保單.txt",
+    "Photos/2025-03/IMG_9270.jpg",
+    "Notes/misc/04_清單_274.txt"
+   ]
+  },
+  {
+   "q": "A man near the old brick building",
+   "expect": [
+    "Photos/2025-01/IMG_9100.jpg"
+   ],
+   "tag": "photo-en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 19,
+   "wall_ms": 19.1,
+   "reranked": false,
+   "top": [
+    "Photos/2025-01/IMG_9100.jpg",
+    "Photos/2025-03/IMG_9229.jpg",
+    "Photos/2025-05/IMG_9485.jpg",
+    "Photos/2025-03/IMG_9224.jpg",
+    "Photos/2025-03/IMG_9270.jpg"
+   ]
+  }
+ ]
+}

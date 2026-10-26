@@ -7,12 +7,13 @@ import numpy as np
 sys.path.insert(0, os.getcwd())
 from semsearch import config, imagevec
 corpus = sys.argv[1]
+QUERIES = sys.argv[2] if len(sys.argv) > 2 else "eval/embeddinggemma2/queries_photos.json"
 db = sqlite3.connect(config.DB_PATH)
 rows = [(f, p, v) for f, p, v in db.execute("SELECT i.file_id, f.path, i.vec FROM image_vecs i JOIN files f ON f.id=i.file_id") if v]
 paths = [os.path.relpath(p, corpus) for _, p, _ in rows]
 M = np.array([np.frombuffer(v, np.float16) for _, _, v in rows], np.float32)
 out = {"text": [], "photo": []}
-for q in json.load(open("eval/embeddinggemma2/queries_photos.json"))["queries"]:
+for q in json.load(open(QUERIES))["queries"]:
     sc = M @ imagevec.query_vector(q["q"])
     order = np.argsort(-sc)
     kind = "photo" if q["tag"].startswith("photo") else "text"
@@ -31,7 +32,7 @@ for x in sorted(p, key=lambda x: x[3])[:5]: print("  photo low right", round(x[3
 # How far the best image stands out from all images (z-score), by question type
 print("\nz of the top image:")
 groups = {"photo": [], "text, answer is an image": [], "text, answer is not an image": []}
-for q in json.load(open("eval/embeddinggemma2/queries_photos.json"))["queries"]:
+for q in json.load(open(QUERIES))["queries"]:
     sc = M @ imagevec.query_vector(q["q"])
     z = (sc.max() - sc.mean()) / sc.std()
     if q["tag"].startswith("photo"):

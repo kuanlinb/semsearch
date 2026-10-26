@@ -78,3 +78,25 @@ query vector 24 ms (Gemma GGUF) vs 37 ms (bge-m3).
     image_scores.py <corpus>   image-only ranks, top scores and z-scores per question type
     summary.py <tag>…          text and photo Hit@1/@3 from eval/lookalike/results
     speed.py <index.db>        bge-m3 vs llama-server speed, interleaved
+
+## Real photos: Crossmodal-3600
+
+`make_xm3600.py` adds 500 random Crossmodal-3600 photos (Open Images, 100 per folder, named
+`IMG_9001.jpg`…) to the look-alike corpus and asks about 100 of them with one human-written
+Chinese caption (converted to Traditional Chinese) and one English caption each.
+
+| | Text Hit@1 / @3 (76) | Photos, Chinese (100) | Photos, English (100) |
+|---|---|---|---|
+| bge-m3, no image search | 61 / 69 | 1 / 1 | 0 / 0 |
+| B, offset 0 | 57 / 69 | 48 / 77 | 68 / 87 |
+| **B, offset 0.03** | **57 / 68** | **57 / 82** | **69 / 89** |
+| B, offset 0.06 | 54 / 66 | 61 / 83 | 69 / 90 |
+
+Among images alone the right photo is first 160/200 and in the top three 185/200. In the full
+search, misses at first place lose about half to look-alike photos and half to text files (some
+fair: "Books in display" → a reading list). Text losses against bge-m3 are content-only (16 → 12)
+and Chinese question / English file (6 → 4); English question / Chinese file gains (9 → 12).
+
+Photos took 0.8 s each here (Open Images photos are about 1024 px): 500 in 7 minutes. A folder
+with over 150 serially named files (`IMG_0001.jpg`…) is treated as a dataset and only the folder
+is indexed, so camera folders would need an exception for image search.
