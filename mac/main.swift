@@ -502,6 +502,47 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: f)
     }
 
+    /// Reranked results: rows that stay slide to their new place, new ones fade in, dropped ones
+    /// fade out, instead of replacing the whole list at once (no flash, no jump)
+    func applyAnimated(_ newHeads: [Hit], keep: String?) {
+        let old = hits.map(\.path)
+        heads = newHeads
+        expanded = []
+        rebuild()
+        let new = hits.map(\.path)
+        var work = old
+        NSAnimationContext.runAnimationGroup { ctx in
+            ctx.duration = 0.18
+            table.beginUpdates()
+            let gone = IndexSet(old.indices.filter { !new.contains(old[$0]) })
+            table.removeRows(at: gone, withAnimation: .effectFade)
+            for i in gone.reversed() { work.remove(at: i) }
+            for (i, p) in new.enumerated() {
+                if let j = work.firstIndex(of: p) {
+                    if j != i {
+                        table.moveRow(at: j, to: i)
+                        work.remove(at: j)
+                        work.insert(p, at: i)
+                    }
+                } else {
+                    table.insertRows(at: [i], withAnimation: .effectFade)
+                    work.insert(p, at: i)
+                }
+            }
+            table.endUpdates()
+        }
+        // moved rows keep their old views: refresh their content (e.g. dimmed or not)
+        for i in hits.indices {
+            (table.view(atColumn: 0, row: i, makeIfNecessary: false) as? ResultCell)?.show(hits[i])
+        }
+        let i = keep.flatMap { k in hits.firstIndex { $0.path == k } } ?? 0
+        if !hits.isEmpty {
+            table.selectRowIndexes([i], byExtendingSelection: false)
+            table.scrollRowToVisible(i)
+        }
+        setExpanded(true)
+    }
+
     func run(_ q: String, fine: Bool) {
         if fine { fineTask?.cancel() } else { task?.cancel() }
         if q.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -521,6 +562,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
                     if !fine && self.lastFineQuery == q { return }  // reranked results already shown
                     if fine { self.lastFineQuery = q }
                     let keep = self.selected?.path
+                    if fine && !self.hits.isEmpty && !r.results.isEmpty {
+                        self.applyAnimated(r.results, keep: self.table.selectedRow > 0 ? keep : nil)
+                        self.footer.stringValue = L("{n} results · ", ["n": r.results.count]) + "\((r.reranked ?? false) ? L("reranked ") : "")\(r.ms) ms"
+                        return
+                    }
                     self.heads = r.results
                     self.expanded = []
                     self.rebuild()
