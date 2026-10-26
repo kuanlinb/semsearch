@@ -237,7 +237,8 @@ def _watch():
         time.sleep(10)
         if time.time() >= next_access:
             threading.Thread(target=_check_access, daemon=True).start()
-            next_access = time.time() + 300
+            # recheck after 30 s while a folder is still blocked, so the warning clears soon after the user allows it
+            next_access = time.time() + (30 if any(v != "ok" for v in dict(_access).values()) else 300)
         busy = _lock_held()
         # While the indexer runs, reload at most every 5 minutes to keep the GPU free
         if busy:
