@@ -101,12 +101,21 @@ struct Hit: Decodable {
     let copies: Int?
     let group: [Hit]?   // lower-ranked files from the same folder (Tab expands them)
     let tier: Int?      // 2 = less related (well below the top reranker score): drawn dimmer
+    let hits: [String]? // query words found in the snippet: bold
+    let best: String?   // the snippet's sentence closest in meaning to the query: full-strength text
+    let page: Int?      // PDF page of that sentence
+}
+
+struct Conditions: Decodable {
+    let time: String?
+    let source: String?
 }
 
 struct SearchResponse: Decodable {
     let results: [Hit]
     let ms: Int
     let reranked: Bool?
+    let conditions: Conditions?  // time and source words the service took out of the query
 }
 
 // MARK: - Global hotkey (Carbon; needs no Accessibility permission)
@@ -172,6 +181,8 @@ final class ResultCell: NSTableCellView {
     let detail = NSTextField(labelWithString: "")
     let badge = NSTextField(labelWithString: "")
     var weak = false  // less related results: dimmer text and icon
+    var hit: Hit?
+    var folderTag = ""  // "+2 in folder": shown on the selected row only, so the list stays quiet
 
     lazy var indent: NSLayoutConstraint = icon.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 18)
 
@@ -218,6 +229,51 @@ final class ResultCell: NSTableCellView {
         icon.alphaValue = on || !weak ? 1 : 0.55
         detail.textColor = on ? NSColor.white.withAlphaComponent(0.85) : .secondaryLabelColor
         badge.textColor = on ? NSColor.white.withAlphaComponent(0.85) : .tertiaryLabelColor
+        if let h = hit { paint(h, on: on) }
+    }
+
+    // The snippet: the sentence that answers the query at full strength, the query's own words
+    // bold, the rest dim; a PDF's page number first
+    func paint(_ h: Hit, on: Bool) {
+        let dates = ResultCell.dateText(h.mtime)
+        badge.stringValue = (on && !folderTag.isEmpty ? folderTag + " · " : "") + (h.mtime > 0 ? dates : "")
+        guard (h.match == "content" || h.match == "place") && !h.snippet.isEmpty else { return }
+        // Collapse table-of-contents dot leaders into one ellipsis
+        let text = h.snippet.replacingOccurrences(of: "\n", with: " ")
+            .replacingOccurrences(of: "[.．·…\\s]{4,}", with: " … ", options: .regularExpression)
+        let dim = on ? NSColor.white.withAlphaComponent(0.65) : NSColor.tertiaryLabelColor
+        let strong = on ? NSColor.white : NSColor.labelColor
+        let font = NSFont.systemFont(ofSize: 11.5)
+        let s = NSMutableAttributedString()
+        if let p = h.page {
+            s.append(NSAttributedString(string: L("p. {n}", ["n": p]) + "  ",
+                                        attributes: [.font: NSFont.systemFont(ofSize: 11.5, weight: .semibold), .foregroundColor: strong]))
+        }
+        let start = s.length
+        s.append(NSAttributedString(string: text, attributes: [.font: font, .foregroundColor: dim]))
+        let ns = s.string as NSString
+        if let b = h.best, !b.isEmpty {
+            let r = ns.range(of: b.replacingOccurrences(of: "\n", with: " "), range: NSRange(location: start, length: ns.length - start))
+            if r.location != NSNotFound {
+                // like a highlighter pen on the page
+                s.addAttribute(.foregroundColor, value: strong, range: r)
+                s.addAttribute(.backgroundColor, value: on ? NSColor.white.withAlphaComponent(0.22)
+                               : NSColor.systemYellow.withAlphaComponent(0.28), range: r)
+            }
+        }
+        for w in h.hits ?? [] {
+            var from = start
+            while from < ns.length {
+                let r = ns.range(of: w, options: .caseInsensitive, range: NSRange(location: from, length: ns.length - from))
+                if r.location == NSNotFound { break }
+                s.addAttributes([.font: NSFont.systemFont(ofSize: 11.5, weight: .bold), .foregroundColor: strong], range: r)
+                from = r.location + r.length
+            }
+        }
+        let para = NSMutableParagraphStyle()
+        para.lineBreakMode = .byTruncatingTail
+        s.addAttribute(.paragraphStyle, value: para, range: NSRange(location: 0, length: s.length))
+        detail.attributedStringValue = s
     }
 
     func show(_ h: Hit, child: Bool = false, expanded: Bool = false) {
@@ -239,21 +295,19 @@ final class ResultCell: NSTableCellView {
             break
         }
         let folder = (shortPath as NSString).deletingLastPathComponent
+        hit = h
         if (h.match == "content" || h.match == "place") && !h.snippet.isEmpty {
-            // Collapse table-of-contents dot leaders into one ellipsis
-            detail.stringValue = h.snippet.replacingOccurrences(of: "\n", with: " ")
-                .replacingOccurrences(of: "[.．·…\\s]{4,}", with: " … ", options: .regularExpression)
             detail.lineBreakMode = .byTruncatingTail
         } else {
             detail.stringValue = h.note.isEmpty ? folder : "\(folder) · \(L("contains")) \(h.note)"
             detail.lineBreakMode = .byTruncatingMiddle
         }
         toolTip = shortPath
-        // Keep the right side quiet: same-folder count and date only; cloud/copies go in the tooltip
-        var tags: [String] = []
-        if !child, let g = h.group?.count, g > 0 { tags.append(expanded ? L("collapse") : L("+{n} in folder", ["n": g])) }
-        if h.mtime > 0 { tags.append(ResultCell.dateText(h.mtime)) }
-        badge.stringValue = tags.joined(separator: " · ")
+        // Keep the right side quiet: the date, and the same-folder count on the selected row;
+        // cloud/copies go in the tooltip
+        folderTag = ""
+        if !child, let g = h.group?.count, g > 0 { folderTag = expanded ? L("collapse") : L("+{n} in folder", ["n": g]) }
+        paint(h, on: backgroundStyle == .emphasized)
     }
 
     // Time for today, month/day for this year, full date otherwise
@@ -288,6 +342,12 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let scroll = NSScrollView()
     let footer = NSTextField(labelWithString: "")
     let gear = NSButton()
+    // "上個月 · LINE ✕": the time and source words the service applied; clicking it searches
+    // the same words again without them
+    let chip = NSButton()
+    var ignoreConditions = false
+    var fieldToGear: NSLayoutConstraint!
+    var fieldToChip: NSLayoutConstraint!
     let placeholder = L("SemSearch: describe the file or app you are looking for")
     var settingsMenu: NSMenu?  // the menu-bar icon's menu
     var hits: [Hit] = []          // rows on screen, including expanded same-folder files
@@ -381,6 +441,16 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         gear.target = self
         gear.action = #selector(showSettingsMenu)
 
+        chip.bezelStyle = .inline
+        chip.isBordered = true
+        chip.font = .systemFont(ofSize: 12.5, weight: .medium)
+        chip.contentTintColor = .controlAccentColor
+        chip.target = self
+        chip.action = #selector(dropConditions)
+        chip.toolTip = L("Search without these conditions")
+        chip.isHidden = true
+        chip.setContentCompressionResistancePriority(.required, for: .horizontal)
+
         field.placeholderString = placeholder
         field.font = .systemFont(ofSize: 21, weight: .regular)
         field.isBordered = false
@@ -419,7 +489,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         hints.alignment = .right
 
-        for (v, parent) in [(glyph, barContent), (field, barContent), (gear, barContent), (scroll, cardContent),
+        for (v, parent) in [(glyph, barContent), (field, barContent), (chip, barContent), (gear, barContent), (scroll, cardContent),
                             (footer, cardContent), (hints, cardContent)] as [(NSView, NSView)] {
             v.translatesAutoresizingMaskIntoConstraints = false
             parent.addSubview(v)
@@ -438,7 +508,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             glyph.leadingAnchor.constraint(equalTo: barContent.leadingAnchor, constant: 20),
             glyph.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             field.leadingAnchor.constraint(equalTo: glyph.trailingAnchor, constant: 12),
-            field.trailingAnchor.constraint(equalTo: gear.leadingAnchor, constant: -10),
+            chip.trailingAnchor.constraint(equalTo: gear.leadingAnchor, constant: -10),
+            chip.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             gear.trailingAnchor.constraint(equalTo: barContent.trailingAnchor, constant: -20),
             gear.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             field.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
@@ -452,6 +523,9 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             hints.firstBaselineAnchor.constraint(equalTo: footer.firstBaselineAnchor),
             hints.leadingAnchor.constraint(greaterThanOrEqualTo: footer.trailingAnchor, constant: 12),
         ])
+        fieldToGear = field.trailingAnchor.constraint(equalTo: gear.leadingAnchor, constant: -10)
+        fieldToChip = field.trailingAnchor.constraint(equalTo: chip.leadingAnchor, constant: -8)
+        fieldToGear.isActive = true
         setExpanded(false)
 
         // ⌘C copies the path, ⌘↩ reveals in Finder, ⌘Y toggles Quick Look
@@ -517,6 +591,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         pendingFine?.cancel()
         fineTask?.cancel()
         lastFineQuery = ""
+        ignoreConditions = false
         let q = field.stringValue
         let w = DispatchWorkItem { [weak self] in self?.run(q, fine: false) }
         pending = w
@@ -571,6 +646,22 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         settingsMenu?.popUp(positioning: nil, at: NSPoint(x: 0, y: gear.bounds.height + 6), in: gear)
     }
 
+    func showConditions(_ c: Conditions?) {
+        let parts = [c?.time, c?.source].compactMap { $0 }.filter { !$0.isEmpty }
+        chip.isHidden = parts.isEmpty
+        chip.title = parts.isEmpty ? "" : L("Only: {c}", ["c": parts.joined(separator: " · ")]) + "  ✕"
+        fieldToGear.isActive = parts.isEmpty
+        fieldToChip.isActive = !parts.isEmpty
+    }
+
+    @objc func dropConditions() {
+        ignoreConditions = true
+        showConditions(nil)
+        run(field.stringValue, fine: true)
+        panel.makeFirstResponder(field)
+        field.currentEditor()?.selectedRange = NSRange(location: field.stringValue.count, length: 0)
+    }
+
     func run(_ q: String, fine: Bool) {
         if fine { fineTask?.cancel() } else { task?.cancel() }
         if q.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -582,26 +673,30 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         }
         var c = URLComponents(string: serverURL + "/search")!
         c.queryItems = [URLQueryItem(name: "q", value: q), URLQueryItem(name: "n", value: "30"),
-                        URLQueryItem(name: "rerank", value: fine ? "1" : "0")]
+                        URLQueryItem(name: "rerank", value: fine ? "1" : "0"),
+                        URLQueryItem(name: "cond", value: ignoreConditions ? "0" : "1")]
         let t = URLSession.shared.dataTask(with: c.url!) { [weak self] data, _, err in
             DispatchQueue.main.async {
                 guard let self, self.field.stringValue == q else { return }
                 if let data, let r = try? JSONDecoder().decode(SearchResponse.self, from: data) {
                     if !fine && self.lastFineQuery == q { return }  // reranked results already shown
                     if fine { self.lastFineQuery = q }
+                    self.showConditions(r.conditions)
                     let keep = self.selected?.path
                     if fine && !self.hits.isEmpty && !r.results.isEmpty {
                         self.applyAnimated(r.results, keep: self.table.selectedRow > 0 ? keep : nil)
-                        self.footer.stringValue = L("{n} results · ", ["n": r.results.count]) + "\((r.reranked ?? false) ? L("reranked ") : "")\(r.ms) ms"
+                        self.footer.stringValue = L("{n} results", ["n": r.results.count]) + ((r.reranked ?? false) ? " · " + L("precise order") : "")
+                        self.footer.toolTip = "\(r.ms) ms"
                         return
                     }
                     self.heads = r.results
                     self.expanded = []
                     self.rebuild()
-                    let mark = (r.reranked ?? false) ? L("reranked ") : ""
+                    let mark = (r.reranked ?? false) ? " · " + L("precise order") : ""
                     self.footer.stringValue = r.results.isEmpty
                         ? L("Nothing found. Try describing it differently.")
-                        : L("{n} results · ", ["n": r.results.count]) + "\(mark)\(r.ms) ms"
+                        : L("{n} results", ["n": r.results.count]) + mark
+                    self.footer.toolTip = "\(r.ms) ms"
                     if fine, let keep, self.table.selectedRow > 0,
                        let i = self.hits.firstIndex(where: { $0.path == keep }) {
                         self.table.reloadData()

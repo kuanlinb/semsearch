@@ -48,5 +48,10 @@
  "Show in Finder": "Finder에서 보기",
  "Quick Look": "훑어보기",
  "Copy": "복사",
- "Copy Path": "경로 복사"
+ "Copy Path": "경로 복사",
+ "p. {n}": "{n}쪽",
+ "Only: {c}": "조건: {c}",
+ "Search without these conditions": "이 조건 없이 검색",
+ "{n} results": "{n}개",
+ "precise order": "정밀 정렬"
 }

@@ -48,5 +48,10 @@
  "Show in Finder": "在 Finder 顯示",
  "Quick Look": "快速查看",
  "Copy": "拷貝",
- "Copy Path": "拷貝路徑"
+ "Copy Path": "拷貝路徑",
+ "p. {n}": "第 {n} 頁",
+ "Only: {c}": "只看：{c}",
+ "Search without these conditions": "不用這些條件，重新搜尋",
+ "{n} results": "{n} 筆",
+ "precise order": "精準排序"
 }

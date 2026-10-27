@@ -48,5 +48,10 @@
  "Show in Finder": "在 Finder 中显示",
  "Quick Look": "快速查看",
  "Copy": "拷贝",
- "Copy Path": "拷贝路径"
+ "Copy Path": "拷贝路径",
+ "p. {n}": "第 {n} 页",
+ "Only: {c}": "只看：{c}",
+ "Search without these conditions": "不用这些条件，重新搜索",
+ "{n} results": "{n} 条",
+ "precise order": "精准排序"
 }

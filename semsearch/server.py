@@ -1,7 +1,8 @@
 """Long-running search service: keeping the model in memory makes each search fast.
 
   GET  /search?q=...&n=20   search, returns JSON (rerank=0 skips the optional reranker,
-                            group=0 turns off folding files from the same folder)
+                            group=0 turns off folding files from the same folder,
+                            cond=0 ignores time and source words, e.g. after the panel's ✕)
   GET  /status              index status (no_access lists folders macOS has not granted)
   POST /reindex             update the index in the background
   POST /opened              {"path": ..., "query": ...}: log a file opened from the panel
@@ -98,9 +99,10 @@ class Handler(BaseHTTPRequestHandler):
             kind = qs.get("kind", [None])[0]
             rerank = qs.get("rerank", ["1"])[0] != "0"
             group = qs.get("group", ["1"])[0] != "0"
+            cond = qs.get("cond", ["1"])[0] != "0"
             try:
                 with search_lock:
-                    res = searcher.search(q, n=n, kind=kind, rerank=rerank, group=group)
+                    res = searcher.search(q, n=n, kind=kind, rerank=rerank, group=group, cond=cond)
             except Exception as e:
                 self._send(500, {"error": str(e), "results": [], "ms": 0})
                 return

@@ -548,17 +548,17 @@ class Searcher:
         keep = [f for f, s in scores if s >= max(top - IMAGE_GAP, IMAGE_FLOOR)]
         return keep[:IMAGE_TOP]
 
-    def search(self, q, n=20, kind=None, rerank=True, group=True):
+    def search(self, q, n=20, kind=None, rerank=True, group=True, cond=True):
         """group=True folds lower-ranked files from the same folder into the best one's
-        "group" list (the app expands it with Tab)."""
+        "group" list (the app expands it with Tab). cond=False ignores time and source words."""
         t0 = time.time()
         q = q.strip()
         if not q:
             return {"results": [], "ms": 0, "reranked": False}
         db = self._db()
         # "上個月 LINE 傳來的報價單": search "報價單" among last month's files that came from LINE
-        cond, cond_info, allowed, sem_q = None, None, None, q
-        if self.cfg.get("conditions"):
+        use_cond, cond, cond_info, allowed, sem_q = cond, None, None, None, q
+        if use_cond and self.cfg.get("conditions"):
             rest, cond = conditions.parse(q)
             if cond:
                 allowed = self.names.allowed(cond)
@@ -663,19 +663,20 @@ class Searcher:
             if key and key in seen:  # list copies of the same file once
                 seen[key]["copies"] += 1
                 continue
-            snippet, where = "", "name"
+            snippet, where, chunk = "", "name", ""
             cid = best_chunk.get(fid)
             if cid:
                 c = db.execute("SELECT kind, text, file_id FROM chunks WHERE id=?", (cid,)).fetchone()
                 if c and c[0] == 1 and c[2] == fid and not extract.garbled(c[1]):
                     # chunk ids can be reused: check ownership; hide garbled text
-                    snippet, where = _snippet(c[1], q), "content"
+                    snippet, where, chunk = _snippet(c[1], sem_q or q), "content", c[1]
             if fid in kw and kw[fid][2]:
                 where = "name"
             results.append({
                 "path": path, "name": name, "ext": ext, "size": size,
                 "mtime": mtime, "is_dir": bool(is_dir), "cloud": bool(dataless),
                 "note": note or "", "snippet": snippet, "match": where,
+                "hits": [], "best": "", "page": None, "_chunk": chunk,
                 "score": round(fused[fid] * 1000, 2),
                 "semantic": round(vec_score.get(fid, 0.0), 3),
                 "rel": round(rel[fid], 3) if fid in rel else None,  # reranker logit
@@ -691,10 +692,54 @@ class Searcher:
         results = [r for r in results if r["match"] == "place" or r["path"] not in places]
         if group:
             results = _group_by_folder(results)
-        out = {"results": results[:n], "ms": int((time.time() - t0) * 1000), "reranked": reranked}
+        results = results[:n]
+        # the closest sentence takes about 0.3 s: only for the request after typing pauses
+        self._explain(results, sem_q or q, [g for r in results for g in r.get("group", [])], deep=rerank)
+        out = {"results": results, "ms": int((time.time() - t0) * 1000), "reranked": reranked}
         if cond_info:
             out["conditions"] = cond_info
         return out
+
+    def _explain(self, results, q, others=(), deep=True, top=8):
+        """Why each result matched, for the panel: the sentence of its best passage that is
+        closest in meaning to the query ("best", any language) and the query words it contains
+        ("hits"), with the snippet centred on that sentence, and a PDF's page number. others
+        (folded same-folder files) and results below the first `top` only get the words."""
+        todo = [r for r in results if r.get("_chunk")][:top] if deep else []
+        sents = [_sentences(r["_chunk"], most=8) for r in todo]
+        flat = [x for ss in sents for x in ss]
+        if flat and q:
+            try:
+                if self.torch:
+                    with self.gpu:
+                        qv = embed.encode([q], kind="query")[0]
+                        sv = embed.encode(flat, kind="query")
+                else:
+                    qv = embed.encode([q], kind="query")[0]
+                    sv = embed.encode(flat, kind="query")
+                sc, i, first = sv @ qv, 0, None
+                for r, ss in zip(todo, sents):
+                    if ss:
+                        j = int(np.argmax(sc[i:i + len(ss)]))
+                        r["_around"] = ss[j]
+                        # Highlight only a clear answer: the first result's sentence, and another's
+                        # when it is about as close; elsewhere the snippet just starts there
+                        first = sc[i + j] if first is None else first
+                        if sc[i + j] >= (0.4 if r is todo[0] else max(0.55, first - 0.05)):
+                            r["best"] = ss[j]
+                    i += len(ss)
+            except Exception:
+                pass
+        for r in [*results, *others]:
+            chunk = r.pop("_chunk", "")
+            if not chunk:
+                continue
+            around = r.pop("_around", "")
+            if around:
+                r["snippet"] = _snippet(chunk, q, around=around)
+            r["hits"] = _hit_words(r["snippet"], q)
+            if r["ext"] == ".pdf" and not r["cloud"]:
+                r["page"] = _pdf_page(r["path"], r["mtime"], [around or r["snippet"], chunk])
 
     def status(self):
         db = self._db()
@@ -847,16 +892,102 @@ def _exists(path):
         return True
 
 
-def _snippet(text, q, width=140):
+def _snippet(text, q, width=140, around=""):
     text = text.replace("\n", " ")
     low = text.lower()
-    pos = -1
-    for t in _terms(q):
-        pos = low.find(t.lower())
-        if pos >= 0:
-            break
+    # start at the given sentence, else a little before the first query word the text contains
+    pos = text.find(around.replace("\n", " ")) if around else -1
+    start = pos
+    if pos < 0:
+        pos = min((p for w in _hit_words(text, q) for p in [low.find(w.lower())] if p >= 0), default=-1)
+        start = max(0, pos - width // 3)
     if pos < 0:
         return text[:width] + ("…" if len(text) > width else "")
-    start = max(0, pos - width // 3)
     s = text[start:start + width]
     return ("…" if start else "") + s + ("…" if start + width < len(text) else "")
+
+
+def _sentences(text, most=12):
+    """A passage cut at sentence ends and line breaks into pieces of 8 to 200 characters, each
+    an exact slice of the text (so the snippet can be found and highlighted)."""
+    spans, start = [], 0
+    for m in re.finditer(r"[。！？；!?;]|\.(?=\s)|\n+", text):
+        if m.group().startswith("\n") and re.match(r"[a-z]", text[m.end():m.end() + 1]) \
+                and re.search(r"[a-z,-][ \t]*$", text[max(0, m.start() - 3):m.start()]):
+            continue  # a PDF line break inside a sentence
+        spans.append((start, m.end()))
+        start = m.end()
+    spans.append((start, len(text)))
+    out = []
+    for a, b in spans:
+        piece = text[a:b].strip()
+        if not piece:
+            continue
+        prev = text[out[-1][0]:out[-1][1]].strip() if out else ""
+        if prev and len(prev) < 25 and not re.search(r"[。！？!?.]$", prev):  # a heading or label goes with what follows
+            out[-1] = (out[-1][0], b)
+        else:
+            out.append((a, b))
+    pieces = [text[a:b].strip().lstrip("#*-> ").strip() for a, b in out]
+    return [p for p in pieces if 8 <= len(p) <= 200][:most]
+
+
+_CJK = re.compile(r"[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af]")
+_FILLER = set("的了是在我你他她它們们和與与及有這这那個个一之要找")
+
+
+def _hit_words(text, q, most=6):
+    """The query's words as they appear in the text, for the app to draw in bold. A Chinese,
+    Japanese or Korean query has no spaces, so its longest pieces (2+ characters) found in
+    the text count; English words also match without a plural or -ed/-ing ending."""
+    low, out = text.lower(), []
+    for t in _terms(q):
+        t = t.lower()
+        if not _CJK.search(t):
+            for w in (t, re.sub(r"(es|s|ed|ing)$", "", t)):
+                if len(w) >= 2 and w not in STOPWORDS and re.search(rf"(?<![a-z0-9]){re.escape(w)}", low):
+                    out.append(w)
+                    break
+            continue
+        i = 0
+        while i < len(t) - 1:
+            j = next((j for j in range(len(t), i + 1, -1) if t[i:j] in low), None)
+            if j and not set(t[i:j]) <= _FILLER:
+                out.append(t[i:j])
+                i = j
+            else:
+                i += 1
+    out = sorted(set(out), key=len, reverse=True)
+    return out[:most]
+
+
+_pages = {}
+
+
+def _pdf_page(path, mtime, probes):
+    """1-based page of a PDF that holds the given text (the snippet, else the chunk), or None."""
+    key = (path, mtime, probes[0][:80])
+    if key in _pages:
+        return _pages[key]
+    squash = lambda s: re.sub(r"[\s…]+", "", s)
+    keys = []
+    for p in probes:
+        p = squash(p)
+        if len(p) >= 12:
+            mid = len(p) // 2
+            keys.append(p[max(0, mid - 12):mid + 12])
+    page = None
+    try:
+        import pypdfium2 as pdfium
+        doc = pdfium.PdfDocument(path)
+        try:
+            texts = [squash(doc[i].get_textpage().get_text_range()) for i in range(min(len(doc), 300))]
+        finally:
+            doc.close()
+        page = next((i + 1 for k in keys for i, t in enumerate(texts) if k in t), None)
+    except Exception:
+        pass
+    if len(_pages) > 500:
+        _pages.clear()
+    _pages[key] = page
+    return page

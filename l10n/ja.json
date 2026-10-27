@@ -48,5 +48,10 @@
  "Show in Finder": "Finder で表示",
  "Quick Look": "クイックルック",
  "Copy": "コピー",
- "Copy Path": "パスをコピー"
+ "Copy Path": "パスをコピー",
+ "p. {n}": "{n} ページ",
+ "Only: {c}": "絞り込み：{c}",
+ "Search without these conditions": "この条件なしで検索",
+ "{n} results": "{n} 件",
+ "precise order": "精密な並び"
 }
