@@ -665,6 +665,10 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     @objc func dropConditions() {
         ignoreConditions = true
+        // a fast search still in flight was sent with the conditions: drop it so the chip stays gone
+        pending?.cancel()
+        pendingFine?.cancel()
+        task?.cancel()
         showConditions(nil)
         run(field.stringValue, fine: true)
         panel.makeFirstResponder(field)

@@ -42,6 +42,7 @@ TIER_SPAN = 40
 TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
 SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
 W_SIM = 0.4
+SENT_CHARS = 160  # the answer-sentence step embeds at most this much of each sentence
 # Codes, IDs and long numbers ("58210377", "NT$18,600", "MXV-2291") mean nothing to an embedding,
 # so for such lookups the keyword match counts more and the vector lists less. Measured on
 # eval/lookalike: those lookups went from rank 13-20 to first, nothing else moved.
@@ -194,6 +195,7 @@ class Searcher:
     def __init__(self):
         self.cfg = config.load()
         embed.get_model(self.cfg["model"])
+        self._qcache = {}
         self.reranker = None
         if self.cfg.get("onnx_reranker"):  # a local int8 export: no PyTorch, CPU only
             self.reranker = embed.OnnxReranker(self.cfg["onnx_reranker"])
@@ -398,7 +400,7 @@ class Searcher:
         if self.torch:
             import torch
             with self.gpu:
-                qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device).to(mat.dtype)
+                qv = torch.from_numpy(self._qvec(q)).to(mat.device).to(mat.dtype)
                 if qv.shape[1] != mat.shape[1]:
                     raise RuntimeError("index and query model differ; wait for the rebuild to finish")
                 scores = (mat @ qv[0]).float()
@@ -409,7 +411,7 @@ class Searcher:
                 s = top.values.cpu().numpy()
                 idx = top.indices.cpu().numpy()
         else:
-            qv = embed.encode([q], kind="query")
+            qv = self._qvec(q)
             if qv.shape[1] != mat.shape[1]:
                 raise RuntimeError("index and query model differ; wait for the rebuild to finish")
             scores = _scores(mat, qv[0])
@@ -458,10 +460,10 @@ class Searcher:
         if self.torch:
             import torch
             with self.gpu:
-                qv = torch.from_numpy(embed.encode([q], kind="query")).to(mat.device).to(mat.dtype)
+                qv = torch.from_numpy(self._qvec(q)).to(mat.device).to(mat.dtype)
                 sc = (mat[torch.as_tensor(rows, device=mat.device)] @ qv[0]).float().cpu().numpy()
         else:
-            sc = _scores(mat[rows], embed.encode([q], kind="query")[0])
+            sc = _scores(mat[rows], self._qvec(q)[0])
         best = {}
         for i in np.argsort(-sc):
             best.setdefault(int(fids[rows[i]]), None)
@@ -700,7 +702,18 @@ class Searcher:
             out["conditions"] = cond_info
         return out
 
-    def _explain(self, results, q, others=(), deep=True, top=8):
+    def _qvec(self, q):
+        """The query's vector, computed once per query: the file, app and sentence steps all use it."""
+        key = (embed._name, q)
+        v = self._qcache.get(key)
+        if v is None:
+            v = embed.encode([q], kind="query")
+            if len(self._qcache) > 64:
+                self._qcache.clear()
+            self._qcache[key] = v
+        return v
+
+    def _explain(self, results, q, others=(), deep=True, top=3):
         """Why each result matched, for the panel: the sentence of its best passage that is
         closest in meaning to the query ("best", any language) and the query words it contains
         ("hits"), with the snippet centred on that sentence, and a PDF's page number. others
@@ -710,13 +723,14 @@ class Searcher:
         flat = [x for ss in sents for x in ss]
         if flat and q:
             try:
+                # long sentences are cut for the model: their start is enough to tell what they say
+                short = [x[:SENT_CHARS] for x in flat]
+                qv = self._qvec(q)[0]
                 if self.torch:
                     with self.gpu:
-                        qv = embed.encode([q], kind="query")[0]
-                        sv = embed.encode(flat, kind="query")
+                        sv = embed.encode(short, kind="query")
                 else:
-                    qv = embed.encode([q], kind="query")[0]
-                    sv = embed.encode(flat, kind="query")
+                    sv = embed.encode(short, kind="query")
                 sc, i, first = sv @ qv, 0, None
                 for r, ss in zip(todo, sents):
                     if ss:
