@@ -52,6 +52,9 @@ DEFAULTS = {
     # "onnx" (ONNX Runtime, int8 bge-m3 on the CPU, no PyTorch needed) or "torch" (PyTorch on the
     # Apple GPU: indexes faster, needs requirements.txt). Changing it rebuilds the index.
     "embed_backend": "onnx",
+    # Time and source words in a query become filters: "上個月 LINE 傳來的報價單" searches
+    # "報價單" among last month's files that came from LINE (semsearch/conditions.py)
+    "conditions": True,
     # Optional second-stage cross-encoder; "" disables it (slow on laptops)
     "reranker": "",
     "rerank_top": 40,

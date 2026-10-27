@@ -2,6 +2,18 @@
 
 ## Unreleased
 
+- Time and source words become filters: “the quote Amy sent on LINE last week” searches
+  “quote” among last week's files that came from LINE. A chip in the search box shows the
+  conditions and its ✕ searches without them. On a 48-question test the right file came first
+  for 42 questions instead of 24. `"conditions": false` turns it off.
+- Each result highlights the sentence that answers the question, in any language (a Chinese
+  question highlights the answer in an English contract), with the query words in bold and the
+  page number for PDFs. It is added to the search that runs after typing pauses: about 0.3 s
+  on an M4.
+- The result list is quieter: long folder paths keep their start and last two folders, the
+  "in folder" count shows on the selected row, and the footer says how many results.
+- Optional: a local int8 reranker (`"onnx_reranker"`, see `eval/local_rerank/`) re-scores
+  the top 5 in about 0.3 s without PyTorch.
 - No PyTorch by default: bge-m3 runs quantized to int8 on ONNX Runtime. The install is about 170 MB
   of Python packages instead of 1 GB and the model 590 MB instead of 2.2 GB; search quality is the
   same, the service starts in about a second, but the first index build is about 3× slower.

@@ -95,6 +95,10 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
   the text in screenshots and scanned PDFs.
 - **Finds apps by what they do**: “take a screenshot” finds Screenshot, “video call” finds FaceTime.
 - **Any language**: ask in Chinese, find an English file, and the other way round.
+- **Understands when and from where**: *“the quote Amy sent on LINE last week”* looks only at
+  last week's files that came from LINE. A chip shows the conditions; ✕ drops them.
+- **Shows the answer**: the sentence that answers your question is highlighted in each result,
+  even when the file is in another language, with the page number for PDFs.
 - **Interface in your language**: English, 繁體中文, 简体中文, 日本語 and 한국어, following your Mac.
   [Add yours](l10n/README.md).
 - **Learns what you use**: files you open often move up.
