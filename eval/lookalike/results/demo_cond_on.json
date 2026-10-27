@@ -1,0 +1,826 @@
+{
+ "summary": {
+  "tag": "beat_demo",
+  "model": "BAAI/bge-m3",
+  "reranker": null,
+  "n": 40,
+  "hit1": 40,
+  "hit3": 40,
+  "panel_hit1": 40,
+  "panel_hit3": 40,
+  "mrr": 1.0,
+  "mean_ms": 12.6,
+  "median_ms": 12,
+  "index_s": null,
+  "searcher_load_s": 0.7,
+  "index_peak_rss_mb": 0,
+  "search_peak_rss_mb": 764,
+  "index_db_mb": 0.74
+ },
+ "queries": [
+  {
+   "q": "how much is my rent",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 10,
+   "wall_ms": 10.6,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "security deposit for the apartment",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.7,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/Document (3).txt",
+    "Home/冷氣保固卡.txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Travel/flight_confirmation.txt",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "when is my car insurance premium due",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 12.0,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Work/Q3_roadmap.md",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "roadside assistance coverage",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.0,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Work/Q3_roadmap.md",
+    "Home/冷氣保固卡.txt",
+    "Recipes/sourdough_starter.md",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "who is drafting the customer email",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.4,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Home/Document (3).txt",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "pricing page A/B test launch date",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.3,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "checkout latency goal",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/Q3_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Work/meeting_notes_0612.md",
+    "Home/冷氣保固卡.txt",
+    "Recipes/紅燒牛肉麵.md"
+   ]
+  },
+  {
+   "q": "what seat did I book on my flight",
+   "expect": [
+    "Travel/flight_confirmation.txt"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 21.0,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/flight_confirmation.txt",
+    "Travel/Kansai_2026.md",
+    "Work/Q3_roadmap.md",
+    "Work/meeting_notes_0612.md",
+    "Home/冷氣保固卡.txt"
+   ]
+  },
+  {
+   "q": "how often to feed the starter",
+   "expect": [
+    "Recipes/sourdough_starter.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.7,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/sourdough_starter.md",
+    "Work/Q3_roadmap.md",
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Home/冷氣保固卡.txt"
+   ]
+  },
+  {
+   "q": "where to see the deer",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "content",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Travel/flight_confirmation.txt",
+    "Finance/scan_0042.pdf",
+    "Work/meeting_notes_0612.md",
+    "Home/Document (3).txt"
+   ]
+  },
+  {
+   "q": "房租多少",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Recipes/紅燒牛肉麵.md"
+   ]
+  },
+  {
+   "q": "租約什麼時候到期",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/Document (3).txt",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Travel/flight_confirmation.txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "車險什麼時候要續約",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.0,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Travel/flight_confirmation.txt",
+    "Work/Q3_roadmap.md",
+    "Finance/2026-03 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "去大阪的班機幾點起飛",
+   "expect": [
+    "Travel/flight_confirmation.txt"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.5,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/flight_confirmation.txt",
+    "Travel/Kansai_2026.md",
+    "Work/Q3_roadmap.md",
+    "Work/meeting_notes_0612.md",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "京都奈良五天行程",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.5,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Travel/flight_confirmation.txt",
+    "Recipes/紅燒牛肉麵.md",
+    "Work/Q3_roadmap.md",
+    "Home/冷氣保固卡.txt"
+   ]
+  },
+  {
+   "q": "酸種麵包的酵母怎麼養",
+   "expect": [
+    "Recipes/sourdough_starter.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.6,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/sourdough_starter.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Home/冷氣保固卡.txt",
+    "Work/meeting_notes_0612.md",
+    "Home/Document (3).txt"
+   ]
+  },
+  {
+   "q": "第三季產品規劃",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 20,
+   "wall_ms": 20.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/Q3_roadmap.md",
+    "Work/meeting_notes_0612.md",
+    "Home/Document (3).txt",
+    "Finance/scan_0042.pdf",
+    "Finance/2026-03 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "上週開會決定了什麼",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "zh→en",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.3,
+   "reranked": false,
+   "conditions": {
+    "time": "上週",
+    "source": null,
+    "matched": 0
+   },
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "beef noodle soup recipe",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/sourdough_starter.md",
+    "Work/meeting_notes_0612.md",
+    "Recipes",
+    "Home/Document (3).txt"
+   ]
+  },
+  {
+   "q": "braised beef with star anise and tomato",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 15,
+   "wall_ms": 15.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/sourdough_starter.md",
+    "Travel/Kansai_2026.md",
+    "Work/meeting_notes_0612.md",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "air conditioner warranty",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 13.0,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Travel/flight_confirmation.txt",
+    "Home/Document (3).txt",
+    "Work/Q3_roadmap.md",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "how long is the compressor covered",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Finance/scan_0042.pdf",
+    "Recipes/sourdough_starter.md",
+    "Home/Document (3).txt",
+    "Travel/Kansai_2026.md"
+   ]
+  },
+  {
+   "q": "electricity and water bill for March",
+   "expect": [
+    "Finance/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.6,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/2026-03 水電費繳費單.txt",
+    "Home/冷氣保固卡.txt",
+    "Home/Document (3).txt",
+    "Work/Q3_roadmap.md",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "utility bill payment deadline",
+   "expect": [
+    "Finance/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "en→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.7,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/2026-03 水電費繳費單.txt",
+    "Home/Document (3).txt",
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "壓縮機保固幾年",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.8,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Finance/scan_0042.pdf",
+    "Work/Q3_roadmap.md",
+    "Home/Document (3).txt"
+   ]
+  },
+  {
+   "q": "電費多少錢",
+   "expect": [
+    "Finance/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/2026-03 水電費繳費單.txt",
+    "Home/冷氣保固卡.txt",
+    "Home/Document (3).txt",
+    "Finance/scan_0042.pdf",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "燉牛肉要多久",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "zh→zh",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.8,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Home/冷氣保固卡.txt",
+    "Recipes/sourdough_starter.md",
+    "Work/Q3_roadmap.md",
+    "Finance/2026-03 水電費繳費單.txt"
+   ]
+  },
+  {
+   "q": "NT$18,600",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Travel/flight_confirmation.txt",
+    "Work/meeting_notes_0612.md"
+   ]
+  },
+  {
+   "q": "seat 32A",
+   "expect": [
+    "Travel/flight_confirmation.txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/flight_confirmation.txt",
+    "Finance/scan_0042.pdf",
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Travel/Kansai_2026.md"
+   ]
+  },
+  {
+   "q": "Shijo-Karasuma",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.5,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Home/冷氣保固卡.txt",
+    "Finance/scan_0042.pdf",
+    "Travel/flight_confirmation.txt",
+    "Recipes/紅燒牛肉麵.md"
+   ]
+  },
+  {
+   "q": "Mia",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.4,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Home/冷氣保固卡.txt",
+    "Finance/scan_0042.pdf"
+   ]
+  },
+  {
+   "q": "HARUKA",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 10,
+   "wall_ms": 10.6,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Recipes/sourdough_starter.md",
+    "Home/冷氣保固卡.txt",
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "1,718",
+   "expect": [
+    "Finance/2026-03 水電費繳費單.txt"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 10,
+   "wall_ms": 10.9,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/2026-03 水電費繳費單.txt",
+    "Recipes/sourdough_starter.md",
+    "Finance/scan_0042.pdf",
+    "Home/Document (3).txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "豆瓣醬",
+   "expect": [
+    "Recipes/紅燒牛肉麵.md"
+   ],
+   "tag": "exact",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.3,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/紅燒牛肉麵.md",
+    "Recipes/sourdough_starter.md",
+    "Home/冷氣保固卡.txt",
+    "Travel/flight_confirmation.txt",
+    "Work/Q3_roadmap.md"
+   ]
+  },
+  {
+   "q": "car insurance pdf",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 11,
+   "wall_ms": 11.7,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Finance/scan_0042.pdf",
+    "Home/冷氣保固卡.txt",
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Travel/flight_confirmation.txt"
+   ]
+  },
+  {
+   "q": "rental contract txt",
+   "expect": [
+    "Home/Document (3).txt"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.4,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/Document (3).txt",
+    "Travel/flight_confirmation.txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Home/冷氣保固卡.txt",
+    "Work/meeting_notes_0612.md"
+   ]
+  },
+  {
+   "q": "japan trip md",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "type-hint",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Travel/Kansai_2026.md",
+    "Work/meeting_notes_0612.md",
+    "Work/Q3_roadmap.md",
+    "Travel/flight_confirmation.txt",
+    "Recipes/sourdough_starter.md"
+   ]
+  },
+  {
+   "q": "sourdough",
+   "expect": [
+    "Recipes/sourdough_starter.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 12,
+   "wall_ms": 12.1,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Recipes/sourdough_starter.md",
+    "Recipes/紅燒牛肉麵.md",
+    "Work/Q3_roadmap.md",
+    "Home/Document (3).txt",
+    "Work/meeting_notes_0612.md"
+   ]
+  },
+  {
+   "q": "Q3 roadmap",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 14,
+   "wall_ms": 14.2,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Work/Q3_roadmap.md",
+    "Work/meeting_notes_0612.md",
+    "Home/Document (3).txt",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Travel/Kansai_2026.md"
+   ]
+  },
+  {
+   "q": "冷氣保固",
+   "expect": [
+    "Home/冷氣保固卡.txt"
+   ],
+   "tag": "name",
+   "rank": 1,
+   "panel_rank": 1,
+   "ms": 13,
+   "wall_ms": 13.8,
+   "reranked": false,
+   "conditions": null,
+   "top": [
+    "Home/冷氣保固卡.txt",
+    "Finance/scan_0042.pdf",
+    "Finance/2026-03 水電費繳費單.txt",
+    "Recipes/紅燒牛肉麵.md",
+    "Home/Document (3).txt"
+   ]
+  }
+ ]
+}

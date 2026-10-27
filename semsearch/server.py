@@ -51,13 +51,14 @@ def _stop(signum=None, frame=None):
     os._exit(0)
 
 
-def start_indexer(quick=False):
+def start_indexer(quick=False, paths=None):
     global indexer_proc
     if indexer_proc and indexer_proc.poll() is None:
         return False
     log = open(config.DATA_DIR / "indexer.log", "a")
     indexer_proc = _spawn(
-        ["nice", "-n", "15", sys.executable, "-m", "semsearch.indexer"] + (["--quick"] if quick else []),
+        ["nice", "-n", "15", sys.executable, "-m", "semsearch.indexer"] + (["--quick"] if quick else [])
+        + (["--paths", *paths] if paths else []),
         cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     return True
 
@@ -155,8 +156,14 @@ QUICK_EVERY = 30 * 60  # the indexer upgrades a quick run to a full scan when th
 
 
 QUIET = 30  # seconds without file changes (e.g. a finished download) before indexing new files
+MAX_WAIT = 300  # but no longer than this while something keeps writing
+MIN_GAP = 60  # between two runs the watcher starts: each run loads the model
+_last_watch_run = [0.0]
 
 _changed = [0.0]  # time of the last file change reported by the watcher
+_first_change = [0.0]  # time of the oldest change not indexed yet
+_changed_dirs = set()  # folders to rescan (indexer.change_target)
+_changed_lock = threading.Lock()
 _access = {}      # root -> "ok" / "denied" / "waiting" (macOS folder permission)
 _probes = {}
 
@@ -188,21 +195,33 @@ def _check_access():
 
 
 def _start_fs_watch():
-    """Watch hot_roots (Downloads, Desktop) and index new files ~30 s after they appear.
+    """Watch every indexed folder and rescan the folders that changed ~30 s after the last
+    change, so new, edited, moved and deleted files show up without waiting for a scan.
 
     Uses a separate helper (bin/semsearch-fswatch, macOS FSEvents) that prints a line per
     change. Python's watchdog is not used: it can hold the GIL inside native code and
     freeze the whole service.
     """
+    from . import indexer
     exe = ROOT / "bin" / "semsearch-fswatch"
-    roots = [r for r in config.load()["hot_roots"] if os.path.isdir(r)]
+    cfg = config.load()
+    # names_only_roots (code projects) change all the time: the 30-minute quick run covers them
+    roots = [r for r in indexer._dedupe_roots(cfg["roots"]) if os.path.isdir(r)
+             and not indexer._under(r, cfg["names_only_roots"])]
+    indexer._exclude_substrings[:] = cfg.get("exclude_substrings", [])
     if not exe.exists() or not roots:
         return
     while True:
         try:
             proc = _spawn([str(exe), *roots], stdout=subprocess.PIPE, text=True)
-            for _ in proc.stdout:
-                _changed[0] = time.time()
+            for line in proc.stdout:
+                target = indexer.change_target(line.rstrip("\n"), roots)
+                if target is None:
+                    continue  # hidden files, packages, build output: the index never looks there
+                with _changed_lock:
+                    _changed_dirs.add(target)
+                    _changed[0] = time.time()
+                    _first_change[0] = _first_change[0] or _changed[0]
         except OSError:
             pass
         time.sleep(30)  # the helper exited unexpectedly: restart it after a pause
@@ -247,9 +266,17 @@ def _watch():
             searcher.maybe_reload()
         if _changed[0] and busy:
             wake.touch()  # ask the running indexer to pause OCR; the change is kept for later
-        if _changed[0] and time.time() - _changed[0] > QUIET and not busy and start_indexer(quick=True):
-            _changed[0] = 0.0
-            next_quick = time.time() + QUICK_EVERY
+        now = time.time()
+        due = _changed[0] and (now - _changed[0] > QUIET or now - _first_change[0] > MAX_WAIT)
+        if due and not busy and now - _last_watch_run[0] > MIN_GAP:
+            with _changed_lock:
+                dirs = sorted(_changed_dirs)
+            if start_indexer(paths=dirs):
+                _last_watch_run[0] = now
+                with _changed_lock:
+                    _changed_dirs.difference_update(dirs)
+                    if not _changed_dirs:
+                        _changed[0] = _first_change[0] = 0.0
         elif time.time() >= next_quick and start_indexer(quick=True):
             next_quick = time.time() + QUICK_EVERY
 

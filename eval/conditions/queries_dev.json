@@ -1,0 +1,239 @@
+{
+ "about": "Dev set for the conditions prototype (written by the same session as semsearch/conditions.py, so it may flatter it; see queries_holdout.json). Corpus: make_corpus.py here. Run with SEMSEARCH_NOW=2026-06-18.",
+ "queries": [
+  {
+   "q": "上個月的水電費",
+   "expect": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "this month's utility bill",
+   "expect": [
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "上個月的信用卡帳單",
+   "expect": [
+    "Finance/Statements/Statement_2026-05.pdf"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "去年的健檢報告",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "最近的健檢報告",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "yesterday's roadmap",
+   "expect": [
+    "Work/Q4_roadmap_draft.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "roadmap from last week",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "上週的會議記錄",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "meeting notes from 3 weeks ago",
+   "expect": [
+    "Work/meetings/meeting_notes_0529.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "今天的會議記錄",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "這週的旅遊行程",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "last year's flight booking",
+   "expect": [
+    "Travel/flight_confirmation (1).txt"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "the screenshot from last month",
+   "expect": [
+    "Work/Screenshot 2026-05-20 at 15.02.11.png",
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "去年的租約",
+   "expect": [
+    "Home/Lease_storage_unit.pdf"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "最近改的車險",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "LINE 傳來的報價單",
+   "expect": [
+    "Downloads/報價單.pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "Gmail 附件的報價單",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "the quote from Slack",
+   "expect": [
+    "Downloads/報價單 (2).pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "AirDrop 傳來的截圖",
+   "expect": [
+    "Downloads/IMG_8850.png",
+    "Travel/IMG_6012.png"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "LINE 收到的好市多收據",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "the PDF from Google Drive",
+   "expect": [
+    "Downloads/document (1).pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "從 ChatGPT 下載的筆記",
+   "expect": [
+    "Study/rag_paper_notes.md"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "Telegram 傳的考試複習",
+   "expect": [
+    "Study/ML_midterm_review.pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "Safari 下載的收據",
+   "expect": [
+    "Downloads/receipt.pdf"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "the reminder someone sent on iMessage",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "source"
+  },
+  {
+   "q": "上週 Gmail 寄來的報價",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "both"
+  },
+  {
+   "q": "上個月 Slack 上的檔案",
+   "expect": [
+    "Downloads/報價單 (2).pdf",
+    "Work/headcount_plan.xlsx"
+   ],
+   "tag": "both"
+  },
+  {
+   "q": "LINE 這週傳來的合約",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "both"
+  },
+  {
+   "q": "去年 Google Drive 的檢討",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "both"
+  },
+  {
+   "q": "airdrop photo from this week",
+   "expect": [
+    "Downloads/IMG_8850.png"
+   ],
+   "tag": "both"
+  },
+  {
+   "q": "先月の水道光熱費",
+   "expect": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "지난주 회의록",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "time"
+  },
+  {
+   "q": "drive to Kyoto hotel booking",
+   "expect": [
+    "Travel/Hotel_Kyoto_booking.pdf"
+   ],
+   "tag": "control"
+  }
+ ]
+}

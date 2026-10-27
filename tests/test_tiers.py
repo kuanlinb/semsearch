@@ -52,3 +52,9 @@ def test_files_beyond_a_small_reranker_window_stay_in_the_second_tier():
 def test_a_full_window_drops_unscored_files():
     out = search._tiers([_r(2.0)] + [_r(None)] * 5, judged=search.TIER_SPAN)
     assert [r["rel"] for r in out] == [2.0]
+
+
+def test_never_hides_everything():
+    # conditions ("AirDrop 傳來的…") can leave a single weak match: it is shown dimmed
+    out = search._tiers([_r(-11.0)], judged=1)
+    assert [(r["rel"], r["tier"]) for r in out] == [(-11.0, 2)]

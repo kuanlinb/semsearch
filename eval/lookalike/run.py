@@ -32,6 +32,7 @@ def main():
     ap.add_argument("--reindex", action="store_true")
     ap.add_argument("--queries", default=os.path.join(HERE, "queries.json"))
     ap.add_argument("--config", default="{}", help='extra config keys as JSON, e.g. \'{"image_search": true}\'')
+    ap.add_argument("--name", help="results/<name>.json (default: the tag)")
     a = ap.parse_args()
     corpus = os.path.abspath(os.path.expanduser(a.corpus))
 
@@ -69,7 +70,7 @@ def main():
         panel = next((i + 1 for i, r in enumerate(grouped["results"])
                       if any(x["path"] in want for x in [r] + r.get("group", []))), None)
         rows.append({**item, "rank": rank, "panel_rank": panel, "ms": flat["ms"], "wall_ms": round(wall_ms, 1),
-                     "reranked": flat["reranked"],
+                     "reranked": flat["reranked"], "conditions": flat.get("conditions"),
                      "top": [os.path.relpath(r["path"], corpus) if r["path"].startswith(corpus) else r["path"]
                              for r in flat["results"][:5]]})
         print(f"{rank or '-':>2} {panel or '-':>2}  {flat['ms']:>5}ms  {item['q']}  →  {rows[-1]['top'][:1]}")
@@ -90,7 +91,7 @@ def main():
     }
     print(json.dumps(summary, ensure_ascii=False))
     os.makedirs(os.path.join(HERE, "results"), exist_ok=True)
-    json.dump({"summary": summary, "queries": rows}, open(os.path.join(HERE, "results", f"{a.tag}.json"), "w"),
+    json.dump({"summary": summary, "queries": rows}, open(os.path.join(HERE, "results", f"{a.name or a.tag}.json"), "w"),
               ensure_ascii=False, indent=1)
 
 

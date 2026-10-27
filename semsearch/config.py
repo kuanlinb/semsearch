@@ -49,8 +49,9 @@ DEFAULTS = {
     "exclude_substrings": [],
     "port": 8799,
     "model": "BAAI/bge-m3",
-    # "torch" (PyTorch, Apple GPU) or "onnx" (ONNX Runtime int8 on the CPU, no PyTorch needed)
-    "embed_backend": "torch",
+    # "onnx" (ONNX Runtime, int8 bge-m3 on the CPU, no PyTorch needed) or "torch" (PyTorch on the
+    # Apple GPU: indexes faster, needs requirements.txt). Changing it rebuilds the index.
+    "embed_backend": "onnx",
     # Optional second-stage cross-encoder; "" disables it (slow on laptops)
     "reranker": "",
     "rerank_top": 40,
@@ -102,8 +103,8 @@ MAX_CHUNKS_PER_FILE = int(os.environ.get("SEMSEARCH_MAX_CHUNKS", 30))
 
 
 def embed_backend():
-    """"torch" or "onnx"; SEMSEARCH_EMBED_BACKEND overrides the config file."""
-    return os.environ.get("SEMSEARCH_EMBED_BACKEND") or load().get("embed_backend", "torch")
+    """"onnx" or "torch"; SEMSEARCH_EMBED_BACKEND overrides the config file."""
+    return os.environ.get("SEMSEARCH_EMBED_BACKEND") or load().get("embed_backend", "onnx")
 
 
 def device():

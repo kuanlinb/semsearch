@@ -1,5 +1,5 @@
-# embed_backend "onnx": everything SemSearch needs without PyTorch (~170 MB instead of ~1 GB).
-# The optional reranker still needs requirements.txt.
+# What install.sh installs by default: everything SemSearch needs without PyTorch (~170 MB
+# instead of ~1 GB). requirements.txt adds PyTorch, for "embed_backend": "torch" or a reranker.
 numpy==2.4.6
 onnxruntime==1.31.0
 tokenizers==0.23.3

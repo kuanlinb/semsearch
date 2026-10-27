@@ -1,0 +1,389 @@
+{
+ "about": "Held-out conditions queries, written from the manifest only, before any search was run",
+ "queries": [
+  {
+   "q": "yesterday's roadmap",
+   "expect": [
+    "Work/Q4_roadmap_draft.md"
+   ],
+   "tag": "time",
+   "why": "yesterday=06-17; only Q4 draft; Q1-Q3 roadmaps older"
+  },
+  {
+   "q": "the roadmap I edited last week",
+   "expect": [
+    "Work/Q3_roadmap.md"
+   ],
+   "tag": "time",
+   "why": "last week=06-08..14; Q3 is 06-11; Q4 is 06-17 this week"
+  },
+  {
+   "q": "先月のクレジットカード明細",
+   "expect": [
+    "Finance/Statements/Statement_2026-05.pdf"
+   ],
+   "tag": "time",
+   "why": "last month=May; Statement_2026-05 mod 05-10; other months excluded"
+  },
+  {
+   "q": "去年的健檢報告",
+   "expect": [
+    "Health/健檢報告_2025.pdf"
+   ],
+   "tag": "time",
+   "why": "last year=2025; 2025 report mod 2025-11-20, 2026 report mod this year"
+  },
+  {
+   "q": "今天寫的會議紀錄",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "time",
+   "why": "today=06-18; only meeting_notes_0619 mod today; others older weekly syncs"
+  },
+  {
+   "q": "上週的週會紀錄",
+   "expect": [
+    "Work/meeting_notes_0612.md"
+   ],
+   "tag": "time",
+   "why": "last week=06-08..14; 0612 mod 06-12; 0605 is two weeks back"
+  },
+  {
+   "q": "上個月的水電費繳費單",
+   "expect": [
+    "Finance/Bills/2026/2026-05 水電費繳費單.txt"
+   ],
+   "tag": "time",
+   "why": "last month=May 2026 mod 05-10; other monthly bills excluded"
+  },
+  {
+   "q": "這個月的水電費",
+   "expect": [
+    "Finance/Bills/2026/2026-06 水電費繳費單.txt"
+   ],
+   "tag": "time",
+   "why": "this month=June, mod 06-10; other monthly bills excluded"
+  },
+  {
+   "q": "that itinerary I was editing recently",
+   "expect": [
+    "Travel/Kansai_2026.md"
+   ],
+   "tag": "time",
+   "why": "recent mod 06-16; Tokyo_2025 itinerary mod 2025-03"
+  },
+  {
+   "q": "昨天的電子機票",
+   "expect": [
+    "Travel/eticket_SIN.pdf"
+   ],
+   "tag": "time",
+   "why": "yesterday=06-17; eticket_SIN; other flight/ticket files older"
+  },
+  {
+   "q": "上個月的報價單",
+   "expect": [
+    "Downloads/報價單 (2).pdf"
+   ],
+   "tag": "time",
+   "why": "last month=May; only 報價單 (2) mod 05-21; others in June"
+  },
+  {
+   "q": "去年的保固書",
+   "expect": [
+    "Home/冰箱保固書.pdf"
+   ],
+   "tag": "time",
+   "why": "last year=2025; fridge warranty mod 2025-08-31; washer 2026, AC card 2024"
+  },
+  {
+   "q": "the hotel booking confirmation from last year",
+   "expect": [
+    "Travel/Hotel_Tokyo_booking.pdf"
+   ],
+   "tag": "time",
+   "why": "last year=2025; Tokyo booking mod 2025-09-30; Kyoto booking mod 2026-02"
+  },
+  {
+   "q": "sourdough notes from last month",
+   "expect": [
+    "Recipes/sourdough_starter.md"
+   ],
+   "tag": "time",
+   "why": "last month=May; starter mod 05-03; sourdough_loaf mod 2025-03"
+  },
+  {
+   "q": "the car insurance policy from 3 weeks ago",
+   "expect": [
+    "Finance/scan_0042.pdf"
+   ],
+   "tag": "time",
+   "why": "3 weeks ago ~05-28; scan_0042 mod 05-28; scan_0017 mod 2025-03"
+  },
+  {
+   "q": "這個月的信用卡帳單",
+   "expect": [
+    "Finance/Statements/Statement_2026-06.pdf"
+   ],
+   "tag": "time",
+   "why": "this month=June; only Statement_2026-06; other months excluded"
+  },
+  {
+   "q": "這週 LINE 傳來的報價單",
+   "expect": [
+    "Downloads/報價單.pdf"
+   ],
+   "tag": "both",
+   "why": "LINE + this week (06-15); other quotes are Gmail 06-10 / Slack 05-21"
+  },
+  {
+   "q": "the quotation I downloaded from Gmail last week",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "both",
+   "why": "Gmail + last week (06-10); other quotes LINE/Slack"
+  },
+  {
+   "q": "AirDrop screenshot from this week",
+   "expect": [
+    "Downloads/IMG_8850.png"
+   ],
+   "tag": "both",
+   "why": "AirDrop + this week (06-16); IMG_6012 AirDrop is January"
+  },
+  {
+   "q": "上個月 Slack 上收到的報價單",
+   "expect": [
+    "Downloads/報價單 (2).pdf"
+   ],
+   "tag": "both",
+   "why": "Slack + last month (05-21); other quotes LINE/Gmail in June"
+  },
+  {
+   "q": "last week's deck on Slack",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "both",
+   "why": "Slack + last week (06-09); headcount_plan Slack is May and xlsx"
+  },
+  {
+   "q": "the PDF I downloaded in Safari yesterday",
+   "expect": [
+    "Downloads/receipt.pdf"
+   ],
+   "tag": "both",
+   "why": "Safari + yesterday (06-17); other Safari PDFs are 06-04 and 2025"
+  },
+  {
+   "q": "去年用 Safari 下載的保險 PDF",
+   "expect": [
+    "Finance/旅平險.pdf"
+   ],
+   "tag": "both",
+   "why": "Safari + last year (2025-02-26); other Safari insurance files are 2026"
+  },
+  {
+   "q": "last month's receipt photo from LINE",
+   "expect": [
+    "Finance/IMG_5203.png"
+   ],
+   "tag": "both",
+   "why": "LINE + last month (05-17); other LINE images are June or earlier"
+  },
+  {
+   "q": "LINE 傳來的報價單",
+   "expect": [
+    "Downloads/報價單.pdf"
+   ],
+   "tag": "source",
+   "why": "LINE; other quotes came via Gmail and Slack"
+  },
+  {
+   "q": "the document PDF I got from Gmail",
+   "expect": [
+    "Downloads/document.pdf"
+   ],
+   "tag": "source",
+   "why": "Gmail; document (1).pdf came from Google Drive"
+  },
+  {
+   "q": "document PDF from Google Drive",
+   "expect": [
+    "Downloads/document (1).pdf"
+   ],
+   "tag": "source",
+   "why": "Google Drive; document.pdf came from Gmail"
+  },
+  {
+   "q": "Slack 上那份簡報",
+   "expect": [
+    "Work/Pricing_review.pptx"
+   ],
+   "tag": "source",
+   "why": "Slack; the only pptx and Slack deck"
+  },
+  {
+   "q": "the receipt I downloaded with Safari",
+   "expect": [
+    "Downloads/receipt.pdf"
+   ],
+   "tag": "source",
+   "why": "Safari; Costco receipt came via LINE"
+  },
+  {
+   "q": "Telegram 傳來的複習講義",
+   "expect": [
+    "Study/ML_midterm_review.pdf"
+   ],
+   "tag": "source",
+   "why": "Telegram; only Telegram file"
+  },
+  {
+   "q": "the notes I saved from ChatGPT",
+   "expect": [
+    "Study/rag_paper_notes.md"
+   ],
+   "tag": "source",
+   "why": "chatgpt.com; other study notes have no source"
+  },
+  {
+   "q": "Google Drive 下載的年度檢討",
+   "expect": [
+    "Work/年終檢討.docx"
+   ],
+   "tag": "source",
+   "why": "Google Drive; only year-end review file"
+  },
+  {
+   "q": "the lease agreement someone sent me on LINE",
+   "expect": [
+    "Home/車位租約.docx"
+   ],
+   "tag": "source",
+   "why": "LINE; other leases have no source"
+  },
+  {
+   "q": "Messages 上收到的預約提醒截圖",
+   "expect": [
+    "Health/IMG_7002.png"
+   ],
+   "tag": "source",
+   "why": "Messages; other appointment/screenshot images are LINE/AirDrop"
+  },
+  {
+   "q": "Gmail 附件的健檢報告",
+   "expect": [
+    "Health/健檢報告_2026.pdf"
+   ],
+   "tag": "source",
+   "why": "Gmail; 2025 report has no source"
+  },
+  {
+   "q": "從 Gmail 下載的報價單",
+   "expect": [
+    "Downloads/報價單 (1).pdf"
+   ],
+   "tag": "source",
+   "why": "Gmail; other quotes LINE/Slack"
+  },
+  {
+   "q": "my old lease for the previous flat",
+   "expect": [
+    "Home/Document (5).txt"
+   ],
+   "tag": "control",
+   "why": "no real condition; previous-flat tenancy text"
+  },
+  {
+   "q": "weekly sync SSO migration Ava",
+   "expect": [
+    "Work/meeting_notes_0619.md"
+   ],
+   "tag": "control",
+   "why": "'weekly' is not a time filter; SSO migration text unique"
+  },
+  {
+   "q": "workout plan run 5 km on Sunday",
+   "expect": [
+    "Health/workout_plan.md"
+   ],
+   "tag": "control",
+   "why": "'Sunday' is content not a date"
+  },
+  {
+   "q": "NAS backup every Sunday and printer IP",
+   "expect": [
+    "Notes/wifi_and_devices.md"
+   ],
+   "tag": "control",
+   "why": "'Sunday' is content not a date"
+  },
+  {
+   "q": "sourdough starter day by day",
+   "expect": [
+    "Recipes/sourdough_starter.md"
+   ],
+   "tag": "control",
+   "why": "'day' is content; starter vs loaf"
+  },
+  {
+   "q": "下次保養要幾公里",
+   "expect": [
+    "Car/保養紀錄.md"
+   ],
+   "tag": "control",
+   "why": "'下次' is content; car maintenance log"
+  },
+  {
+   "q": "airline statement biggest charge",
+   "expect": [
+    "Finance/Statements/Statement_2026-04.pdf"
+   ],
+   "tag": "control",
+   "why": "'airline' contains 'line'; April statement largest item airline"
+  },
+  {
+   "q": "Northwind Traders annual subscription invoice",
+   "expect": [
+    "Work/invoices/INV-20260103.pdf"
+   ],
+   "tag": "control",
+   "why": "name picks invoice; 'annual' not a date"
+  },
+  {
+   "q": "待辦清單 回覆房東修繕",
+   "expect": [
+    "Notes/待辦.md"
+   ],
+   "tag": "control",
+   "why": "todo list unique by content"
+  },
+  {
+   "q": "scooter oil change, last done in March",
+   "expect": [
+    "Car/scooter_maintenance.md"
+   ],
+   "tag": "control",
+   "why": "'March' in content not file date; scooter file"
+  },
+  {
+   "q": "護照要剩六個月以上效期",
+   "expect": [
+    "Travel/護照換發.md"
+   ],
+   "tag": "control",
+   "why": "content about passport validity; no date condition"
+  },
+  {
+   "q": "Pixelwork quote valid for 14 days",
+   "expect": [
+    "Downloads/報價單 (2).pdf"
+   ],
+   "tag": "control",
+   "why": "'valid 14 days' is content; Pixelwork picks quote"
+  }
+ ]
+}

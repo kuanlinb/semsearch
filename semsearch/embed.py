@@ -3,9 +3,10 @@ EmbeddingGemma "task: search result | query: " / "title: … | text: ".
 
 Two runtimes (config "embed_backend"):
   "torch"  sentence-transformers on PyTorch (Apple GPU through MPS), any Hugging Face model
-  "onnx"   ONNX Runtime with an int8 export of bge-m3: no PyTorch needed, runs on the CPU
+  "onnx"   ONNX Runtime with an int8 export of bge-m3: no PyTorch needed, runs on the CPU (default)
   "llama"  a running llama.cpp llama-server (config "image_url"), e.g. EmbeddingGemma 2 GGUF
 """
+import hashlib
 import os
 import re
 import threading
@@ -22,23 +23,44 @@ _lock = threading.Lock()
 _name = None
 
 
-# ONNX exports: model name -> (Hugging Face repo, model file, tokenizer file). The config key
-# "onnx_model" can instead name a local folder with model.onnx (+ model.onnx_data) and tokenizer.json.
+# ONNX exports: model name -> (folder name, where to download, {file: sha256}). bge-m3 is
+# quantized per output channel by tools/export_onnx.py (cosine ~0.993 to the PyTorch vectors;
+# same Hit@1 / Hit@3 on eval/lookalike). The config key "onnx_model" can instead name a local
+# folder with model.onnx, model.onnx_data and tokenizer.json.
 ONNX_MODELS = {
-    "BAAI/bge-m3": ("Xenova/bge-m3", "onnx/model_int8.onnx", "tokenizer.json"),
+    "BAAI/bge-m3": ("bge-m3-onnx-int8", "https://github.com/kuanlinb/semsearch/releases/download/bge-m3-onnx-int8/", {
+        "model.onnx": "c63c378174a4352c28bc5d6e9cf0605f13148a385f69363d66266753938277b8",
+        "model.onnx_data": "e2cd25b5dd81c0ec6e06a805ea8a4c72634eacb656a7f4cdee6e9dbc062daae8",
+        "tokenizer.json": "6710678b12670bc442b99edc952c4d996ae309a7020c1fa0096dd245c2faf790",
+    }),
 }
 MAX_TOKENS = 256
 
 
-def _fetch(repo, path):
-    """A file from a Hugging Face repo, downloaded once into config.MODELS_DIR."""
-    dest = config.MODELS_DIR / repo.replace("/", "--") / path
-    if not dest.exists():
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        tmp = dest.with_suffix(dest.suffix + ".part")
-        urllib.request.urlretrieve(f"https://huggingface.co/{repo}/resolve/main/{path}", tmp)
-        tmp.rename(dest)
-    return str(dest)
+def _sha256(path):
+    h = hashlib.sha256()
+    with open(path, "rb") as f:
+        for block in iter(lambda: f.read(1 << 20), b""):
+            h.update(block)
+    return h.hexdigest()
+
+
+def _fetch(folder, url, files):
+    """The model's files, downloaded once into config.MODELS_DIR/folder and checked."""
+    dest = config.MODELS_DIR / folder
+    dest.mkdir(parents=True, exist_ok=True)
+    for name, sha in files.items():
+        path = dest / name
+        if path.exists():
+            continue
+        tmp = path.with_suffix(path.suffix + ".part")
+        print(f"downloading {url}{name}", flush=True)
+        urllib.request.urlretrieve(url + name, tmp)
+        if _sha256(tmp) != sha:
+            tmp.unlink()
+            raise RuntimeError(f"{name} from {url} does not match its checksum; try again later")
+        tmp.rename(path)
+    return dest
 
 
 class OnnxModel:
@@ -52,8 +74,8 @@ class OnnxModel:
             local = os.path.expanduser(local)
             model_path, tok_path = os.path.join(local, "model.onnx"), os.path.join(local, "tokenizer.json")
         elif name in ONNX_MODELS:
-            repo, model_file, tok_file = ONNX_MODELS[name]
-            model_path, tok_path = _fetch(repo, model_file), _fetch(repo, tok_file)
+            folder = _fetch(*ONNX_MODELS[name])
+            model_path, tok_path = str(folder / "model.onnx"), str(folder / "tokenizer.json")
         else:
             raise ValueError(f"no ONNX export known for {name}; use embed_backend \"torch\"")
         self.tok = Tokenizer.from_file(tok_path)
@@ -97,6 +119,31 @@ class LlamaModel:
             return imagevec.query_vector(texts[0][len(imagevec.QUERY_PROMPT):])[None]
         parts = [imagevec.embed_texts(texts[i:i + batch_size]) for i in range(0, len(texts), batch_size)]
         return np.concatenate(parts) if parts else np.empty((0, 768), np.float32)
+class OnnxReranker:
+    """A cross-encoder (bge-reranker-v2-m3) exported by eval/local_rerank/export_reranker.py and
+    quantized by tools/export_onnx.py: raw logits, the scale the tier cut-offs use. CPU only."""
+
+    def __init__(self, folder, max_tokens=256):
+        import onnxruntime as ort
+        from tokenizers import Tokenizer
+        folder = os.path.expanduser(folder)
+        self.tok = Tokenizer.from_file(os.path.join(folder, "tokenizer.json"))
+        self.tok.enable_truncation(max_tokens)
+        self.tok.enable_padding(pad_id=self.tok.token_to_id("<pad>") or 1)
+        so = ort.SessionOptions()
+        so.graph_optimization_level = ort.GraphOptimizationLevel.ORT_ENABLE_ALL
+        so.enable_cpu_mem_arena = False
+        so.intra_op_num_threads = int(os.environ.get("SEMSEARCH_THREADS", max(1, (os.cpu_count() or 4) // 2)))
+        self.sess = ort.InferenceSession(os.path.join(folder, "model.onnx"), so, providers=["CPUExecutionProvider"])
+
+    def scores(self, q, texts, batch_size=8):
+        out = []
+        for i in range(0, len(texts), batch_size):
+            enc = self.tok.encode_batch([(q, t) for t in texts[i:i + batch_size]])
+            feed = {"input_ids": np.array([e.ids for e in enc], dtype=np.int64),
+                    "attention_mask": np.array([e.attention_mask for e in enc], dtype=np.int64)}
+            out.extend(self.sess.run(None, feed)[0].ravel().tolist())
+        return out
 
 
 def get_model(name: str):

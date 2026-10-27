@@ -32,7 +32,7 @@ on your Mac: your files and searches never leave it.
 
 ## Install
 
-**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 4 GB of free space.
+**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 2 GB of free space.
 
 **With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 14 or later):
 
@@ -98,7 +98,7 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 - **Interface in your language**: English, 繁體中文, 简体中文, 日本語 and 한국어, following your Mac.
   [Add yours](l10n/README.md).
 - **Learns what you use**: files you open often move up.
-- **Stays up to date**: new downloads show up in about 30 seconds.
+- **Stays up to date**: new, edited, moved and deleted files show up in about a minute, in every folder it indexes.
 - **Cloud-friendly**: files that are only in iCloud, OneDrive, Google Drive or Dropbox are found by
   name and never downloaded.
 - **Private**: runs entirely on your Mac. An optional [GPU reranker](remote/README.md) on another

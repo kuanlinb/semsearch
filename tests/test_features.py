@@ -198,6 +198,35 @@ def test_remote_reranker_used_when_up_and_skipped_fast_when_down(index_env):
     assert s.remote_down_until > time.time() + 10  # backs off instead of retrying every query
 
 
+def test_remote_reranker_that_is_not_up_yet_never_slows_a_search(index_env, monkeypatch):
+    # Right after login or wake the SSH tunnel is not there yet: searches use the fast order
+    # without waiting, and the background check picks the reranker up once it answers
+    indexer.run(workers=1)
+    _Reranker.delay, _Reranker.calls = 0.0, 0
+    monkeypatch.setattr(search, "REMOTE_PROBE_EVERY", 0.2)
+    monkeypatch.setattr(search, "REMOTE_BACKOFF", 0)
+    import socket
+    sock = socket.socket()
+    sock.bind(("127.0.0.1", 0))
+    port = sock.getsockname()[1]
+    sock.close()
+    _use_remote(port)
+    s = Searcher()
+    t = time.time()
+    res = s.search("kitchen renovation plan", n=5)
+    assert res["reranked"] is False and time.time() - t < 1 and _Reranker.calls == 0
+    srv = ThreadingHTTPServer(("127.0.0.1", port), _Reranker)
+    threading.Thread(target=srv.serve_forever, daemon=True).start()
+    try:
+        deadline = time.time() + 5
+        while not s.remote_ok and time.time() < deadline:
+            time.sleep(0.1)
+        assert s.search("kitchen renovation plan", n=5)["reranked"] is True
+    finally:
+        srv.shutdown()
+        srv.server_close()
+
+
 def test_slow_remote_reranker_times_out(index_env, monkeypatch):
     indexer.run(workers=1)
     monkeypatch.setattr(search, "REMOTE_TIMEOUT", 0.5)

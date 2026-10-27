@@ -12,7 +12,7 @@ import time
 
 import numpy as np
 
-from . import config, embed, extract, usage
+from . import conditions, config, embed, extract, usage
 
 # Usage boost: files opened within USAGE_DAYS move up (more the more recent), and so do
 # files opened from the search panel, especially for the same query
@@ -20,6 +20,8 @@ USAGE_DAYS = 90
 W_RECENT, W_OPENS, W_SAME_QUERY = 0.15, 0.3, 0.6
 REMOTE_TIMEOUT = 3     # seconds to wait for a remote reranker
 REMOTE_BACKOFF = 15    # after a failure, don't try the remote reranker again for this long
+REMOTE_PROBE = 0.5     # seconds a health check may take; searches use the remote only after one passes
+REMOTE_PROBE_EVERY = 5  # while it is down, check again this often (in the background, not in a search)
 RRF_K = 20  # tuned with eval/tune.py
 W_NAME, W_CONTENT = 1.0, 1.0
 # Also count how far ahead a file's content similarity is, so a clear content match is not
@@ -193,14 +195,25 @@ class Searcher:
         self.cfg = config.load()
         embed.get_model(self.cfg["model"])
         self.reranker = None
-        if self.cfg.get("reranker"):
-            from sentence_transformers import CrossEncoder
-            dev = config.device()
-            self.reranker = CrossEncoder(self.cfg["reranker"], device=dev, max_length=256)
-            if dev == "mps":
-                self.reranker.model.half()
+        if self.cfg.get("onnx_reranker"):  # a local int8 export: no PyTorch, CPU only
+            self.reranker = embed.OnnxReranker(self.cfg["onnx_reranker"])
+        elif self.cfg.get("reranker"):
+            try:
+                from sentence_transformers import CrossEncoder
+            except ImportError:  # the light install has no PyTorch: install.sh adds it for a reranker
+                print("reranker needs PyTorch: run install.sh again to add it", flush=True)
+            else:
+                dev = config.device()
+                self.reranker = CrossEncoder(self.cfg["reranker"], device=dev, max_length=256)
+                if dev == "mps":
+                    self.reranker.model.half()
         self.remote = self.cfg.get("remote_reranker", "")
-        self.remote_down_until = 0.0
+        self.remote_ok, self.remote_down_until = False, 0.0
+        if self.remote:
+            # Check now and keep checking in the background, so a search never waits on a link that
+            # is not up yet (the SSH tunnel after login or wake) or has gone away
+            self._remote_probe()
+            threading.Thread(target=self._remote_watch, daemon=True).start()
         self.recent = {}
         self.lock = threading.Lock()
         self.gpu = threading.Lock()  # PyTorch MPS is not thread-safe: one GPU op at a time
@@ -323,7 +336,9 @@ class Searcher:
                                   (fid,)).fetchone()
             texts.append(((name[0] if name else "") + "\n" + (body[0][:400] if body else "")).strip())
         scores = self._remote_scores(q, texts) if self.remote else None
-        if scores is None and self.reranker:
+        if scores is None and isinstance(self.reranker, embed.OnnxReranker):
+            scores = self.reranker.scores(q, texts)
+        elif scores is None and self.reranker:
             with self.gpu:
                 import torch
                 # raw logits, the same scale as the remote reranker (the tier thresholds use it)
@@ -335,12 +350,31 @@ class Searcher:
         ranked = sorted(zip(top, scores), key=lambda x: -(float(x[1]) + bonus[x[0]]))
         return [f for f, _ in ranked] + order[len(top):], True, {f: float(sc) for f, sc in zip(top, scores)}
 
+    def _remote_probe(self):
+        """Whether the remote reranker answers at all (any HTTP reply counts); searches use it only then."""
+        import urllib.error
+        import urllib.request
+        try:
+            urllib.request.urlopen(self.remote.rstrip("/") + "/health", timeout=REMOTE_PROBE).close()
+            self.remote_ok = True
+        except urllib.error.HTTPError:
+            self.remote_ok = True
+        except Exception:
+            self.remote_ok = False
+
+    def _remote_watch(self):
+        while True:
+            time.sleep(REMOTE_PROBE_EVERY)
+            if not self.remote_ok and time.time() >= self.remote_down_until:
+                self._remote_probe()
+
     def _remote_scores(self, q, texts):
-        """Scores from the remote reranker (remote/rerank_server.py), or None when it is
-        unreachable; after a failure it is not tried again for REMOTE_BACKOFF seconds."""
+        """Scores from the remote reranker (remote/rerank_server.py), or None when it is down;
+        after a failure it is not tried again for REMOTE_BACKOFF seconds, then only once a
+        background health check passes."""
         import json
         import urllib.request
-        if time.time() < self.remote_down_until:
+        if not self.remote_ok:
             return None
         try:
             req = urllib.request.Request(self.remote.rstrip("/") + "/rerank",
@@ -350,16 +384,17 @@ class Searcher:
                 return [float(x) for x in json.load(r)["scores"]]
         except Exception as e:
             print("remote rerank failed:", repr(e), flush=True)
-            self.remote_down_until = time.time() + REMOTE_BACKOFF
+            self.remote_ok, self.remote_down_until = False, time.time() + REMOTE_BACKOFF
             return None
 
     # ---- retrieval channels ----
-    def _vector(self, q, k=2500):
-        """Return [(chunk id, file id, kind, score)], best first."""
+    def _vector(self, q, k=2500, allow=None):
+        """Return [(chunk id, file id, kind, score)], best first. allow: file ids to keep (conditions)."""
         with self.lock:
             mat, ids, fids, kinds = self.mat, self.chunk_ids, self.chunk_file, self.chunk_kind
         if mat is None:
             return []
+        keep = None if allow is None else np.isin(fids, allow)
         if self.torch:
             import torch
             with self.gpu:
@@ -367,6 +402,8 @@ class Searcher:
                 if qv.shape[1] != mat.shape[1]:
                     raise RuntimeError("index and query model differ; wait for the rebuild to finish")
                 scores = (mat @ qv[0]).float()
+                if keep is not None:
+                    scores[torch.from_numpy(~keep).to(scores.device)] = -10.0
                 k = min(k, scores.shape[0])
                 top = torch.topk(scores, k)
                 s = top.values.cpu().numpy()
@@ -376,11 +413,13 @@ class Searcher:
             if qv.shape[1] != mat.shape[1]:
                 raise RuntimeError("index and query model differ; wait for the rebuild to finish")
             scores = _scores(mat, qv[0])
+            if keep is not None:
+                scores[~keep] = -10.0
             k = min(k, len(scores))
             idx = np.argpartition(-scores, k - 1)[:k]
             idx = idx[np.argsort(-scores[idx], kind="stable")]
             s = scores[idx]
-        return [(int(ids[i]), int(fids[i]), int(kinds[i]), float(sc)) for i, sc in zip(idx, s)]
+        return [(int(ids[i]), int(fids[i]), int(kinds[i]), float(sc)) for i, sc in zip(idx, s) if sc > -10.0]
 
     def _usage_boost(self, fused, q):
         """Move frequently used files up: recently opened (Spotlight's last-used date), often
@@ -517,9 +556,24 @@ class Searcher:
         if not q:
             return {"results": [], "ms": 0, "reranked": False}
         db = self._db()
-        kw_q, want_types = parse_types(q)
-        vec = self._vector(q)
-        kw = self._keyword(db, kw_q)
+        # "上個月 LINE 傳來的報價單": search "報價單" among last month's files that came from LINE
+        cond, cond_info, allowed, sem_q = None, None, None, q
+        if self.cfg.get("conditions"):
+            rest, cond = conditions.parse(q)
+            if cond:
+                allowed = self.names.allowed(cond)
+                src = cond.get("source")
+                cond_info = {"time": cond.get("time"), "source": src[0] if src else None,
+                             "matched": int(len(allowed))}
+                if len(allowed):
+                    sem_q = rest
+                else:  # nothing meets them: say so, and search without them
+                    cond, allowed = None, None
+        kw_q, want_types = parse_types(sem_q) if sem_q else ("", None)
+        if want_types and kw_q == sem_q.lower():
+            sem_q = ""  # only type words were left ("上週的 PDF"): list the newest files of that type
+        vec = self._vector(sem_q, allow=allowed) if sem_q else []
+        kw = self._keyword(db, kw_q) if sem_q else {}
 
         # Rank name vectors and content vectors separately so long documents cannot flood results
         best_chunk, vec_score, name_score, content_score = {}, {}, {}, {}
@@ -532,10 +586,10 @@ class Searcher:
             vec_score[fid] = max(vec_score.get(fid, sc), sc)
         lookup = is_lookup(kw_q)
         images = []
-        if self.cfg.get("image_search") and not lookup and (not want_types or want_types & config.IMAGE_EXT):
-            images = self._image_scores(q)
+        if self.cfg.get("image_search") and sem_q and not lookup and (not want_types or want_types & config.IMAGE_EXT):
+            images = self._image_scores(sem_q)
         shared = embed._name and "embeddinggemma" in embed._name.lower()
-        gemma_list = self._gemma_list(q, images) if self.cfg.get("gemma_channel") and not shared else []
+        gemma_list = self._gemma_list(sem_q, images) if self.cfg.get("gemma_channel") and sem_q and not shared else []
         if images and shared:
             for fid, sc in images[:IMAGE_TOP]:
                 sc += IMAGE_OFFSET
@@ -568,6 +622,12 @@ class Searcher:
         if images and not shared and not gemma_list:
             for r, fid in enumerate(self._images(images)):
                 fused[fid] = fused.get(fid, 0) + W_IMAGE / (RRF_K + r)
+        if cond:
+            allowed_set = set(allowed.tolist())
+            fused = {f: v for f, v in fused.items() if f in allowed_set}
+            if not fused:  # no words to search for: newest first
+                newest = sorted(allowed_set, key=lambda f: -self.names.mtime_of(f))
+                fused = {f: 1.0 / (RRF_K + r) for r, f in enumerate(newest[:500])}
         if want_types and ".app" in want_types:
             # Explicitly asked for an app: list apps only, re-ranking all of them by name
             app_scores = self._app_vector(q)
@@ -583,7 +643,7 @@ class Searcher:
         order = sorted(fused, key=lambda f: -fused[f])
         reranked, rel = False, {}
         if rerank and (self.reranker or self.remote) and order:
-            order, reranked, rel = self._rerank(db, q, order, best_chunk, kw)
+            order, reranked, rel = self._rerank(db, sem_q or q, order, best_chunk, kw)
 
         results, seen = match_places(q), {}
         limit = n * 4 if group else n  # more candidates before folding folders together
@@ -631,7 +691,10 @@ class Searcher:
         results = [r for r in results if r["match"] == "place" or r["path"] not in places]
         if group:
             results = _group_by_folder(results)
-        return {"results": results[:n], "ms": int((time.time() - t0) * 1000), "reranked": reranked}
+        out = {"results": results[:n], "ms": int((time.time() - t0) * 1000), "reranked": reranked}
+        if cond_info:
+            out["conditions"] = cond_info
+        return out
 
     def status(self):
         db = self._db()
@@ -647,6 +710,10 @@ class _NameIndex:
 
     def __init__(self, db):
         rows = db.execute("SELECT id, name, parent, mtime, ext, is_dir FROM files").fetchall()
+        try:
+            self.src = dict(db.execute("SELECT id, src FROM files WHERE src != ''"))
+        except sqlite3.Error:  # index from before sources were recorded
+            self.src = {}
         db.close()
         self.ids = np.array([r[0] for r in rows], dtype=np.int64)
         self.kind = {r[0]: (r[4], r[5]) for r in rows}
@@ -667,6 +734,22 @@ class _NameIndex:
         self.parent_blob = "\n".join(k.replace("\n", " ") for k in self.parent_keys)
         self.parent_starts = np.cumsum([0] + [len(k) + 1 for k in self.parent_keys[:-1]]) \
             if self.parent_keys else np.zeros(0)
+
+    def allowed(self, cond):
+        """File ids that meet the conditions (conditions.parse)."""
+        ok = np.ones(len(self.ids), dtype=bool)
+        if "after" in cond:
+            ok &= (self.mtime >= cond["after"]) & (self.mtime < cond["before"])
+        if cond.get("source"):
+            fit = {f for f, s in self.src.items() if conditions.source_matches(s, cond["source"])}
+            ok &= np.isin(self.ids, np.fromiter(fit, dtype=np.int64, count=len(fit)))
+        return self.ids[ok]
+
+    def mtime_of(self, fid):
+        if not hasattr(self, "_row"):
+            self._row = {int(f): i for i, f in enumerate(self.ids)}
+        i = self._row.get(fid)
+        return float(self.mtime[i]) if i is not None else 0.0
 
     def exact_apps(self, q):
         q = q.strip().lower()
@@ -729,6 +812,8 @@ def _tiers(results, judged=TIER_SPAN):
         else:
             r["tier"] = 1 if r["rel"] >= tier1 else 2
         out.append(r)
+    if not out and results:  # never an empty list: conditions can leave only weak matches
+        out = [dict(results[0], tier=2)]
     return sorted(out, key=lambda r: r["tier"])  # stable: keeps the order within each tier
 
 
