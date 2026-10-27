@@ -294,7 +294,7 @@ final class ResultCell: NSTableCellView {
             shortPath = short + shortPath.dropFirst(long.count)
             break
         }
-        let folder = (shortPath as NSString).deletingLastPathComponent
+        let folder = ResultCell.compact((shortPath as NSString).deletingLastPathComponent)
         hit = h
         if (h.match == "content" || h.match == "place") && !h.snippet.isEmpty {
             detail.lineBreakMode = .byTruncatingTail
@@ -308,6 +308,15 @@ final class ResultCell: NSTableCellView {
         folderTag = ""
         if !child, let g = h.group?.count, g > 0 { folderTag = expanded ? L("collapse") : L("+{n} in folder", ["n": g]) }
         paint(h, on: backgroundStyle == .emphasized)
+    }
+
+    // A long folder path keeps its start and its last two folders ("~/Documents/…/Work/Clients");
+    // the full path is in the tooltip
+    static func compact(_ path: String) -> String {
+        let parts = path.split(separator: "/", omittingEmptySubsequences: false).map(String.init)
+        let lead = path.hasPrefix("/") ? 2 : 1  // "/Users" keeps "", "Users"; "~/Documents" keeps "~"
+        guard parts.count > lead + 3 else { return path }
+        return (parts.prefix(lead + (path.hasPrefix("~") ? 1 : 0)) + ["…"] + parts.suffix(2)).joined(separator: "/")
     }
 
     // Time for today, month/day for this year, full date otherwise
