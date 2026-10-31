@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.3 (2026-10-31)
 
 - Spotlight-style touches on the panel: a type filter under the search box (⌘1–⌘6: all,
   documents, PDFs, slides and sheets, images, folders), a progress bar while the index is first
