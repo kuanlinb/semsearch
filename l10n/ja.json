@@ -1,7 +1,7 @@
 {
  "SemSearch: describe the file or app you are looking for": "SemSearch：探しているファイルやアプリを説明してください",
  "Describe the file or app you are looking for": "探しているファイルやアプリを説明してください",
- "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand": "↩ 開く　⌘↩ Finder で表示　⌘Y プレビュー　Tab 展開",
+ "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand   ⌘1–6 type": "↩ 開く　⌘↩ Finder で表示　⌘Y プレビュー　Tab 展開　⌘1–6 種類",
  "contains": "含む",
  "collapse": "閉じる",
  "+{n} in folder": "同じフォルダに +{n}",
@@ -53,5 +53,15 @@
  "Only: {c}": "絞り込み：{c}",
  "Search without these conditions": "この条件なしで検索",
  "{n} results": "{n} 件",
- "precise order": "精密な並び"
+ "precise order": "精密な並び",
+ "All": "すべて",
+ "Slides & sheets": "スライド・表",
+ "Images": "画像",
+ "Folders": "フォルダ",
+ "Search in Finder": "Finder で検索",
+ "Building the index: file names {done} / {total}": "インデックス作成中：ファイル名 {done} / {total}",
+ "Reading file contents {done} / {total}; until then, these files are found by name only": "ファイルの内容を読み込み中 {done} / {total}。読み込み前のファイルは名前でのみ見つかります",
+ "Scanning your folders. The first time takes a few minutes…": "フォルダをスキャン中。初回は数分かかります…",
+ "Nothing of this type. Press ⌘1 to see all.": "この種類は見つかりません。⌘1 ですべて表示",
+ "Clear search history": "検索履歴を消去"
 }

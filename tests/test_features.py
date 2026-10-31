@@ -324,3 +324,29 @@ def test_ocr_yields_to_new_files(index_env, monkeypatch, ocr_helper):
     indexer.WAKE.touch()  # what the service does when the watcher reports new files
     indexer.run_ocr(indexer.connect(), config.load(), {}, [], lambda: None, lambda: None, [0.0], [])
     assert _ocr_state("whiteboard.png")[0] == 1  # paused before touching it
+
+
+# ---- type filter and indexing progress ----
+
+def test_type_filter_keeps_only_that_kind(index_env):
+    (index_env / "home" / "kitchen_renovation_quote.pdf").write_bytes(b"%PDF-1.4\n")
+    (index_env / "home" / "kitchen renovation photos").mkdir()
+    indexer.run(workers=1)
+    s = Searcher()
+
+    def names(kind):
+        return [(r["name"], r["is_dir"]) for r in s.search("kitchen renovation", n=10, kind=kind, group=False)["results"]]
+    assert {n for n, _ in names(None)} >= {"kitchen_renovation_plan.md", "kitchen_renovation_quote.pdf"}
+    assert [n for n, _ in names("pdf")] == ["kitchen_renovation_quote.pdf"]
+    assert "kitchen_renovation_plan.md" in [n for n, _ in names("doc")]
+    assert all(".pdf" not in n for n, _ in names("doc"))
+    assert names("folder") and all(d for _, d in names("folder"))
+    assert names("image") == []
+    assert search.kind_ok("folder", ".app", True) is False
+
+
+def test_progress_is_cleared_after_a_run(index_env):
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DATA_DIR / "index.db")
+    assert db.execute("SELECT v FROM meta WHERE k='progress'").fetchone() is None
+    db.close()

@@ -1,7 +1,7 @@
 {
  "SemSearch: describe the file or app you are looking for": "SemSearch: 찾는 파일이나 앱을 설명해 보세요",
  "Describe the file or app you are looking for": "찾는 파일이나 앱을 설명해 보세요",
- "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand": "↩ 열기   ⌘↩ Finder에서 보기   ⌘Y 미리보기   Tab 펼치기",
+ "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand   ⌘1–6 type": "↩ 열기   ⌘↩ Finder에서 보기   ⌘Y 미리보기   Tab 펼치기   ⌘1–6 종류",
  "contains": "포함",
  "collapse": "접기",
  "+{n} in folder": "같은 폴더에 +{n}",
@@ -53,5 +53,15 @@
  "Only: {c}": "조건: {c}",
  "Search without these conditions": "이 조건 없이 검색",
  "{n} results": "{n}개",
- "precise order": "정밀 정렬"
+ "precise order": "정밀 정렬",
+ "All": "전체",
+ "Slides & sheets": "프레젠테이션・표",
+ "Images": "이미지",
+ "Folders": "폴더",
+ "Search in Finder": "Finder에서 검색",
+ "Building the index: file names {done} / {total}": "색인 만드는 중: 파일 이름 {done} / {total}",
+ "Reading file contents {done} / {total}; until then, these files are found by name only": "파일 내용 읽는 중 {done} / {total}. 아직 읽지 않은 파일은 이름으로만 찾을 수 있습니다",
+ "Scanning your folders. The first time takes a few minutes…": "폴더를 살펴보는 중입니다. 처음에는 몇 분 걸립니다…",
+ "Nothing of this type. Press ⌘1 to see all.": "이 종류는 없습니다. ⌘1을 누르면 전체를 봅니다",
+ "Clear search history": "검색 기록 지우기"
 }

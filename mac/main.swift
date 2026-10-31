@@ -145,8 +145,10 @@ final class HotKey {
 // MARK: - Search panel
 
 final class KeyPanel: NSPanel {
-    override var canBecomeKey: Bool { true }
-    override var canBecomeMain: Bool { true }
+    // A --snapshot run must never take the keyboard, or whatever the user is typing lands in it
+    static let offscreen = CommandLine.arguments.contains("--snapshot")
+    override var canBecomeKey: Bool { !KeyPanel.offscreen }
+    override var canBecomeMain: Bool { !KeyPanel.offscreen }
 }
 
 // Liquid Glass (NSGlassEffectView) on macOS 26, frosted glass on older systems.
@@ -408,7 +410,23 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     let pad: CGFloat = 36
     let rowH: CGFloat = 50
     let maxRows = 8
-    let hints = NSTextField(labelWithString: L("↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand"))
+    let hints = NSTextField(labelWithString: L("↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand   ⌘1–6 type"))
+    // Type filter: ⌘1–⌘6 from left to right, like Spotlight's ⌘1–⌘4
+    let kinds: [(key: String?, label: String)] = [(nil, L("All")), ("doc", L("Documents")), ("pdf", "PDF"),
+                                                  ("sheet", L("Slides & sheets")), ("image", L("Images")), ("folder", L("Folders"))]
+    let kindBar = NSSegmentedControl()
+    var kind: String? { kinds[max(0, kindBar.selectedSegment)].key }
+    // Indexing progress: shown only for a first build or a large batch of new files
+    let top = NSStackView()
+    let indexRow = NSStackView()
+    let indexLabel = NSTextField(labelWithString: "")
+    let indexBar = NSProgressIndicator()
+    var indexTimer: Timer?
+    var showingResults = false
+    // Not the file you wanted: run the same words through Finder's search
+    let finderButton = NSButton(title: L("Search in Finder"), target: nil, action: nil)
+    // Search history: kept on this Mac only; ↑ in an empty box brings it back
+    var historyIndex: Int?
     var card: NSView!
     var glassParts: [(outer: NSView, content: NSView)] = []  // for --snapshot
 
@@ -492,14 +510,57 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         scroll.automaticallyAdjustsContentInsets = false
         scroll.contentInsets = NSEdgeInsets(top: 8, left: 0, bottom: 4, right: 0)
 
-        for f in [footer, hints] {
+        for f in [footer, hints, indexLabel] {
             f.font = .systemFont(ofSize: 11)
             f.textColor = .tertiaryLabelColor
         }
         hints.alignment = .right
+        hints.lineBreakMode = .byTruncatingHead
+        hints.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
+        indexLabel.textColor = .secondaryLabelColor
+        indexLabel.lineBreakMode = .byTruncatingTail
+        indexLabel.setContentCompressionResistancePriority(.required, for: .horizontal)
+        indexBar.style = .bar
+        indexBar.controlSize = .small
+        indexBar.minValue = 0
+        indexBar.maxValue = 1
+        indexBar.widthAnchor.constraint(equalToConstant: 150).isActive = true
+        indexRow.orientation = .horizontal
+        indexRow.spacing = 10
+        indexRow.addArrangedSubview(indexLabel)
+        indexRow.addArrangedSubview(indexBar)
+        indexRow.isHidden = true
+
+        kindBar.segmentCount = kinds.count
+        for (i, k) in kinds.enumerated() {
+            kindBar.setLabel(k.label, forSegment: i)
+            kindBar.setToolTip("⌘\(i + 1)", forSegment: i)
+        }
+        kindBar.trackingMode = .selectOne
+        kindBar.selectedSegment = 0
+        kindBar.controlSize = .small
+        kindBar.font = .systemFont(ofSize: 12)
+        kindBar.target = self
+        kindBar.action = #selector(kindChanged)
+        kindBar.focusRingType = .none
+        kindBar.refusesFirstResponder = true
+
+        top.orientation = .vertical
+        top.alignment = .centerX
+        top.spacing = 8
+        top.addArrangedSubview(indexRow)
+        top.addArrangedSubview(kindBar)
+
+        finderButton.isBordered = false
+        finderButton.font = .systemFont(ofSize: 11)
+        finderButton.contentTintColor = .linkColor
+        finderButton.toolTip = "⌘F"
+        finderButton.target = self
+        finderButton.action = #selector(searchInFinder)
+        finderButton.refusesFirstResponder = true
 
         for (v, parent) in [(glyph, barContent), (field, barContent), (chip, barContent), (gear, barContent), (scroll, cardContent),
-                            (footer, cardContent), (hints, cardContent)] as [(NSView, NSView)] {
+                            (top, cardContent), (footer, cardContent), (finderButton, cardContent), (hints, cardContent)] as [(NSView, NSView)] {
             v.translatesAutoresizingMaskIntoConstraints = false
             parent.addSubview(v)
         }
@@ -522,15 +583,23 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             gear.trailingAnchor.constraint(equalTo: barContent.trailingAnchor, constant: -20),
             gear.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
             field.centerYAnchor.constraint(equalTo: barContent.centerYAnchor),
-            scroll.topAnchor.constraint(equalTo: cardContent.topAnchor),
+            top.topAnchor.constraint(equalTo: cardContent.topAnchor, constant: 10),
+            top.leadingAnchor.constraint(equalTo: cardContent.leadingAnchor, constant: 22),
+            top.trailingAnchor.constraint(equalTo: cardContent.trailingAnchor, constant: -22),
+            scroll.topAnchor.constraint(equalTo: top.bottomAnchor, constant: 2),
             scroll.leadingAnchor.constraint(equalTo: cardContent.leadingAnchor),
             scroll.trailingAnchor.constraint(equalTo: cardContent.trailingAnchor),
             scroll.bottomAnchor.constraint(equalTo: footer.topAnchor, constant: -6),
             footer.leadingAnchor.constraint(equalTo: cardContent.leadingAnchor, constant: 22),
-            footer.bottomAnchor.constraint(equalTo: cardContent.bottomAnchor, constant: -10),
+            // gives way when only the indexing progress is shown and the results area is folded away
+            { let c = footer.bottomAnchor.constraint(equalTo: cardContent.bottomAnchor, constant: -10)
+              c.priority = .defaultHigh; return c }(),
+            scroll.heightAnchor.constraint(greaterThanOrEqualToConstant: 0),
+            finderButton.leadingAnchor.constraint(equalTo: footer.trailingAnchor, constant: 10),
+            finderButton.firstBaselineAnchor.constraint(equalTo: footer.firstBaselineAnchor),
             hints.trailingAnchor.constraint(equalTo: cardContent.trailingAnchor, constant: -22),
             hints.firstBaselineAnchor.constraint(equalTo: footer.firstBaselineAnchor),
-            hints.leadingAnchor.constraint(greaterThanOrEqualTo: footer.trailingAnchor, constant: 12),
+            hints.leadingAnchor.constraint(greaterThanOrEqualTo: finderButton.trailingAnchor, constant: 12),
         ])
         fieldToGear = field.trailingAnchor.constraint(equalTo: gear.leadingAnchor, constant: -10)
         fieldToChip = field.trailingAnchor.constraint(equalTo: chip.leadingAnchor, constant: -8)
@@ -549,6 +618,13 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
                     self.quickLook(); return nil
                 case "o":
                     self.openSelected(); return nil
+                case "f":
+                    self.searchInFinder(); return nil
+                case let k? where k.count == 1 && ("1"..."6").contains(k):
+                    let i = Int(k)! - 1
+                    // the same type again goes back to All
+                    self.kindBar.selectedSegment = self.kindBar.selectedSegment == i ? 0 : i
+                    self.kindChanged(); return nil
                 default: break
                 }
             }
@@ -557,11 +633,18 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     }
 
     func setExpanded(_ on: Bool) {
-        card.isHidden = !on
+        showingResults = on
+        let showCard = on || !indexRow.isHidden
+        card.isHidden = !showCard
+        kindBar.isHidden = !on
+        for v in [scroll, footer, finderButton, hints] as [NSView] { v.isHidden = !on }
+        let parts = [indexRow.isHidden ? nil : max(indexLabel.intrinsicContentSize.height, indexBar.intrinsicContentSize.height),
+                     kindBar.isHidden ? nil : kindBar.intrinsicContentSize.height].compactMap { $0 }
+        let topH = parts.reduce(0, +) + CGFloat(max(parts.count - 1, 0)) * top.spacing
         let rows = min(hits.count, maxRows)
-        let ch = 8 + CGFloat(max(rows, 1)) * rowH + 4 + 30
+        let ch = 10 + topH + (on ? 2 + 8 + CGFloat(max(rows, 1)) * rowH + 4 + 30 : 10)
         cardHeight.constant = ch
-        let h: CGFloat = (on ? barH + gap + ch : barH) + 2 * pad
+        let h: CGFloat = (showCard ? barH + gap + ch : barH) + 2 * pad
         let top = panel.frame.maxY
         var f = panel.frame
         f.size.height = h
@@ -580,10 +663,46 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
         field.selectText(nil)
+        refreshIndexStatus()
+        indexTimer?.invalidate()
+        indexTimer = Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in self?.refreshIndexStatus() }
     }
 
     func hide() {
+        indexTimer?.invalidate()
+        indexTimer = nil
         panel.orderOut(nil)
+    }
+
+    // MARK: Indexing progress
+
+    func refreshIndexStatus() {
+        URLSession.shared.dataTask(with: URL(string: serverURL + "/status")!) { [weak self] data, _, _ in
+            var text: String?, frac: Double?
+            if let data, let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+               j["indexing"] as? Bool == true {
+                if let p = (j["progress"] as? String)?.split(separator: " "), p.count == 3,
+                   let done = Int(p[1]), let total = Int(p[2]), total >= 300 {
+                    frac = Double(done) / Double(total)
+                    let n = ["done": done.formatted(), "total": total.formatted()]
+                    text = p[0] == "names"
+                        ? L("Building the index: file names {done} / {total}", n)
+                        : L("Reading file contents {done} / {total}; until then, these files are found by name only", n)
+                } else if j["files"] as? Int ?? 0 == 0 {
+                    text = L("Scanning your folders. The first time takes a few minutes…")
+                }
+            }
+            DispatchQueue.main.async { self?.showIndexStatus(text, frac) }
+        }.resume()
+    }
+
+    func showIndexStatus(_ text: String?, _ frac: Double?) {
+        let was = indexRow.isHidden
+        indexRow.isHidden = text == nil
+        indexLabel.stringValue = text ?? ""
+        indexBar.isIndeterminate = frac == nil
+        if let frac { indexBar.doubleValue = frac } else { indexBar.startAnimation(nil) }
+        if was != indexRow.isHidden { setExpanded(showingResults) }
     }
 
     func windowDidResignKey(_ notification: Notification) {
@@ -596,11 +715,20 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     // While typing show fast results (tens of ms); after a 0.5 s pause ask for the reranked order
     func controlTextDidChange(_ obj: Notification) {
         field.placeholderString = placeholder  // the first-launch tip is done once typing starts
+        historyIndex = nil
+        ignoreConditions = false
+        requery()
+    }
+
+    @objc func kindChanged() {
+        requery()
+    }
+
+    func requery() {
         pending?.cancel()
         pendingFine?.cancel()
         fineTask?.cancel()
         lastFineQuery = ""
-        ignoreConditions = false
         let q = field.stringValue
         let w = DispatchWorkItem { [weak self] in self?.run(q, fine: false) }
         pending = w
@@ -688,9 +816,11 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         c.queryItems = [URLQueryItem(name: "q", value: q), URLQueryItem(name: "n", value: "30"),
                         URLQueryItem(name: "rerank", value: fine ? "1" : "0"),
                         URLQueryItem(name: "cond", value: ignoreConditions ? "0" : "1")]
+        let k = kind
+        if let k { c.queryItems?.append(URLQueryItem(name: "kind", value: k)) }
         let t = URLSession.shared.dataTask(with: c.url!) { [weak self] data, _, err in
             DispatchQueue.main.async {
-                guard let self, self.field.stringValue == q else { return }
+                guard let self, self.field.stringValue == q, self.kind == k else { return }
                 if let data, let r = try? JSONDecoder().decode(SearchResponse.self, from: data) {
                     if !fine && self.lastFineQuery == q { return }  // reranked results already shown
                     if fine { self.lastFineQuery = q }
@@ -707,7 +837,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
                     self.rebuild()
                     let mark = (r.reranked ?? false) ? " · " + L("precise order") : ""
                     self.footer.stringValue = r.results.isEmpty
-                        ? L("Nothing found. Try describing it differently.")
+                        ? (k == nil ? L("Nothing found. Try describing it differently.") : L("Nothing of this type. Press ⌘1 to see all."))
                         : L("{n} results", ["n": r.results.count]) + mark
                     self.footer.toolTip = "\(r.ms) ms"
                     if fine, let keep, self.table.selectedRow > 0,
@@ -741,11 +871,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     func control(_ control: NSControl, textView: NSTextView, doCommandBy sel: Selector) -> Bool {
         switch sel {
         case #selector(NSResponder.moveDown(_:)): move(1); return true
-        case #selector(NSResponder.moveUp(_:)): move(-1); return true
+        case #selector(NSResponder.moveUp(_:)):
+            if field.stringValue.isEmpty || (historyIndex != nil && table.selectedRow <= 0) { recallHistory() } else { move(-1) }
+            return true
         case #selector(NSResponder.cancelOperation(_:)):
             // first clear the text, then close (like Spotlight)
             if field.stringValue.isEmpty { hide() } else {
                 field.stringValue = ""
+                kindBar.selectedSegment = 0
                 controlTextDidChange(Notification(name: NSControl.textDidChangeNotification))
             }
             return true
@@ -755,6 +888,29 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             return true
         default: return false
         }
+    }
+
+    // MARK: Search history (queries you opened a result from, kept on this Mac only)
+
+    static let historyKey = "history"
+    var history: [String] { UserDefaults.standard.stringArray(forKey: Self.historyKey) ?? [] }
+
+    func remember(_ q: String) {
+        let q = q.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return }
+        UserDefaults.standard.set(Array(([q] + history.filter { $0 != q }).prefix(30)), forKey: Self.historyKey)
+    }
+
+    /// ↑ in an empty box fills in the latest query; ↑ again on the first row goes further back
+    func recallHistory() {
+        let h = history
+        let i = historyIndex.map { $0 + 1 } ?? 0
+        guard i < h.count else { return }
+        historyIndex = i
+        ignoreConditions = false
+        field.stringValue = h[i]
+        field.currentEditor()?.selectedRange = NSRange(location: (h[i] as NSString).length, length: 0)
+        requery()
     }
 
     func move(_ d: Int) {
@@ -773,6 +929,7 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
     // Tell the service which file was opened for this query (stored locally), so files you
     // open often move up
     func logOpen(_ path: String) {
+        remember(field.stringValue)
         var r = URLRequest(url: URL(string: serverURL + "/opened")!)
         r.httpMethod = "POST"
         r.setValue("1", forHTTPHeaderField: "X-SemSearch")
@@ -786,6 +943,30 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
         logOpen(h.path)
         hide()
         NSWorkspace.shared.open(URL(fileURLWithPath: h.path))
+    }
+
+    /// Finder's "name and contents" search for the same words: a temporary smart folder opened in Finder
+    @objc func searchInFinder() {
+        let q = field.stringValue.trimmingCharacters(in: .whitespaces)
+        guard !q.isEmpty else { return }
+        remember(q)
+        let words = q.split(whereSeparator: \.isWhitespace).map {
+            "(** == \"\($0.replacingOccurrences(of: "\\", with: "").replacingOccurrences(of: "\"", with: ""))*\"cdw)"
+        }
+        let plist: [String: Any] = [
+            "CompatibleVersion": 1,
+            "RawQuery": words.joined(separator: " && "),
+            "RawQueryDict": ["FinderFilesOnly": true, "UserFilesOnly": true,
+                             "SearchScopes": ["kMDQueryScopeHome"],
+                             "RawQuery": words.joined(separator: " && ")],
+        ]
+        let name = q.replacingOccurrences(of: "/", with: "／").replacingOccurrences(of: ":", with: "：").prefix(60)
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("\(name).savedSearch")
+        guard let data = try? PropertyListSerialization.data(fromPropertyList: plist, format: .xml, options: 0),
+              (try? data.write(to: url)) != nil else { return }
+        hide()
+        NSWorkspace.shared.open([url], withApplicationAt: URL(fileURLWithPath: "/System/Library/CoreServices/Finder.app"),
+                                configuration: NSWorkspace.OpenConfiguration())
     }
 
     @objc func revealSelected() {
@@ -1011,6 +1192,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         shortcutItem.submenu = NSMenu()
         menu.addItem(shortcutItem)
         showShortcut()
+        menu.addItem(NSMenuItem(title: L("Clear search history"), action: #selector(clearHistory), keyEquivalent: ""))
         menu.addItem(.separator())
         menu.addItem(NSMenuItem(title: L("Quit SemSearch"), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"))
         for i in menu.items where i.action != nil && i.action != #selector(NSApplication.terminate(_:)) { i.target = self }
@@ -1044,6 +1226,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         controller = SearchController()
         let q = CommandLine.arguments.firstIndex(of: "--query").map { CommandLine.arguments[$0 + 1] } ?? ""
         controller.field.stringValue = q
+        if let i = CommandLine.arguments.firstIndex(of: "--kind"), i + 1 < CommandLine.arguments.count,
+           let k = controller.kinds.firstIndex(where: { $0.key == CommandLine.arguments[i + 1] }) {
+            controller.kindBar.selectedSegment = k
+        }
+        if let i = CommandLine.arguments.firstIndex(of: "--fake-index"), i + 1 < CommandLine.arguments.count {
+            controller.showIndexStatus(CommandLine.arguments[i + 1], 0.37)
+        }
         controller.run(q, fine: true)
         // Order it in far off-screen (invisible, no focus change) so the views actually draw
         controller.panel.setFrameOrigin(NSPoint(x: -20000, y: -20000))
@@ -1136,6 +1325,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         shortcut = sc
         saveHotkey(spec)
         showShortcut()
+    }
+
+    @objc func clearHistory() {
+        UserDefaults.standard.removeObject(forKey: SearchController.historyKey)
+        controller.historyIndex = nil
     }
 
     @objc func reindex() {

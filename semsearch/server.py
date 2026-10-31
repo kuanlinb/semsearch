@@ -110,6 +110,8 @@ class Handler(BaseHTTPRequestHandler):
         elif u.path == "/status":
             st = searcher.status()
             st["indexing"] = bool(indexer_proc and indexer_proc.poll() is None) or _lock_held()
+            if not st["indexing"]:
+                st.pop("progress", None)  # left behind by an interrupted run
             st["no_access"] = [r for r, v in dict(_access).items() if v != "ok"]  # probe threads add keys
             self._send(200, st)
         elif re.fullmatch(r"/l10n/[A-Za-z-]+\.json", u.path) and (ROOT / u.path[1:]).is_file():

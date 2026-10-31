@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+- Spotlight-style touches on the panel: a type filter under the search box (⌘1–⌘6: all,
+  documents, PDFs, slides and sheets, images, folders), a progress bar while the index is first
+  being built, ↑ in an empty box for earlier searches (kept on your Mac; the menu can clear
+  them), and "Search in Finder" (⌘F) for when the file isn't there.
 - Time and source words become filters: “the quote Amy sent on LINE last week” searches
   “quote” among last week's files that came from LINE. A chip in the search box shows the
   conditions and its ✕ searches without them. On a 48-question test the right file came first

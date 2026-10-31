@@ -517,6 +517,7 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
         ids = unchanged[i:i + 5000]
         db.execute(f"UPDATE files SET seen=? WHERE id IN ({','.join('?' * len(ids))})",
                    [scan_id, *ids])
+    db.execute("DELETE FROM meta WHERE k='progress'")  # left over from an interrupted run
     db.commit()
 
     pending = []  # (file_id, kind, text)
@@ -561,6 +562,10 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
         db.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (str(time.time()),))
         db.commit()
 
+    def show_progress(stage, done, total):
+        # Read by the "Building the index" bar on the panel; removed when the run is done
+        db.execute("INSERT OR REPLACE INTO meta VALUES('progress', ?)", (f"{stage} {done} {total}",))
+
     names_only = cfg["names_only_roots"]
     apps = app_names([t[0] for t in todo if t[0].endswith(".app")])
     # Phase 1: embed every name first (fast), so the whole index is searchable by name right away
@@ -596,8 +601,9 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
             if len(pending) >= 512:
                 flush()
         flush()
-        bump()
         done = b + len(part)
+        show_progress("names", done, len(todo))
+        bump()
         log(f"  names {done}/{len(todo)} ({done / (time.time() - t0):.0f}/s)")
 
     # Files indexed before sources were recorded
@@ -651,14 +657,16 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
             db.executemany("UPDATE files SET ocr_state=1 WHERE id=?",
                            [(fid,) for fid, path, ext, _, _ in part
                             if ext == ".pdf" and not contents.get(path) and _ocr_size_ok(path)])
+            done = b + len(part)
+            show_progress("content", done, len(rows))
             bump()
             progress[0] = time.time()  # a batch with no extractable text (scanned PDFs) is still progress
-            done = b + len(part)
             el = time.time() - t1
             log(f"  contents {done}/{len(rows)} ({done / el:.1f}/s, ~{(len(rows) - done) * el / done / 60:.0f} min left)")
     finally:
         _kill_pool(pool)
 
+    db.execute("DELETE FROM meta WHERE k='progress'")
     refresh_usage(db)
     db.commit()
     # Phase 3: OCR of images and scanned PDFs, at most `ocr_minutes` per run

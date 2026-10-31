@@ -1,7 +1,7 @@
 {
  "SemSearch: describe the file or app you are looking for": "語意搜尋：用一句話描述你要找的檔案或 App",
  "Describe the file or app you are looking for": "用一句話描述你要找的檔案或 App",
- "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand": "↩ 開啟　⌘↩ 在 Finder 顯示　⌘Y 預覽　Tab 展開",
+ "↩ open   ⌘↩ show in Finder   ⌘Y preview   Tab expand   ⌘1–6 type": "↩ 開啟　⌘↩ 在 Finder 顯示　⌘Y 預覽　Tab 展開　⌘1–6 類型",
  "contains": "內含",
  "collapse": "收合",
  "+{n} in folder": "+{n} 個同資料夾",
@@ -53,5 +53,15 @@
  "Only: {c}": "只看：{c}",
  "Search without these conditions": "不用這些條件，重新搜尋",
  "{n} results": "{n} 筆",
- "precise order": "精準排序"
+ "precise order": "精準排序",
+ "All": "全部",
+ "Slides & sheets": "簡報・試算表",
+ "Images": "圖片",
+ "Folders": "資料夾",
+ "Search in Finder": "在 Finder 中搜尋",
+ "Building the index: file names {done} / {total}": "正在建立索引：讀檔名 {done} / {total}",
+ "Reading file contents {done} / {total}; until then, these files are found by name only": "正在讀文件內容 {done} / {total}，還沒讀到的只能用檔名找到",
+ "Scanning your folders. The first time takes a few minutes…": "正在掃描資料夾，第一次要花幾分鐘…",
+ "Nothing of this type. Press ⌘1 to see all.": "這個類型找不到，按 ⌘1 看全部",
+ "Clear search history": "清除搜尋記錄"
 }

@@ -76,6 +76,9 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 | ⌘ C | Copy the file (paste it in Finder, or as a path in text) |
 | ⌥ ⌘ C | Copy the path |
 | Tab | Show the other matches from the same folder |
+| ⌘ 1 – ⌘ 6 | Only documents, PDFs, slides and sheets, images or folders (⌘ 1 is all) |
+| ⌘ F | Search the same words in Finder |
+| ↑ (empty box) | Bring back an earlier search; ↑ again goes further back |
 | Esc | Clear the search, press again to close |
 
 **Tips**

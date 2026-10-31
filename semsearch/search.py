@@ -88,6 +88,22 @@ _SHEET = {".xlsx", ".xls", ".csv", ".numbers"}
 _IMAGE = {".png", ".jpg", ".jpeg", ".heic", ".gif", ".webp"}
 _VIDEO = {".mp4", ".mov", ".mkv", ".avi"}
 _AUDIO = {".m4a", ".mp3", ".wav", ".aac"}
+# Type filter on the panel (⌘1–⌘6): only these extensions; "folder" lists folders only
+KINDS = {
+    "doc": {".docx", ".doc", ".pages", ".txt", ".md", ".rtf", ".odt"},
+    "pdf": {".pdf"},
+    "sheet": {".pptx", ".ppt", ".key", ".xlsx", ".xls", ".csv", ".numbers"},
+    "image": _IMAGE | {".tiff", ".bmp", ".svg"},
+    "folder": None,
+}
+
+
+def kind_ok(kind, ext, is_dir):
+    if kind == "folder":
+        return bool(is_dir) and ext != ".app"
+    return not is_dir and ext in KINDS[kind]
+
+
 # File-type words in a query express a preference for that type; they are not
 # matched against file names.
 TYPE_WORDS = [
@@ -642,12 +658,14 @@ class Searcher:
         for fid in self.names.exact_apps(q):
             fused[fid] = max(fused.values(), default=0) + 1
         self._usage_boost(fused, q)
+        if kind in KINDS:  # filter before reranking, so the reranker only spends time on matching files
+            fused = {f: fused[f] for f, ext, is_dir in self.names.types(list(fused)) if kind_ok(kind, ext, is_dir)}
         order = sorted(fused, key=lambda f: -fused[f])
         reranked, rel = False, {}
         if rerank and (self.reranker or self.remote) and order:
             order, reranked, rel = self._rerank(db, sem_q or q, order, best_chunk, kw)
 
-        results, seen = match_places(q), {}
+        results, seen = (match_places(q) if kind in (None, "folder") else []), {}
         limit = n * 4 if group else n  # more candidates before folding folders together
         for fid in order:
             if len(results) >= limit:
@@ -657,8 +675,6 @@ class Searcher:
             if not row:
                 continue
             path, name, ext, size, mtime, is_dir, dataless, note = row
-            if kind == "folder" and not is_dir:
-                continue
             if not _exists(path):
                 continue
             key = (name, size) if not is_dir else None
