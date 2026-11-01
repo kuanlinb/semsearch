@@ -32,8 +32,10 @@
 
 ## 0.1.2 (2026-10-26)
 
-- Homebrew installs no longer need the Xcode Command Line Tools on macOS 14 or later: the app
-  comes already compiled.
+- The Homebrew formula compiles the app itself, so a bottle carries it ready to run. Bottles
+  shipped with 0.1.3 and cover macOS 15 and later; there, installs need no Xcode Command Line
+  Tools. (This entry first said macOS 14: Homebrew has no Python bottles for macOS 14, so it
+  builds from source and still needs them.)
 - `install.sh` explains how to get the Command Line Tools when they are missing or only a stub.
 - Searching for a number or a code (an invoice or booking number, an amount, a plate) finds the
   file that contains it: on a 249-file test set those lookups went from rank 13-20 to first.

@@ -30,7 +30,7 @@ Spotlight 要記得檔名裡的字才找得到。SemSearch 看得懂意思，就
 
 **需要**：M1 以後的 Mac（Apple 晶片）、macOS 13 以上、約 2 GB 空間。
 
-**用 [Homebrew](https://brew.sh) 安裝**（一行；macOS 14 以上不用裝 Xcode 工具）：
+**用 [Homebrew](https://brew.sh) 安裝**（一行；macOS 15 以上不用裝 Xcode 工具）：
 
 ```bash
 brew install kuanlinb/tap/semsearch && semsearch-install

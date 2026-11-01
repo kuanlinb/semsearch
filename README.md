@@ -34,7 +34,7 @@ on your Mac: your files and searches never leave it.
 
 **You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 2 GB of free space.
 
-**With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 14 or later):
+**With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 15 or later):
 
 ```bash
 brew install kuanlinb/tap/semsearch && semsearch-install
