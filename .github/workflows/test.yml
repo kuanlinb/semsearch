@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   test:
-    runs-on: macos-14   # Apple silicon
+    runs-on: macos-15   # Apple silicon (macos-14 images retire 2026-11-02)
     strategy:
       fail-fast: false
       matrix:
