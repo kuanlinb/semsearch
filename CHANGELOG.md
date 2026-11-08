@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.4 (2026-11-09)
 
 - Uses less memory. With the PyTorch backend the search server drops from about 6.3 GB to
   3.3 GB and no longer grows each time the index reloads: bge-m3 is converted once to a float16
