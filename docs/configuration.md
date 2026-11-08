@@ -30,6 +30,8 @@ Optional `~/.semsearch/config.json` (any subset of these keys):
 | `remote_reranker_ssh` | `""` | SSH host (e.g. `my-gpu-box`) the service keeps a tunnel to for `remote_reranker`'s port. |
 | `ocr_minutes` | `15` | Minutes per index run spent on OCR; the rest continues next run. `0` turns OCR off. |
 | `port` | `8799` | Local port of the search service (or set `SEMSEARCH_PORT`). |
+| `max_server_mb` | `5000` | Memory limit of the search service in MB. Past it the service restarts itself (at most once an hour, never in its first 10 minutes); after that it only shows a notification. `0` turns it off. |
+| `max_indexer_mb` | `4000` | Memory limit of the indexer in MB. Past it the run stops and the next scheduled run continues. `0` turns it off. |
 | `hotkey` | `"option+space"` | Shortcut that opens the search box. Easiest to change from the menu-bar icon (**Shortcut**); here any combination works, e.g. `"option+shift+space"` or `"cmd+shift+k"`: `cmd`, `option`, `control`, `shift` plus `space`, a letter or a digit. Takes effect when the app restarts. |
 
 Invalid JSON in the config file is ignored (defaults are used). Package folders

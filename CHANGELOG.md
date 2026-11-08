@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased
+
+- Fixed: running once with a different backend (`SEMSEARCH_EMBED_BACKEND`) no longer wipes the
+  index. Only `"embed_backend"` in `config.json` (or `--full`) rebuilds it; a one-off run with
+  another backend logs why and leaves the index alone.
+- New: memory limits. The search service restarts itself past `max_server_mb` (default 5000,
+  at most once an hour), the indexer stops past `max_indexer_mb` (default 4000) and the next run
+  continues, so a runaway process can't slow the whole Mac down.
+- For maintainers: `tools/memcheck.py` measures memory with the real model and index, on a clone
+  of the data folder, and fails when a budget is exceeded; a new test catches reloads that keep
+  old vectors alive.
+
 ## 0.1.4 (2026-11-09)
 
 - Uses less memory. With the PyTorch backend the search server drops from about 6.3 GB to

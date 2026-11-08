@@ -439,11 +439,24 @@ def run_images(db, cfg, bump, progress, names_only):
         log(f"  images {done} in {time.time() - t0:.0f}s")
 
 
+def _backend_switch_is_deliberate() -> bool:
+    """True only when the backend comes from config.json itself, not from the environment
+    variable or from the default."""
+    if os.environ.get("SEMSEARCH_EMBED_BACKEND"):
+        return False
+    try:
+        return "embed_backend" in json.loads(config.USER_CONFIG.read_text())
+    except Exception:
+        return False
+
+
 def run(full=False, limit=None, workers=4, quick=False, paths=None):
     """paths: rescan only these folders (what the file watcher saw change), like a quick run."""
     cfg = config.load()
     WAKE.unlink(missing_ok=True)  # this run picks up the new files
     _exclude_substrings[:] = cfg.get("exclude_substrings", [])
+    from . import memguard
+    memguard.start("indexer", cfg.get("max_indexer_mb"), every=15, log=log)
     embed.get_model(cfg["model"])
     db = connect()
     old_model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
@@ -451,8 +464,18 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
     # (indexes from before the ONNX backend were all built with PyTorch)
     old_backend = db.execute("SELECT v FROM meta WHERE k='backend'").fetchone()
     backend = config.embed_backend()
-    if full or (old_model and (old_model[0] != cfg["model"]
-                               or (old_backend[0] if old_backend else "torch") != backend)):
+    built_with = old_backend[0] if old_backend else "torch"
+    if not full and old_model and old_model[0] == cfg["model"] and built_with != backend \
+            and not _backend_switch_is_deliberate():
+        # Rebuilding takes hours (days with OCR), so only a change written in config.json may
+        # trigger it, never a one-off SEMSEARCH_EMBED_BACKEND or a default that differs from what
+        # the index was built with (2026-11-09: a test run with the env var wiped a real index)
+        log(f"the index was built with the {built_with} backend, this run would use {backend}: "
+            f'not rebuilding. To switch, set "embed_backend": "{backend}" in config.json '
+            "(that rebuilds the whole index), or run with --full.")
+        db.close()
+        return
+    if full or (old_model and (old_model[0] != cfg["model"] or built_with != backend)):
         log("clearing the old index")
         db.executescript("DELETE FROM files; DELETE FROM chunks; DELETE FROM chunks_fts; DELETE FROM image_vecs; "
                        "DELETE FROM gemma_vecs;")

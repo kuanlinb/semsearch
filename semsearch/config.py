@@ -48,6 +48,10 @@ DEFAULTS = {
     # Skip any file or folder whose full path contains one of these strings
     "exclude_substrings": [],
     "port": 8799,
+    # Memory limits in MB: past them the server restarts (at most once an hour) and the indexer
+    # stops until its next run, instead of slowing the whole Mac down. 0 turns a limit off.
+    "max_server_mb": 5000,
+    "max_indexer_mb": 4000,
     "model": "BAAI/bge-m3",
     # "onnx" (ONNX Runtime, int8 bge-m3 on the CPU, no PyTorch needed) or "torch" (PyTorch on the
     # Apple GPU: indexes faster, needs requirements.txt). Changing it rebuilds the index.

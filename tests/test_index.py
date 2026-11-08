@@ -1,4 +1,5 @@
 import os
+import json
 import sqlite3
 
 import numpy as np
@@ -97,15 +98,33 @@ def test_only_web_page_asset_folders_are_skipped():
     assert skip_dir("node_modules") and skip_dir(".git")
 
 
-def test_switching_backend_rebuilds_the_index(index_env, monkeypatch):
-    indexer.run(workers=1)
+def _mark_stale():
     db = sqlite3.connect(config.DB_PATH)
     assert db.execute("SELECT v FROM meta WHERE k='backend'").fetchone() == ("onnx",)
     db.execute("UPDATE files SET name='stale' WHERE name='kitchen_renovation_plan.md'")
     db.commit()
-    monkeypatch.setenv("SEMSEARCH_EMBED_BACKEND", "torch")
+    db.close()
+
+
+def test_switching_backend_in_config_rebuilds_the_index(index_env):
+    indexer.run(workers=1)
+    _mark_stale()
+    cfg = json.loads((config.DATA_DIR / "config.json").read_text())
+    cfg["embed_backend"] = "torch"
+    (config.DATA_DIR / "config.json").write_text(json.dumps(cfg))
     indexer.run(workers=1)
     assert "stale" not in names() and "kitchen_renovation_plan.md" in names()
+
+
+def test_a_one_off_backend_never_wipes_the_index(index_env, monkeypatch):
+    """2026-11-09: a test run with SEMSEARCH_EMBED_BACKEND wiped a real index (days of OCR)."""
+    indexer.run(workers=1)
+    _mark_stale()
+    monkeypatch.setenv("SEMSEARCH_EMBED_BACKEND", "torch")
+    indexer.run(workers=1)
+    assert "stale" in names(), "the index must be left alone"
+    db = sqlite3.connect(config.DB_PATH)
+    assert db.execute("SELECT v FROM meta WHERE k='backend'").fetchone() == ("onnx",)
 
 
 def test_model_download_is_checked(tmp_path, monkeypatch):

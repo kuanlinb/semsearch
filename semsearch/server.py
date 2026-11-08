@@ -37,7 +37,7 @@ def _spawn(*args, **kw):
     return proc
 
 
-def _stop(signum=None, frame=None):
+def _stop(signum=None, frame=None, code=0):
     """Quitting the app sends SIGTERM: stop the helpers too, so a long indexing run doesn't outlive it."""
     procs = list(_children)
     for p in procs:
@@ -49,7 +49,7 @@ def _stop(signum=None, frame=None):
             p.wait(max(0.0, deadline - time.time()))
         except subprocess.TimeoutExpired:
             p.kill()
-    os._exit(0)
+    os._exit(code)
 
 
 def start_indexer(quick=False, paths=None):
@@ -313,6 +313,9 @@ def main():
         threading.Thread(target=_keep_tunnel, daemon=True,
                          args=(cfg["remote_reranker_ssh"], _tunnel_port(cfg["remote_reranker"]))).start()
     print(f"semsearch ready on http://127.0.0.1:{cfg['port']}", flush=True)
+    from . import memguard
+    memguard.start("server", cfg.get("max_server_mb"), log=lambda m: print(m, flush=True),
+                   exit=lambda code: _stop(code=code))
     _watch()
 
 
