@@ -546,6 +546,11 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
                            (cur.lastrowid, gvecs[i].astype(np.float16).tobytes()))
         pending.clear()
         progress[0] = time.time()
+        flushes[0] += 1
+        if flushes[0] % 20 == 0:  # batches of long chunks pile up cached MPS memory; return it now and then
+            embed.release_gpu_cache()
+
+    flushes = [0]
 
     def drop_chunks(fid, content_only=False):
         sql = "SELECT id FROM chunks WHERE file_id=?" + (" AND kind=1" if content_only else "")

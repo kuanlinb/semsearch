@@ -1,5 +1,14 @@
 # Changelog
 
+## Unreleased
+
+- Uses less memory. With the PyTorch backend the search server drops from about 6.3 GB to
+  3.3 GB and no longer grows each time the index reloads: bge-m3 is converted once to a float16
+  safetensors copy in `~/.semsearch/models/` (the float32 original left a 1.1 GB CPU copy behind
+  after moving to the GPU), cached GPU memory is returned after each reload and during indexing,
+  and reloads read the vectors in batches instead of all at once. The default ONNX backend
+  starts at 1.3 GB instead of 1.9 GB. Search results are unchanged.
+
 ## 0.1.3 (2026-10-31)
 
 - Spotlight-style touches on the panel: a type filter under the search box (⌘1–⌘6: all,

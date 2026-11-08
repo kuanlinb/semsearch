@@ -261,28 +261,46 @@ class Searcher:
             return False
         db = self._db()
         model = db.execute("SELECT v FROM meta WHERE k='model'").fetchone()
-        rows = db.execute("SELECT id, file_id, kind, vec FROM chunks").fetchall()
+        # fetchall() on a few hundred thousand rows keeps several copies alive in Python (row
+        # objects, join, copy) and a long-running server grows a little with every reload; read in
+        # batches straight into preallocated arrays instead. BEGIN gives count and read one snapshot.
+        db.execute("BEGIN")
+        n = db.execute("SELECT count(*) FROM chunks").fetchone()[0]
+        first = db.execute("SELECT vec FROM chunks LIMIT 1").fetchone()
+        vecs = None
+        if n and first:
+            ids = np.empty(n, dtype=np.int64)
+            fids = np.empty(n, dtype=np.int64)
+            kinds = np.empty(n, dtype=np.int8)
+            vecs = np.empty((n, len(first[0]) // 2), dtype=np.float16)
+            i = 0
+            cur = db.execute("SELECT id, file_id, kind, vec FROM chunks")
+            while i < n:
+                part = cur.fetchmany(5000)
+                if not part:
+                    break
+                for r in part[: n - i]:
+                    ids[i], fids[i], kinds[i] = r[0], r[1], r[2]
+                    vecs[i] = np.frombuffer(r[3], dtype=np.float16)
+                    i += 1
+            ids, fids, kinds, vecs = ids[:i], fids[:i], kinds[:i], vecs[:i]
         db.close()
         if model and model[0] != embed._name:
             # The index was rebuilt with another model; queries must use the same one
             with self.gpu:
                 embed.reset()
                 embed.get_model(model[0])
-        if rows:
-            ids = np.fromiter((r[0] for r in rows), dtype=np.int64, count=len(rows))
-            fids = np.fromiter((r[1] for r in rows), dtype=np.int64, count=len(rows))
-            kinds = np.fromiter((r[2] for r in rows), dtype=np.int8, count=len(rows))
-            vecs = np.frombuffer(b"".join(r[3] for r in rows), dtype=np.float16).reshape(len(rows), -1)
+        if vecs is not None and len(vecs):
             if self.torch:
                 import torch
                 dev = config.device()
-                cpu = torch.from_numpy(vecs.copy())
                 with self.gpu:
-                    mat = cpu.to(dev)
+                    mat = torch.from_numpy(vecs).to(dev)
                 if dev == "cpu":
                     mat = mat.float()
+                del vecs
             else:
-                mat = vecs.copy()  # stays float16; _scores converts one block at a time
+                mat = vecs  # stays float16; _scores converts one block at a time
         else:
             ids = fids = np.zeros(0, dtype=np.int64)
             kinds = np.zeros(0, dtype=np.int8)
@@ -328,6 +346,9 @@ class Searcher:
             self.g_fids, self.g_mat = g_fids, g_mat
             self.names = names
             self.recent = recent
+        del mat  # the old matrix is gone now, so its GPU memory can be returned
+        with self.gpu:
+            embed.release_gpu_cache()
         return True
 
     def maybe_reload(self, min_interval=0):

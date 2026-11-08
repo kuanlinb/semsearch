@@ -165,12 +165,63 @@ def get_model(name: str):
                     model_kwargs={"dtype": torch.bfloat16 if device == "mps" else torch.float32},
                     config_kwargs={"vision_config": None, "audio_config": None})
             else:
-                _model = SentenceTransformer(name, device=device)
+                local = _fp16_copy(name) if device == "mps" else None
+                if local:
+                    import torch
+                    _model = SentenceTransformer(local, device=device, model_kwargs={"dtype": torch.float16})
+                else:
+                    _model = SentenceTransformer(name, device=device)
+                    if device == "mps":
+                        _model.half()  # ~50% faster on MPS; vectors are stored as float16 anyway
             _model.max_seq_length = MAX_TOKENS
-            if device == "mps" and not _is_gemma(name):
-                _model.half()  # ~50% faster on MPS; vectors are stored as float16 anyway
             _name = name
     return _model
+
+
+def _fp16_copy(name: str):
+    """A float16 safetensors copy of the model, made the first time and reused after that.
+
+    bge-m3 ships as a float32 pytorch_model.bin: loading it reads the whole file into memory and
+    converts it, and that CPU copy stays behind after the model moves to the GPU (~1.1 GB per
+    process). A float16 safetensors file is memory-mapped instead (2.8 GB → 1.7 GB for bge-m3,
+    identical vectors). The conversion runs in a child process, so its memory goes away with it.
+    """
+    import shutil
+    import subprocess
+    import sys
+    dst = config.DATA_DIR / "models" / (name.replace("/", "--") + "-fp16")
+    if (dst / "model.safetensors").exists():
+        return str(dst)
+    tmp = dst.with_name(dst.name + f".tmp{os.getpid()}")
+    code = ("import sys, torch\n"
+            "from sentence_transformers import SentenceTransformer\n"
+            "m = SentenceTransformer(sys.argv[1], device='cpu', model_kwargs={'dtype': torch.float16})\n"
+            "m.save(sys.argv[2], safe_serialization=True)\n")
+    try:
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        subprocess.run([sys.executable, "-c", code, name, str(tmp)], check=True, timeout=900,
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        try:
+            os.rename(tmp, dst)
+        except OSError:  # the server or the indexer made it first
+            shutil.rmtree(tmp, ignore_errors=True)
+    except Exception:
+        shutil.rmtree(tmp, ignore_errors=True)
+    return str(dst) if (dst / "model.safetensors").exists() else None
+
+
+def release_gpu_cache():
+    """Give PyTorch's cached MPS memory back to the system; a long-running process keeps growing
+    otherwise. Does nothing (and never imports torch) on the ONNX and llama backends."""
+    import sys
+    torch = sys.modules.get("torch")
+    if torch is None:
+        return
+    try:
+        if torch.backends.mps.is_available():
+            torch.mps.empty_cache()
+    except Exception:
+        pass
 
 
 def reset():
