@@ -1,6 +1,6 @@
 # Changelog
 
-## Unreleased
+## 0.1.5 (2026-11-09)
 
 - Fixed: running once with a different backend (`SEMSEARCH_EMBED_BACKEND`) no longer wipes the
   index. Only `"embed_backend"` in `config.json` (or `--full`) rebuilds it; a one-off run with
