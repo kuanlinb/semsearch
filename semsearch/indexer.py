@@ -10,6 +10,8 @@ import re
 import sqlite3
 import sys
 import time
+import unicodedata
+import urllib.error
 from concurrent.futures import ProcessPoolExecutor
 
 from pathlib import Path
@@ -148,6 +150,22 @@ def _under(path, dirs):
     return any(path == d or path.startswith(d.rstrip("/") + "/") for d in dirs)
 
 
+def _under_any(dirs):
+    """A fast _under(path, dirs) for many dirs (a watcher run can bring tens of thousands):
+    looks the path and its parents up in a set."""
+    dirs = {d.rstrip("/") or "/" for d in dirs}
+    if "/" in dirs:
+        return lambda path: True
+
+    def check(path):
+        while path and path != "/":
+            if path in dirs:
+                return True
+            path = os.path.dirname(path)
+        return False
+    return check
+
+
 def change_target(path, roots):
     """The folder to rescan when the file watcher reports `path`, or None when the index never
     looks there (outside the roots, hidden, packages, build output, excluded). A change inside
@@ -169,12 +187,19 @@ def change_target(path, roots):
 
 
 def _dedupe_roots(roots):
-    """Drop duplicate or nested roots so no file is processed twice."""
-    out = []
+    """Drop duplicate or nested roots so no file is processed twice. Checks each folder's
+    parents against a set, so tens of thousands of changed folders stay fast."""
+    kept = set()
     for r in sorted({os.path.normpath(r) for r in roots}, key=len):
-        if not _under(r, out):
-            out.append(r)
-    return out
+        parent, inside = r, False
+        while parent not in ("/", ""):
+            if parent in kept:
+                inside = True
+                break
+            parent = os.path.dirname(parent)
+        if not inside and "/" not in kept:
+            kept.add(r)
+    return sorted(kept, key=len)
 
 
 _SERIAL = re.compile(r"\d{3,}|[0-9a-f]{8,}|^(img|dsc|frame|image|sample)", re.I)
@@ -192,7 +217,7 @@ def _serial(name: str) -> bool:
 
 
 def name_text(path: str, is_dir: bool, note: str) -> str:
-    p = Path(path)
+    p = Path(unicodedata.normalize("NFC", path))  # macOS often stores names decomposed (NFD)
     parents = [x for x in p.parent.parts[-3:] if x not in ("/", "Users")]
     kind = "folder" if is_dir else (p.suffix.lower().lstrip(".") or "file")
     s = f"{embed.readable_name(p.name) if not is_dir else p.name} ({kind})"
@@ -373,22 +398,31 @@ def run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only):
             if WAKE.exists():  # new files are waiting: step aside, OCR resumes next run
                 log("new files detected; pausing OCR")
                 break
-            if proc is None or proc.poll() is not None:
-                proc = start()
             text = ""
-            try:
-                proc.stdin.write(path + "\n")
-                proc.stdin.flush()
-                ready, _, _ = select.select([proc.stdout], [], [], OCR_TIMEOUT)
-                if ready:
-                    line = proc.stdout.readline()
-                    if line:
-                        text = json.loads(line).get("text", "")
-                else:  # stuck: start a fresh helper and skip this file
-                    proc.kill()
+            if "\n" in path or "\r" in path:
+                pass  # the helper reads one path per line: such a name would shift every answer
+            elif _is_cloud_only(path):
+                continue  # evicted to the cloud since the scan; stays queued for when it is back
+            else:
+                if proc is None or proc.poll() is not None:
+                    proc = start()
+                try:
+                    proc.stdin.write(path + "\n")
+                    proc.stdin.flush()
+                    ready, _, _ = select.select([proc.stdout], [], [], OCR_TIMEOUT)
+                    if ready:
+                        line = proc.stdout.readline()
+                        answer = json.loads(line) if line else {}
+                        if answer.get("path") == path:  # never another file's text
+                            text = answer.get("text", "")
+                        else:
+                            proc.kill()
+                            proc = None
+                    else:  # stuck: start a fresh helper and skip this file
+                        proc.kill()
+                        proc = None
+                except (OSError, ValueError):
                     proc = None
-            except (OSError, ValueError):
-                proc = None
             text = extract._clean(text)
             if len(text) >= 20 and not extract.garbled(text):
                 ctx[fid] = embed.readable_name(name)
@@ -409,7 +443,8 @@ def run_ocr(db, cfg, ctx, pending, flush, bump, progress, names_only):
                 bump()
                 log(f"  OCR {done}/{len(rows)} ({(time.time() - t0) / done:.2f} s each, {found} with text)")
         flush()
-        bump()
+        if done:
+            bump()
     finally:
         if proc and proc.poll() is None:
             proc.stdin.close()
@@ -437,8 +472,18 @@ def run_images(db, cfg, bump, progress, names_only):
         if time.time() > deadline:
             log("image time is up; the rest waits for the next run")
             break
+        if _is_cloud_only(path):  # evicted to the cloud since the scan: reading it downloads it
+            continue
         try:
             v = imagevec.image_vector(path).astype(np.float16)
+        except urllib.error.HTTPError as e:  # this image refused (or no image support): skip it
+            log("image failed:", path, e)
+            v = np.zeros(0, np.float16)
+        except (ConnectionError, TimeoutError, urllib.error.URLError) as e:
+            # llama-server stopped: the remaining images wait for the next run instead of
+            # being stored as empty (which is never retried)
+            log("image search: llama-server stopped answering; the rest waits for the next run:", e)
+            break
         except Exception as e:
             log("image failed:", path, e)
             v = np.zeros(0, np.float16)  # empty: not retried every run
@@ -448,9 +493,79 @@ def run_images(db, cfg, bump, progress, names_only):
         if done % 50 == 0:
             bump()
             log(f"  images {done}/{len(rows)} ({done / (time.time() - t0):.1f}/s)")
-    bump()
     if done:
+        bump()
         log(f"  images {done} in {time.time() - t0:.0f}s")
+
+
+def _is_cloud_only(path):
+    """Whether the file is now only in the cloud (or gone): opening it would download it."""
+    try:
+        return bool(os.stat(path).st_flags & config.SF_DATALESS)
+    except OSError:
+        return True
+
+
+def _purge_out_of_scope(db, cfg, failed):
+    """After a full scan: entries outside every root (a folder taken out of "roots", a cloud
+    drive that was removed) and document text under names_only_roots (added there later).
+    Out-of-scope entries are removed only when a scan at least MASS_REMOVAL_WAIT seconds
+    earlier already found them out of scope, so a cloud drive that is briefly missing (its
+    folder is a root only while it exists) is not dropped and rebuilt."""
+    roots = cfg["roots"]
+    now = time.time()
+    in_roots, in_failed = _under_any(roots), _under_any(failed)
+    rows = db.execute("SELECT id, path, missing_since FROM files").fetchall()
+    out = [(fid, since) for fid, path, since in rows if not in_roots(path) and not in_failed(path)]
+    if len(out) >= MASS_REMOVAL_MIN and len(out) > MASS_REMOVAL * len(rows):
+        # Most of the index outside every root is more likely a mistyped "roots" than a real
+        # change: keep it all (an index rebuilt from scratch with --full drops it on purpose)
+        log(f"{len(out)} of {len(rows)} entries are outside the folders to index; keeping them "
+            "(check roots in config.json; run the indexer with --full to start over)")
+        return 0
+    gone = [fid for fid, since in out if since and now - since >= MASS_REMOVAL_WAIT]
+    fresh = [fid for fid, since in out if not since]
+    for i in range(0, len(fresh), 900):
+        ids = fresh[i:i + 900]
+        db.execute(f"UPDATE files SET missing_since=? WHERE id IN ({','.join('?' * len(ids))})", [now] + ids)
+    _delete_files(db, gone)
+    if out:
+        log(f"outside the folders to index: {len(out)} entries, removing {len(gone)} "
+            "(the rest an hour from now if still outside)")
+    names_only = cfg["names_only_roots"]
+    dropped = 0
+    if names_only:
+        rows = db.execute("SELECT DISTINCT f.id, f.path FROM files f JOIN chunks c ON c.file_id = f.id "
+                          "WHERE c.kind=1").fetchall()
+        ids = [fid for fid, path in rows if _under(path, names_only)]
+        for i in range(0, len(ids), 900):
+            part = ids[i:i + 900]
+            q = ",".join("?" * len(part))
+            cids = [r[0] for r in db.execute(f"SELECT id FROM chunks WHERE kind=1 AND file_id IN ({q})", part)]
+            _delete_chunks(db, cids)
+            db.execute(f"UPDATE files SET content_done=1, ocr_state=0 WHERE id IN ({q})", part)
+        dropped = len(ids)
+        if dropped:
+            log(f"names only: dropped the text of {dropped} files under names_only_roots")
+    return len(gone) + dropped
+
+
+def _delete_chunks(db, cids):
+    for j in range(0, len(cids), 900):
+        cq = ",".join("?" * len(cids[j:j + 900]))
+        db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({cq})", cids[j:j + 900])
+        db.execute(f"DELETE FROM chunks WHERE id IN ({cq})", cids[j:j + 900])
+        db.execute(f"DELETE FROM gemma_vecs WHERE chunk_id IN ({cq})", cids[j:j + 900])
+
+
+def _delete_files(db, ids):
+    """Remove these entries with their vectors."""
+    for i in range(0, len(ids), 900):
+        part = ids[i:i + 900]
+        q = ",".join("?" * len(part))
+        _delete_chunks(db, [r[0] for r in db.execute(f"SELECT id FROM chunks WHERE file_id IN ({q})", part)])
+        db.execute(f"DELETE FROM image_vecs WHERE file_id IN ({q})", part)
+        db.execute(f"DELETE FROM files WHERE id IN ({q})", part)
 
 
 def _backend_switch_is_deliberate() -> bool:
@@ -692,22 +807,24 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
     for fid, path in old:
         db.execute("UPDATE files SET src=? WHERE id=?", (conditions.read_source(path), fid))
     if old:
-        db.commit()
+        bump()
         log(f"sources read for {len(old)} files")
 
     # Apps: index a one-line "what it is for" description as the app's text, so a query like
     # "note-taking app" or "take a screenshot" finds it. Covers apps indexed before this existed.
     rows = db.execute("SELECT id, path, name FROM files WHERE ext='.app' AND id NOT IN "
                       "(SELECT file_id FROM chunks WHERE kind=1)").fetchall()
+    described = 0
     for fid, path, name in rows:
         desc = appinfo.describe(path)
         if desc:
             ctx[fid] = embed.readable_name(name)
             pending.append((fid, KIND_CONTENT, desc))
+            described += 1
     flush()
-    if rows:
+    if described:  # apps with nothing to describe come back every run: no reason to reload
         bump()
-        log("app descriptions", len(rows))
+        log("app descriptions", described)
 
     # Phase 2: document contents, including leftovers from an interrupted run.
     # At most 3 attempts per document, so one broken PDF can't block every future run.
@@ -757,6 +874,7 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
     if not limit and cfg.get("image_search"):
         run_images(db, cfg, bump, progress, names_only)
 
+    removed = 0
     if not limit:
         # Remove entries that vanished, but only under roots scanned this time and never
         # under folders that could not be read (maybe just a temporary permission/cloud error)
@@ -766,23 +884,20 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
         # Entries found again are no longer counted as missing
         db.execute("UPDATE files SET missing_since=NULL WHERE seen=? AND missing_since IS NOT NULL", (scan_id,))
         db.execute("DELETE FROM meta WHERE k='mass_removal'")  # left by 0.1.6 pre-releases
+        in_ok, in_failed, scanned = _under_any(ok_roots), _under_any(failed), set(roots)
         under = [(fid, seen) for fid, path, seen in db.execute("SELECT id, path, seen FROM files")
-                 if _under(path, ok_roots) and not _under(path, failed)
-                 and path not in roots]  # a scanned folder is not listed by its own scan
+                 if in_ok(path) and not in_failed(path)
+                 and path not in scanned]  # a scanned folder is not listed by its own scan
         gone = _confirmed_gone(db, [fid for fid, seen in under if seen != scan_id], len(under), full)
-        for i in range(0, len(gone), 2000):
-            ids = gone[i:i + 2000]
-            q = ",".join("?" * len(ids))
-            cids = [r[0] for r in db.execute(f"SELECT id FROM chunks WHERE file_id IN ({q})", ids)]
-            for j in range(0, len(cids), 2000):
-                cq = ",".join("?" * len(cids[j:j + 2000]))
-                db.execute(f"DELETE FROM chunks_fts WHERE rowid IN ({cq})", cids[j:j + 2000])
-                db.execute(f"DELETE FROM chunks WHERE id IN ({cq})", cids[j:j + 2000])
-                db.execute(f"DELETE FROM gemma_vecs WHERE chunk_id IN ({cq})", cids[j:j + 2000])
-            db.execute(f"DELETE FROM image_vecs WHERE file_id IN ({q})", ids)
-            db.execute(f"DELETE FROM files WHERE id IN ({q})", ids)
+        _delete_files(db, gone)
         log("removed vanished entries:", len(gone))
-    db.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (str(time.time()),))
+        removed += len(gone)
+        if not quick and not paths:
+            removed += _purge_out_of_scope(db, cfg, failed)
+    if removed:
+        # Phases that changed something bumped the version already; a run that changed nothing
+        # leaves it, so the search service does not reload the whole index for nothing
+        db.execute("INSERT OR REPLACE INTO meta VALUES('version', ?)", (str(time.time()),))
     db.execute("INSERT OR REPLACE INTO meta VALUES('last_index', ?)", (time.strftime("%Y-%m-%d %H:%M"),))
     if not quick and not limit:
         db.execute("INSERT OR REPLACE INTO meta VALUES('last_full', ?)", (str(time.time()),))
@@ -804,7 +919,16 @@ def main():
     ap.add_argument("--workers", type=int, default=4)
     ap.add_argument("--quick", action="store_true", help="scan only hot_roots (Downloads, Desktop)")
     ap.add_argument("--paths", nargs="+", help="rescan only these folders (from the file watcher)")
+    ap.add_argument("--paths-from", help="a file listing folders to rescan, separated by NUL bytes "
+                    "(the service uses it: thousands of folders do not fit on a command line)")
     a = ap.parse_args()
+    if a.paths_from:
+        try:
+            a.paths = [p for p in Path(a.paths_from).read_text().split("\0") if p] or None
+        except OSError:
+            a.paths = None
+        if not a.paths:
+            a.quick = True
     lock = config.DATA_DIR / "indexer.lock"
     config.ensure_data_dir()
     import fcntl

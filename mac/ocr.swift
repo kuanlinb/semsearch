@@ -10,8 +10,15 @@ let maxSide: CGFloat = 2200      // larger images are downscaled first (faster, 
 let maxPdfPages = 5              // only the first pages of a scanned PDF
 let minTextBoxes = 1             // run full recognition when at least one line of text is detected
 
+let maxPixels = 150_000_000      // larger images are skipped: a small file can claim a huge size
+                                 // ("decompression bomb") and take gigabytes to decode
+
 func cgImage(_ url: URL) -> CGImage? {
     guard let src = CGImageSourceCreateWithURL(url as CFURL, nil) else { return nil }
+    let props = CGImageSourceCopyPropertiesAtIndex(src, 0, nil) as? [CFString: Any]
+    let w = props?[kCGImagePropertyPixelWidth] as? Int ?? 0
+    let h = props?[kCGImagePropertyPixelHeight] as? Int ?? 0
+    if w <= 0 || h <= 0 || w * h > maxPixels { return nil }
     let opts: [CFString: Any] = [
         kCGImageSourceCreateThumbnailFromImageAlways: true,
         kCGImageSourceThumbnailMaxPixelSize: maxSide,
@@ -55,7 +62,8 @@ func ocr(_ path: String) -> String {
 }
 
 while let line = readLine() {
-    let path = line.trimmingCharacters(in: .whitespacesAndNewlines)
+    // The path exactly as sent: a name may end in a space, and trimming it would read another file
+    let path = line
     if path.isEmpty { continue }
     let text = autoreleasepool { ocr(path) }
     let obj: [String: String] = ["path": path, "text": text]

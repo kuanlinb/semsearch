@@ -71,5 +71,6 @@
  "The search service keeps stopping. Details: ~/.semsearch/server.log": "검색 서비스가 계속 멈춥니다. 자세한 내용: ~/.semsearch/server.log",
  "⚠︎ {shortcut} is used by another app: pick another under Shortcut": "⚠︎ {shortcut}을(를) 다른 앱이 쓰고 있습니다: 단축키에서 다른 것을 고르세요",
  "⚠︎ The index is not updated until config.json is fixed: {problem}": "⚠︎ config.json을 고칠 때까지 색인을 업데이트하지 않습니다: {problem}",
- "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut}을(를) 다른 앱이 쓰고 있습니다. 오른쪽 톱니바퀴에서 다른 단축키를 고르세요."
+ "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut}을(를) 다른 앱이 쓰고 있습니다. 오른쪽 톱니바퀴에서 다른 단축키를 고르세요.",
+ "Port {port} is used by the SemSearch of another account on this Mac. Set a different port in ~/.semsearch/config.json.": "포트 {port}을(를) 이 Mac의 다른 계정 SemSearch가 쓰고 있습니다. ~/.semsearch/config.json에서 다른 port를 설정하세요."
 }

@@ -2,13 +2,19 @@
 # Sign an app with a stable, self-signed certificate: macOS ties folder permissions to the app's
 # signature, so an ad-hoc signature (different on every build) makes it ask again after each update.
 # The certificate lives in its own keychain, ~/Library/Keychains/semsearch-signing.keychain-db, with a
-# random password kept in ~/.semsearch/signing-keychain.pw. Falls back to an ad-hoc signature.
+# random password kept in ~/Library/Application Support/SemSearch/signing-keychain.pw (not in
+# ~/.semsearch: deleting the index to start over must not change the app's signature, which would
+# make macOS ask for folder access again). Falls back to an ad-hoc signature.
 # Usage: mac/sign.sh /path/to/App.app
 set -uo pipefail
 APP="$1"
 NAME="SemSearch Local Signing"
 KC="$HOME/Library/Keychains/semsearch-signing.keychain-db"
-PWFILE="$HOME/.semsearch/signing-keychain.pw"
+PWFILE="$HOME/Library/Application Support/SemSearch/signing-keychain.pw"
+OLD_PWFILE="$HOME/.semsearch/signing-keychain.pw"  # before 0.1.7
+if [[ ! -f "$PWFILE" && -f "$OLD_PWFILE" ]]; then
+  mkdir -p -m 700 "$(dirname "$PWFILE")" && mv "$OLD_PWFILE" "$PWFILE"
+fi
 
 ensure_identity() {
   if [[ -f "$KC" && -f "$PWFILE" ]]; then
@@ -19,7 +25,7 @@ ensure_identity() {
   local tmp pw
   tmp="$(mktemp -d)"
   pw="$(/usr/bin/openssl rand -hex 16)"
-  mkdir -p "$(dirname "$PWFILE")"
+  mkdir -p -m 700 "$(dirname "$PWFILE")"
   (umask 077; print -r -- "$pw" > "$PWFILE")
   /usr/bin/openssl req -x509 -newkey rsa:2048 -nodes -days 7300 -subj "/CN=$NAME" \
     -keyout "$tmp/key.pem" -out "$tmp/cert.pem" \
@@ -43,10 +49,13 @@ sign_stable() {
   orig=("${(@f)$(security list-keychains -d user | sed -e 's/^ *"//' -e 's/"$//')}")
   orig=("${(@)orig:#}")  # drop empty lines
   (( ${#orig} )) || return 1  # never replace a search list we could not read
-  security list-keychains -d user -s "${orig[@]}" "$KC" || return 1
+  # Restore the search list even when the install is interrupted (Ctrl-C) while signing
+  trap 'security list-keychains -d user -s "${orig[@]}"; exit 130' INT TERM HUP
+  security list-keychains -d user -s "${orig[@]}" "$KC" || { trap - INT TERM HUP; return 1; }
   codesign --force --sign "$NAME" "$APP"
   local ok=$?
   security list-keychains -d user -s "${orig[@]}"
+  trap - INT TERM HUP
   return $ok
 }
 

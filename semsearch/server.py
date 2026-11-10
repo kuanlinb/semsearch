@@ -56,11 +56,16 @@ def start_indexer(quick=False, paths=None):
     global indexer_proc
     if indexer_proc and indexer_proc.poll() is None:
         return False
-    log = open(config.DATA_DIR / "indexer.log", "a")
-    indexer_proc = _spawn(
-        ["nice", "-n", "15", sys.executable, "-m", "semsearch.indexer"] + (["--quick"] if quick else [])
-        + (["--paths", *paths] if paths else []),
-        cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
+    args = ["--quick"] if quick else []
+    if paths:
+        # Through a file: unpacking a big archive can change tens of thousands of folders,
+        # more than fits on a command line (the service used to crash on that)
+        listing = config.DATA_DIR / "changed-folders"
+        listing.write_text("\0".join(paths))
+        args = ["--paths-from", str(listing)]
+    with open(config.DATA_DIR / "indexer.log", "a") as log:
+        indexer_proc = _spawn(["nice", "-n", "15", sys.executable, "-m", "semsearch.indexer", *args],
+                              cwd=ROOT, stdout=log, stderr=subprocess.STDOUT)
     return True
 
 
@@ -77,9 +82,19 @@ class Handler(BaseHTTPRequestHandler):
         self.wfile.write(data)
 
     def _trusted(self):
-        """Only answer requests addressed to this loopback port: blocks DNS-rebinding pages."""
+        """Only answer requests addressed to this loopback port (blocks DNS-rebinding pages) and
+        not sent by another web site: a page elsewhere could otherwise make the browser fire
+        searches here (slowing the Mac, and timing them could hint at which files exist)."""
         port = config.load()["port"]
-        return self.headers.get("Host", "") in (f"127.0.0.1:{port}", f"localhost:{port}")
+        ours = (f"127.0.0.1:{port}", f"localhost:{port}")
+        if self.headers.get("Host", "") not in ours:
+            return False
+        if urlparse(self.path).path in ("/", "/index.html") or self.path.startswith("/l10n/"):
+            return True  # the page itself holds no data: a link to it from anywhere may open it
+        if self.headers.get("Sec-Fetch-Site", "same-origin") not in ("same-origin", "none"):
+            return False
+        origin = self.headers.get("Origin")
+        return origin is None or origin in (f"http://{h}" for h in ours)
 
     def do_GET(self):
         if not self._trusted():
@@ -114,6 +129,7 @@ class Handler(BaseHTTPRequestHandler):
                 st.pop("progress", None)  # left behind by an interrupted run
             st["no_access"] = [r for r, v in dict(_access).items() if v != "ok"]  # probe threads add keys
             st["config_problems"] = config.load()["config_problems"]  # the app shows them in its menu
+            st["uid"] = os.getuid()  # the app checks this is its own account's service
             self._send(200, st)
         elif re.fullmatch(r"/l10n/[A-Za-z-]+\.json", u.path) and (ROOT / u.path[1:]).is_file():
             self._send(200, (ROOT / u.path[1:]).read_bytes())
@@ -259,31 +275,35 @@ def _watch():
     wake = config.DATA_DIR / "wake"
     while True:
         time.sleep(10)
-        if time.time() >= next_access:
-            threading.Thread(target=_check_access, daemon=True).start()
-            # recheck after 30 s while a folder is still blocked, so the warning clears soon after the user allows it
-            next_access = time.time() + (30 if any(v != "ok" for v in dict(_access).values()) else 300)
-        busy = _lock_held()
-        # While the indexer runs, reload at most every 5 minutes to keep the GPU free
-        if busy:
-            searcher.maybe_reload(min_interval=300)
-        else:
-            searcher.maybe_reload()
-        if _changed[0] and busy:
-            wake.touch()  # ask the running indexer to pause OCR; the change is kept for later
-        now = time.time()
-        due = _changed[0] and (now - _changed[0] > QUIET or now - _first_change[0] > MAX_WAIT)
-        if due and not busy and now - _last_watch_run[0] > MIN_GAP:
-            with _changed_lock:
-                dirs = sorted(_changed_dirs)
-            if start_indexer(paths=dirs):
-                _last_watch_run[0] = now
+        try:
+            if time.time() >= next_access:
+                threading.Thread(target=_check_access, daemon=True).start()
+                # recheck after 30 s while a folder is still blocked, so the warning clears soon after the user allows it
+                next_access = time.time() + (30 if any(v != "ok" for v in dict(_access).values()) else 300)
+            busy = _lock_held()
+            # While the indexer runs, reload at most every 5 minutes to keep the GPU free
+            if busy:
+                searcher.maybe_reload(min_interval=300)
+            else:
+                searcher.maybe_reload()
+            if _changed[0] and busy:
+                wake.touch()  # ask the running indexer to pause OCR; the change is kept for later
+            now = time.time()
+            due = _changed[0] and (now - _changed[0] > QUIET or now - _first_change[0] > MAX_WAIT)
+            if due and not busy and now - _last_watch_run[0] > MIN_GAP:
                 with _changed_lock:
-                    _changed_dirs.difference_update(dirs)
-                    if not _changed_dirs:
-                        _changed[0] = _first_change[0] = 0.0
-        elif time.time() >= next_quick and start_indexer(quick=True):
-            next_quick = time.time() + QUICK_EVERY
+                    dirs = sorted(_changed_dirs)
+                if start_indexer(paths=dirs):
+                    _last_watch_run[0] = now
+                    with _changed_lock:
+                        _changed_dirs.difference_update(dirs)
+                        if not _changed_dirs:
+                            _changed[0] = _first_change[0] = 0.0
+            elif time.time() >= next_quick and start_indexer(quick=True):
+                next_quick = time.time() + QUICK_EVERY
+        except Exception:  # one bad round (a file that vanished, a full disk) must not end the service
+            import traceback
+            traceback.print_exc()
 
 
 def main():

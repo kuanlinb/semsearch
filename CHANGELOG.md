@@ -1,5 +1,41 @@
 # Changelog
 
+## 0.1.7 (2026-11-10)
+
+The less common problems found in the same review as 0.1.6.
+
+- **A query that is a file's name puts that file first** ("履歷" → 履歷.txt, "report" →
+  report.pdf). Short files with no text of their own used to lose to long documents that only
+  mention the word.
+- **Names stored decomposed are found**: macOS often stores Korean, Japanese kana with
+  dakuten and accented names as NFD, while typed text is NFC, so "데이터", "データ" or "résumé"
+  missed by name.
+- **Narrowing the scope cleans up**: a folder taken out of `roots` (or a cloud drive that was
+  removed) leaves the index after a full scan an hour later, and folders added to
+  `names_only_roots` lose their document text. If most of the index would go (a mistyped
+  `roots`), nothing is removed; an empty `roots` is reported as a config problem.
+- **The service no longer crashes when tens of thousands of folders change at once**
+  (unpacking a big archive): the changed folders go to the indexer through a file, and one bad
+  round of the service's loop is logged instead of ending it.
+- **A run that changed nothing no longer makes the service reload the whole index** (this
+  happened every 30 minutes, doubling memory while it reloaded).
+- **OCR and image search re-check that a file is still on the Mac** before reading it, so a
+  file evicted to iCloud or OneDrive since the scan is not downloaded. OCR text can no longer
+  end up on the wrong file (a name with a line break shifted every answer), names ending in a
+  space are read, and images claiming a huge size are skipped instead of decoded.
+- **Image search stops when llama-server stops answering** instead of marking every remaining
+  image as empty, which was never retried; an image the server refuses is skipped alone.
+- **Each account on a Mac gets its own port** (8799, 8800, …) and the app refuses a service
+  that belongs to another account instead of showing that account's files.
+- **Searches sent by other web sites are refused**, so a page you visit cannot make your
+  browser run searches on this Mac.
+- One-letter queries no longer walk every file name, and the panel opens on the display the
+  pointer is on.
+- The signing keychain's password moved to `~/Library/Application Support/SemSearch`, so
+  deleting `~/.semsearch` to start over no longer makes macOS ask for folder access again; an
+  interrupted install no longer leaves the signing keychain on the keychain search list.
+- An app with an unusual `Info.plist` no longer stops every index run.
+
 ## 0.1.6 (2026-11-10)
 
 Fixes found by trying SemSearch the way a new user would, on a fresh install.

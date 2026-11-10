@@ -206,7 +206,7 @@ def test_wrong_types_are_ignored_not_used(tmp_path):
         '{"roots": "~/Notes", "port": "8800", "conditions": "yes", "max_server_mb": 3000, "reranker": false}')
     cfg = config.load()
     assert cfg["roots"] == [os.path.expanduser("~/Notes")]
-    assert cfg["port"] == 8799 and cfg["conditions"] is True and cfg["max_server_mb"] == 3000
+    assert cfg["port"] == config.default_port() and cfg["conditions"] is True and cfg["max_server_mb"] == 3000
     assert cfg["reranker"] == "" and len(cfg["config_problems"]) == 2
     # null or an unknown backend must not switch backends (that rebuilds the whole index)
     for bad in ['{"embed_backend": null}', '{"embed_backend": "Torch"}', '{"embed_backend": false}',
@@ -414,3 +414,175 @@ def test_files_found_by_an_interrupted_run_are_unmarked(index_env, monkeypatch):
     a.rename(hidden)                       # glitch 2, an hour after glitch 1
     indexer.run(workers=1)
     assert "a_3.txt" in names(), "found again in between: this is a first miss, keep it"
+
+
+def _meta(key):
+    db = sqlite3.connect(config.DB_PATH)
+    row = db.execute("SELECT v FROM meta WHERE k=?", (key,)).fetchone()
+    db.close()
+    return row[0] if row else None
+
+
+def test_a_run_that_changes_nothing_does_not_make_the_service_reload(index_env):
+    indexer.run(workers=1)
+    before = _meta("version")
+    indexer.run(workers=1)
+    assert _meta("version") == before, "the service reloads the whole index when this changes"
+    (index_env / "home" / "new.md").write_text("Something new about the garden. " * 3)
+    indexer.run(workers=1)
+    assert _meta("version") != before
+
+
+def test_a_folder_taken_out_of_roots_leaves_the_index_an_hour_later(index_env, tmp_path):
+    other = tmp_path / "other"
+    other.mkdir()
+    (other / "old_project_notes.md").write_text("Notes about the old project. " * 3)
+    _write_config(roots=[str(index_env), str(other)])
+    indexer.run(workers=1)
+    assert "old_project_notes.md" in names()
+    _write_config(roots=[str(index_env)])
+    indexer.run(workers=1)
+    assert "old_project_notes.md" in names(), "kept for now: the folder may be back soon"
+    db = sqlite3.connect(config.DB_PATH)
+    db.execute("UPDATE files SET missing_since = missing_since - 4000 WHERE missing_since IS NOT NULL")
+    db.commit()
+    db.close()
+    indexer.run(workers=1)
+    n = names()
+    assert "old_project_notes.md" not in n and "kitchen_renovation_plan.md" in n
+
+
+def test_names_only_added_later_drops_the_text(index_env):
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DB_PATH)
+    q = "SELECT count(*) FROM chunks c JOIN files f ON f.id=c.file_id WHERE c.kind=1 AND f.name=?"
+    assert db.execute(q, ("kitchen_renovation_plan.md",)).fetchone()[0] > 0
+    db.close()
+    _write_config(names_only_roots=[str(index_env / "home")])
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DB_PATH)
+    assert db.execute(q, ("kitchen_renovation_plan.md",)).fetchone()[0] == 0
+    assert db.execute(q, ("bank_statement_2026.txt",)).fetchone()[0] > 0
+    db.close()
+    assert "kitchen_renovation_plan.md" in names(), "still found by name"
+
+
+def test_ocr_text_only_ever_goes_to_its_own_file(index_env, monkeypatch, tmp_path):
+    """A helper answer for another path (a file name with a line break once shifted every
+    answer by one) is thrown away instead of being stored as this file's text."""
+    import sys
+    helper = tmp_path / "fake-ocr"
+    helper.write_text(f"#!{sys.executable}\n"
+                      "import json, sys\n"
+                      "for line in sys.stdin:\n"
+                      "    print(json.dumps({'path': 'some/other/file.png', 'text': 'WRONG FILE TEXT ' * 5}), flush=True)\n")
+    helper.chmod(0o755)
+    monkeypatch.setattr(indexer, "OCR_BIN", helper)
+    (index_env / "scan.png").write_bytes(b"x")
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DB_PATH)
+    assert not db.execute("SELECT count(*) FROM chunks WHERE text LIKE '%WRONG FILE%'").fetchone()[0]
+    db.close()
+
+
+def test_decomposed_file_names_match_typed_queries(index_env):
+    """macOS often stores names decomposed (NFD); what people type is composed (NFC)."""
+    import unicodedata
+    for name in ["résumé final.txt", "データ分析.txt", "한글 보고서.txt"]:
+        (index_env / unicodedata.normalize("NFD", name)).write_text("x " * 30)
+    indexer.run(workers=1)
+    s = Searcher()
+    for q in ["résumé", "データ", "한글"]:
+        got = [unicodedata.normalize("NFC", r["name"]) for r in s.search(q, n=3, group=False)["results"]]
+        assert got and q in got[0], (q, got)
+
+
+def test_changed_folders_come_through_a_file(index_env, monkeypatch, tmp_path):
+    """Tens of thousands of changed folders do not fit on a command line."""
+    import sys
+    seen = {}
+    monkeypatch.setattr(indexer, "run", lambda **kw: seen.update(kw))
+    listing = tmp_path / "changed"
+    many = [str(index_env / f"dir {i}\nwith newline") for i in range(30000)]
+    listing.write_text("\0".join(many))
+    monkeypatch.setattr(sys, "argv", ["indexer", "--paths-from", str(listing)])
+    indexer.main()
+    assert seen["paths"] == many
+    listing.write_text("")
+    indexer.main()
+    assert seen["quick"] is True and not seen["paths"]
+
+
+def test_an_odd_app_info_plist_does_not_stop_indexing(tmp_path):
+    import plistlib
+    from semsearch import apps
+    for i, info in enumerate([["not", "a", "dict"], {"CFBundleDocumentTypes": [{"CFBundleTypeName": 5}]}]):
+        app = tmp_path / f"Odd{i}.app" / "Contents"
+        app.mkdir(parents=True)
+        (app / "Info.plist").write_bytes(plistlib.dumps(info))
+        assert apps.describe(str(app.parent)) == ""
+
+
+def test_a_query_that_is_a_file_name_puts_that_file_first(index_env):
+    """2026-11-10: "履歷" ranked 履歷.txt (too short to have text of its own) below long
+    documents that only mention it."""
+    (index_env / "履歷.txt").write_text("x")
+    (index_env / "求職筆記.md").write_text("履歷 履歷 履歷：投履歷的筆記，履歷要更新。 " * 20)
+    (index_env / "budget.txt").write_text("x")
+    (index_env / "planning.md").write_text("The budget, the budget review and budget plans. " * 20)
+    indexer.run(workers=1)
+    s = Searcher()
+    for q, want in [("履歷", "履歷.txt"), ("budget", "budget.txt"), ("Budget ", "budget.txt")]:
+        got = [r["name"] for r in s.search(q, n=3, group=False)["results"]]
+        assert got[0] == want, (q, got)
+
+
+def test_one_letter_queries_stay_cheap():
+    from semsearch.search import _NameIndex
+    idx = _NameIndex.__new__(_NameIndex)
+    blob = "\n".join(f"a file {i}" for i in range(100000))
+    starts = np.cumsum([0] + [len(f"a file {i}") + 1 for i in range(99999)])
+    assert len(_NameIndex._find(blob, starts, "a", limit=500)) == 500
+
+
+def test_a_mistyped_roots_never_empties_the_index(index_env, monkeypatch, tmp_path):
+    monkeypatch.setattr(indexer, "MASS_REMOVAL_MIN", 2)
+    indexer.run(workers=1)
+    before = names()
+    _write_config(roots=[])
+    assert config.load()["config_problems"]
+    _write_config(roots=[str(tmp_path / "Documnets")])        # a typo: most of the index is now "outside"
+    for _ in range(2):
+        indexer.run(workers=1)
+        db = sqlite3.connect(config.DB_PATH)
+        db.execute("UPDATE files SET missing_since = missing_since - 4000 WHERE missing_since IS NOT NULL")
+        db.commit()
+        db.close()
+    assert names() == before
+
+
+def test_under_any_matches_under():
+    dirs = ["/a/b", "/c", "/d/e/"]
+    for p in ["/a/b", "/a/b/x", "/a/bc", "/c/1/2", "/cc", "/d/e/f", "/d", "/"]:
+        assert indexer._under_any(dirs)(p) == indexer._under(p, dirs), p
+    assert indexer._under_any(["/"])("/anything")
+
+
+def test_one_refused_image_does_not_stop_image_search(index_env, monkeypatch):
+    import urllib.error
+    from semsearch import imagevec
+    for name in ["a.png", "b.png", "c.png"]:
+        (index_env / name).write_bytes(b"x")
+    _write_config(image_search=True)
+    monkeypatch.setattr(imagevec, "available", lambda: True)
+
+    def vector(path):
+        if path.endswith("a.png"):
+            raise urllib.error.HTTPError("u", 500, "cannot decode", {}, None)
+        return np.ones(4, np.float32)
+    monkeypatch.setattr(imagevec, "image_vector", vector)
+    indexer.run(workers=1)
+    db = sqlite3.connect(config.DB_PATH)
+    stored = dict(db.execute("SELECT f.name, length(v.vec) FROM image_vecs v JOIN files f ON f.id=v.file_id"))
+    db.close()
+    assert stored.get("a.png") == 0 and stored.get("b.png") and stored.get("c.png")

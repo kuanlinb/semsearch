@@ -71,5 +71,6 @@
  "The search service keeps stopping. Details: ~/.semsearch/server.log": "搜索服务一直停止。详细原因：~/.semsearch/server.log",
  "⚠︎ {shortcut} is used by another app: pick another under Shortcut": "⚠︎ {shortcut} 被其他应用占用：请在“快捷键”换一个",
  "⚠︎ The index is not updated until config.json is fixed: {problem}": "⚠︎ config.json 修好之前不会更新索引：{problem}",
- "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut} 被其他应用占用了。请点右边的齿轮换一个快捷键。"
+ "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut} 被其他应用占用了。请点右边的齿轮换一个快捷键。",
+ "Port {port} is used by the SemSearch of another account on this Mac. Set a different port in ~/.semsearch/config.json.": "端口 {port} 被这台 Mac 另一个账户的 SemSearch 占用了。请在 ~/.semsearch/config.json 设置别的 port。"
 }

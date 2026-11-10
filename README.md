@@ -91,7 +91,7 @@ Press **⌥ Space** (Option + Space), type what you are looking for in your own 
 - Ask in any language; the file can be in another one.
 - Want ⌘Space? It can [replace Spotlight's shortcut](docs/troubleshooting.md#use-space-instead-of-spotlight); Spotlight keeps the 🔍 key.
 - ⌥ Space does nothing? Another app is using it: pick another shortcut under **Shortcut**, from the menu-bar icon or the gear in the search box ([more](docs/troubleshooting.md#space-does-nothing)).
-- Also available from the menu-bar icon, in a browser at `http://127.0.0.1:8799`, and in
+- Also available from the menu-bar icon, in a browser at `http://127.0.0.1:8799` (8800, 8801… for other accounts on the same Mac), and in
   Terminal as `ss your question`.
 
 ## Features

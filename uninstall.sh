@@ -54,6 +54,8 @@ if [[ -n "$ALL" ]]; then
   rm -rf "${SEMSEARCH_DATA:-$HOME/.semsearch}"
   if [[ -z "$SKIP_AGENT" ]]; then  # the signing certificate made by install.sh
     security delete-keychain "$HOME/Library/Keychains/semsearch-signing.keychain-db" 2>/dev/null || true
+    rm -f "$HOME/Library/Application Support/SemSearch/signing-keychain.pw"
+    rmdir "$HOME/Library/Application Support/SemSearch" 2>/dev/null || true
   fi
   # Homebrew keeps the Python environment outside the package so it survives upgrades
   if [[ -L .venv ]]; then

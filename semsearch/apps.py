@@ -173,11 +173,21 @@ CATEGORY = {
 
 
 def describe(path):
-    """One line saying what the app does, or "" when there is nothing to go on."""
+    """One line saying what the app does, or "" when there is nothing to go on (also for an
+    Info.plist of an unexpected shape: one odd app must not stop every index run)."""
+    try:
+        return _describe(path)
+    except Exception:
+        return ""
+
+
+def _describe(path):
     try:
         with open(Path(path) / "Contents" / "Info.plist", "rb") as f:
             info = plistlib.load(f)
     except Exception:
+        return ""
+    if not isinstance(info, dict):
         return ""
     known = KNOWN.get(info.get("CFBundleIdentifier", ""))
     if known:
@@ -189,7 +199,7 @@ def describe(path):
     kinds = []
     for t in info.get("CFBundleDocumentTypes", []) or []:
         name = t.get("CFBundleTypeName") if isinstance(t, dict) else None
-        if name and name not in kinds and not name.startswith(("public.", "com.", "org.")):
+        if isinstance(name, str) and name and name not in kinds and not name.startswith(("public.", "com.", "org.")):
             kinds.append(name)
     if kinds:
         parts.append("opens " + ", ".join(kinds[:6]))

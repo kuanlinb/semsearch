@@ -13,7 +13,9 @@ Only the latest version on `main` is supported.
 - **Your files stay on your Mac.** Indexing and search run locally; the only download is the
   embedding model from Hugging Face. Nothing is sent anywhere unless you set up the optional
   [remote reranker](remote/README.md), which receives the query and short snippets of the top results.
-- **A local search service** listens on `127.0.0.1:8799`, so other computers cannot reach it.
+- **A local search service** listens on `127.0.0.1:8799` (8800, 8801… for other accounts), so other computers
+  cannot reach it. Requests that a web page on another site makes the browser send to it are refused
+  (`Sec-Fetch-Site` / `Origin`), so such a page cannot run searches or measure how long they take.
   Web pages in your browser cannot read it either: it only answers requests addressed to
   `127.0.0.1` or `localhost`, sends no CORS headers, and changes (like re-indexing) need a
   custom header that pages cannot send.

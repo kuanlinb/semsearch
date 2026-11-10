@@ -30,10 +30,14 @@ let userConfig: [String: Any] = {
     return (try? JSONSerialization.jsonObject(with: d)) as? [String: Any] ?? [:]
 }()
 
-// Port: SEMSEARCH_PORT, else "port" in ~/.semsearch/config.json, else 8799
+// Port: SEMSEARCH_PORT, else "port" in ~/.semsearch/config.json, else 8799 for the first account
+// and 8799 + n for the others (same rule as config.default_port), so two accounts on one Mac
+// do not share a service
 let serverPort: Int = {
     if let p = ProcessInfo.processInfo.environment["SEMSEARCH_PORT"], let n = Int(p) { return n }
-    return userConfig["port"] as? Int ?? 8799
+    if let n = userConfig["port"] as? Int { return n }
+    let uid = Int(getuid())
+    return (501..<600).contains(uid) ? 8799 + uid - 501 : 8799
 }()
 
 // Shortcut: picked in the menu-bar menu, or "hotkey" in ~/.semsearch/config.json, e.g.
@@ -654,7 +658,10 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
 
     func toggle() {
         if panel.isVisible && panel.isKeyWindow { hide(); return }
-        if let screen = NSScreen.main {
+        // The screen the pointer is on: with several displays, NSScreen.main is the one with the
+        // key window, which is not where the user is looking when another app is in front
+        let mouse = NSEvent.mouseLocation
+        if let screen = NSScreen.screens.first(where: { NSMouseInRect(mouse, $0.frame, false) }) ?? NSScreen.main {
             let vf = screen.visibleFrame
             let x = vf.midX - width / 2 - pad
             let top = vf.maxY - vf.height * 0.18 + pad  // the visible bar stays where it was
@@ -810,6 +817,14 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
             rebuild()
             table.reloadData()
             setExpanded(false)
+            return
+        }
+        if let app = NSApp.delegate as? AppDelegate, app.foreignService {
+            heads = []
+            rebuild()
+            table.reloadData()
+            footer.stringValue = app.serviceProblem() ?? ""
+            setExpanded(true)
             return
         }
         var c = URLComponents(string: serverURL + "/search")!
@@ -1079,6 +1094,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var quitting = false
     var misses = 0
     var hotkeyOK = true
+    var foreignService = false  // the service on our port belongs to another account
     let repo = repoDir
 
     // The app launches the service so macOS folder access is granted once, to this app
@@ -1086,9 +1102,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         if quitting { return }
         var req = URLRequest(url: URL(string: serverURL + "/status")!)
         req.timeoutInterval = 8
-        URLSession.shared.dataTask(with: req) { [weak self] _, resp, _ in
+        URLSession.shared.dataTask(with: req) { [weak self] data, resp, _ in
             guard let self else { return }
             if resp != nil {  // a service is already running (503 while starting counts)
+                // ...but it may be another account's on the same Mac (the port is shared by all
+                // users): then never send it a query or show its files
+                if let data, let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+                   let uid = j["uid"] as? Int {
+                    self.foreignService = uid != Int(getuid())
+                }
                 self.misses = 0
                 DispatchQueue.main.asyncAfter(deadline: .now() + 60) { self.startServer() }
                 return
@@ -1118,6 +1140,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     /// Why the search service is not answering, in words for the menu and the search box (nil: no idea yet)
     func serviceProblem() -> String? {
+        if foreignService {
+            return L("Port {port} is used by the SemSearch of another account on this Mac. Set a different port in ~/.semsearch/config.json.", ["port": serverPort])
+        }
         if !FileManager.default.isExecutableFile(atPath: repo + "/.venv/bin/python") {
             return L("The SemSearch program files are missing ({path}). Run semsearch-install (Homebrew) or ./install.sh again.", ["path": repo])
         }

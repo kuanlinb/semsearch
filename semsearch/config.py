@@ -47,7 +47,7 @@ DEFAULTS = {
     "names_only_roots": [],
     # Skip any file or folder whose full path contains one of these strings
     "exclude_substrings": [],
-    "port": 8799,
+    "port": None,  # set below: default_port()
     # Memory limits in MB: past them the server restarts (at most once an hour) and the indexer
     # stops until its next run, instead of slowing the whole Mac down. 0 turns a limit off.
     "max_server_mb": 5000,
@@ -71,6 +71,18 @@ DEFAULTS = {
     # next run. 0 turns OCR off.
     "ocr_minutes": 15,
 }
+
+
+
+def default_port():
+    """8799 for the first account on the Mac, 8800, 8801... for the next ones (uid 502, 503...):
+    every account runs its own service, and a shared port would let one account's app talk to
+    another's index. The app (mac/main.swift) uses the same rule."""
+    uid = os.getuid()
+    return 8799 + uid - 501 if 501 <= uid < 600 else 8799
+
+
+DEFAULTS["port"] = default_port()
 
 # Directory names skipped entirely (packages, caches, VCS, build output)
 EXCLUDE_DIRS = {
@@ -191,6 +203,8 @@ def _read_user():
                 bad = "a list of strings"
             else:
                 value = [x for x in value if x.strip()]  # "" would match every path
+                if key == "roots" and not value:
+                    bad = "a list of folders (it is empty)"
         elif key in OFF_KEYS and value in (None, False):
             value = ""  # "reranker": false
         elif key == "embed_backend":

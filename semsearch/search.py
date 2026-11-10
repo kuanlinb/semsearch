@@ -9,6 +9,7 @@ import re
 import sqlite3
 import threading
 import time
+import unicodedata
 
 import numpy as np
 
@@ -39,6 +40,7 @@ W_NAME, W_CONTENT = 1.0, 1.0
 # below TIER_SPAN, the unseen files up to rank TIER_SPAN stay in the second tier (a correct file
 # ranked 21-40 would otherwise vanish unjudged), the rest are dropped.
 TIER_SPAN = 40
+FIND_LIMIT = 20000                    # name occurrences collected per query term
 TIER1_GAP = 2.0                       # first tier: within 2 of the top score (reranker logits)
 SHOW_GAP, SHOW_FLOOR = 5.0, -10.0     # second tier ("less related"); further or below -10 (unrelated) is hidden
 W_SIM = 0.4
@@ -591,7 +593,8 @@ class Searcher:
         """group=True folds lower-ranked files from the same folder into the best one's
         "group" list (the app expands it with Tab). cond=False ignores time and source words."""
         t0 = time.time()
-        q = q.strip()
+        # Typed text is NFC; macOS often stores names decomposed (NFD: 한글, データ, résumé)
+        q = unicodedata.normalize("NFC", q).strip()
         if not q:
             return {"results": [], "ms": 0, "reranked": False}
         db = self._db()
@@ -685,6 +688,11 @@ class Searcher:
             for fid, ext, is_dir in self.names.types(list(fused)):
                 key = "<dir>" if is_dir else ext
                 fused[fid] *= 1.6 if key in want_types else 0.6
+        # The query is exactly a file's name ("履歷" → 履歷.txt): those files go first. A short
+        # file with no text of its own otherwise loses to long documents that only mention it
+        top = max(fused.values(), default=0)
+        for fid in ([] if want_types and not sem_q else self.names.exact_names(q)):  # not for "pdf" alone
+            fused[fid] = top + 0.5 + fused.get(fid, 0)
         # The query is exactly an app name (e.g. "Photos" / "照片"): that app goes first
         for fid in self.names.exact_apps(q):
             fused[fid] = max(fused.values(), default=0) + 1
@@ -818,6 +826,10 @@ class Searcher:
         return out
 
 
+def _nfc(s):
+    return unicodedata.normalize("NFC", s) if not s.isascii() else s
+
+
 class _NameIndex:
     """All names and folder paths in one in-memory string; str.find is much faster than SQL LIKE."""
 
@@ -834,14 +846,14 @@ class _NameIndex:
         self.app_names = {}
         for r in rows:
             if r[4] == ".app":
-                self.app_names[r[0]] = r[1].split("（")[0].removesuffix(".app").lower()
+                self.app_names[r[0]] = _nfc(r[1].split("（")[0].removesuffix(".app").lower())
         self.mtime = np.array([r[3] or 0 for r in rows], dtype=np.float64)
-        names = [r[1].lower().replace("\n", " ") for r in rows]
+        names = [_nfc(r[1].lower().replace("\n", " ")) for r in rows]
         self.blob = "\n".join(names)
         self.starts = np.cumsum([0] + [len(n) + 1 for n in names[:-1]]) if names else np.zeros(0)
         parents = {}
         for i, r in enumerate(rows):
-            parents.setdefault(r[2].lower(), []).append(i)
+            parents.setdefault(_nfc(r[2].lower()), []).append(i)
         self.parent_keys = list(parents)
         self.parent_rows = [np.array(v) for v in parents.values()]
         self.parent_blob = "\n".join(k.replace("\n", " ") for k in self.parent_keys)
@@ -864,6 +876,22 @@ class _NameIndex:
         i = self._row.get(fid)
         return float(self.mtime[i]) if i is not None else 0.0
 
+    def exact_names(self, q):
+        """Files whose whole name, without the extension, is the query ("履歷" → 履歷.txt)."""
+        q = _nfc(q.strip().lower())
+        if not q or (len(q) == 1 and q.isascii()):
+            return []
+        if not hasattr(self, "_stems"):
+            stems = {}
+            for i, fid in enumerate(self.ids):
+                start = int(self.starts[i])
+                end = self.blob.find("\n", start)
+                name = self.blob[start:] if end < 0 else self.blob[start:end]
+                stem = name.rsplit(".", 1)[0] if "." in name[1:] else name
+                stems.setdefault(stem, []).append(int(fid))
+            self._stems = stems
+        return self._stems.get(q, [])
+
     def exact_apps(self, q):
         q = q.strip().lower()
         return [f for f, (ext, _) in self.kind.items()
@@ -879,20 +907,27 @@ class _NameIndex:
         return [(f, *self.kind.get(f, ("", 0))) for f in fids]
 
     @staticmethod
-    def _find(blob, starts, term):
+    def _find(blob, starts, term, limit=FIND_LIMIT):
+        """Rows whose text contains `term`; at most `limit` occurrences are collected, so the
+        first keystroke ("a", "的") does not walk millions of names while later ones wait."""
         pos, out = 0, []
-        while True:
+        while len(out) < limit:
             pos = blob.find(term, pos)
             if pos < 0:
-                return np.unique(np.searchsorted(starts, np.array(out), side="right") - 1) if out else []
+                break
             out.append(pos)
             pos += 1
+        return np.unique(np.searchsorted(starts, np.array(out), side="right") - 1) if out else []
 
     def match(self, terms, parent_limit=3000):
         """Return [(file id, number of terms in the name, mtime)]."""
         count = {}
         for t in terms:
-            for i in self._find(self.blob, self.starts, t.lower()):
+            if len(t) == 1 and t.isascii():
+                continue  # one letter or digit is in almost every name: no signal, much work
+            # Only very short terms are capped: a longer common word ("report") must still find
+            # the newest files, which come last in the names
+            for i in self._find(self.blob, self.starts, t.lower(), FIND_LIMIT if len(t) <= 2 else 10 ** 9):
                 count[i] = count.get(i, 0) + 1
         out = [(int(self.ids[i]), c, float(self.mtime[i])) for i, c in count.items()]
         if len(terms) == 1:

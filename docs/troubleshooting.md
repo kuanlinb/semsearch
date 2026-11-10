@@ -15,7 +15,8 @@
 - The search service listens on `127.0.0.1` only and rejects requests addressed to any other
   host (DNS-rebinding protection), but other user accounts on the same Mac can query it while
   it runs. The index files themselves (`~/.semsearch`) are readable by your account only.
-- If another program already uses port 8799, set a different `port`.
+- If another program already uses port 8799, set a different `port`. Each account on the Mac has its own
+  default port, and the app never uses another account's service.
 
 ## ⌥Space does nothing
 
@@ -66,6 +67,7 @@ launchctl bootout gui/$(id -u)/io.github.kuanlinb.semsearch
 rm -f ~/Library/LaunchAgents/io.github.kuanlinb.semsearch.plist
 rm -rf /Applications/SemSearch.app
 security delete-keychain ~/Library/Keychains/semsearch-signing.keychain-db
+rm -rf ~/Library/Application\ Support/SemSearch            # the signing keychain's password
 rm -rf ~/.semsearch                                   # the index, settings and model
 rm -rf "$(brew --prefix)/var/semsearch"               # Homebrew only: its Python environment
 ss="$(brew --prefix)/bin/ss"; [ -L "$ss" ] && [ ! -e "$ss" ] && rm "$ss"   # only a broken link

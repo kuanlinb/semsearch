@@ -81,7 +81,7 @@ cd semsearch
 - 用中文問、檔案是英文也找得到，反過來也可以。
 - 想用 ⌘ 空白鍵？可以[把 Spotlight 的快捷鍵讓出來](docs/troubleshooting.md#use-space-instead-of-spotlight)，Spotlight 改用鍵盤上的 🔍 鍵開。
 - 按 ⌥ Space 沒反應？通常是別的 App 佔用了這個快捷鍵，點選單列的 SemSearch 圖示或搜尋框右邊的齒輪，在「快捷鍵」裡換一個就好。選單列看不到圖示的話，從「應用程式」資料夾再打開一次 SemSearch，搜尋框就會出現（[詳細說明](docs/troubleshooting.md#space-does-nothing)）。
-- 也可以從選單列的放大鏡圖示、瀏覽器 `http://127.0.0.1:8799`，或終端機 `ss 你的問題` 來搜尋。
+- 也可以從選單列的放大鏡圖示、瀏覽器 `http://127.0.0.1:8799`（同一台 Mac 的其他帳號是 8800、8801…），或終端機 `ss 你的問題` 來搜尋。
 - 介面語言跟著系統：支援英文、繁體中文、簡體中文、日文、韓文，其他語言顯示英文。
 
 ## 特色
