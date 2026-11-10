@@ -39,7 +39,7 @@ KIND_NAME, KIND_CONTENT = 0, 1
 
 
 def connect():
-    config.DATA_DIR.mkdir(exist_ok=True)
+    config.ensure_data_dir()
     db = sqlite3.connect(config.DB_PATH, timeout=60)
     db.execute("PRAGMA journal_mode=WAL")
     db.execute("PRAGMA synchronous=NORMAL")
@@ -53,6 +53,8 @@ def connect():
         db.execute("ALTER TABLE files ADD COLUMN ocr_state INTEGER DEFAULT 0")
     if "src" not in cols:  # where a downloaded or received file came from (conditions.read_source)
         db.execute("ALTER TABLE files ADD COLUMN src TEXT")
+    if "missing_since" not in cols:  # when a scan that missed most files first missed this one
+        db.execute("ALTER TABLE files ADD COLUMN missing_since REAL")
     return db
 
 
@@ -76,6 +78,9 @@ def _excluded(path: str) -> bool:
 
 
 _exclude_substrings = []
+# Folders whose files are never folded into a dataset: Desktop and Downloads themselves
+# (hot_roots), where 150 screenshots are the user's own files, not training data
+_never_collapse = set()
 
 
 def walk(roots, failed=None):
@@ -106,9 +111,10 @@ def walk(roots, failed=None):
                 if e.is_file(follow_symlinks=False):
                     by_ext.setdefault(os.path.splitext(e.name)[1].lower(), []).append(e.name)
             counts = {x: len(v) for x, v in by_ext.items()}
-            bulk = {x for x, v in by_ext.items()
-                    if len(v) >= config.DATASET_THRESHOLD and x not in config.NEVER_COLLAPSE_EXT
-                    and sum(map(_serial, v)) >= config.DATASET_SERIAL_RATIO * len(v)}
+            bulk = set() if d in _never_collapse else {
+                x for x, v in by_ext.items()
+                if len(v) >= config.DATASET_THRESHOLD and x not in config.NEVER_COLLAPSE_EXT
+                and sum(map(_serial, v)) >= config.DATASET_SERIAL_RATIO * len(v)}
             note = ""
             if bulk:
                 note = ", ".join(f"{counts[x]} {x or 'extensionless'} files" for x in bulk)
@@ -128,7 +134,9 @@ def walk(roots, failed=None):
                         elif not skip_dir(e.name, names):
                             stack.append(e.path)
                     elif e.is_file():
-                        if os.path.splitext(e.name)[1].lower() in bulk:
+                        # Only the machine-named files of a dataset are left out: a file the
+                        # user named among them is still indexed one by one
+                        if bulk and os.path.splitext(e.name)[1].lower() in bulk and _serial(e.name):
                             continue
                         yield e.path, e.stat(follow_symlinks=False), False, ""
                 except OSError:
@@ -169,12 +177,18 @@ def _dedupe_roots(roots):
     return out
 
 
-_SERIAL = re.compile(r"\d{3,}|[0-9a-f]{8,}|^(img|dsc|frame|image|sample|screenshot|螢幕快照|截圖|スクリーンショット)", re.I)
+_SERIAL = re.compile(r"\d{3,}|[0-9a-f]{8,}|^(img|dsc|frame|image|sample)", re.I)
+# Screenshots are named by date and time ("Screenshot 2026-11-10 at 10.15.32", "截圖 2026-11-10
+# 上午10.15.32"), which looks serial, but each one is something the user chose to capture
+# (2026-11-10: a Desktop with 160 screenshots was skipped entirely, OCR text and all)
+_SCREENSHOT = re.compile(r"^(screen ?shot|螢幕快照|螢幕截圖|截圖|截屏|屏幕快照|屏幕截图|截图|"
+                         r"スクリーンショット|스크린샷|captura de pantalla|capture d.écran|bildschirmfoto)", re.I)
 
 
 def _serial(name: str) -> bool:
     """Machine-generated names like IMG_0001.jpg, frame_000123.png, 3f9a2c1e.json."""
-    return bool(_SERIAL.search(os.path.splitext(name)[0]))
+    stem = os.path.splitext(name)[0]
+    return not _SCREENSHOT.match(stem) and bool(_SERIAL.search(stem))
 
 
 def name_text(path: str, is_dir: bool, note: str) -> str:
@@ -450,11 +464,50 @@ def _backend_switch_is_deliberate() -> bool:
         return False
 
 
+MASS_REMOVAL = 0.5        # a scan missing more than this share of the scanned entries...
+MASS_REMOVAL_MIN = 200    # ...(and at least this many) removes only what a scan this many
+MASS_REMOVAL_WAIT = 3600  # seconds earlier missed too
+
+
+def _confirmed_gone(db, gone, n_scanned, full):
+    """Of the entries this scan did not find, the ones to remove now.
+
+    A scan that suddenly misses most files is more often a glitch (a drive or cloud folder that
+    did not answer, a setting that excluded too much) than a real deletion. Then nothing is
+    removed at once: each missing entry is marked with when it was first missed, and removed
+    only when a scan at least an hour later still misses it. An entry found again is unmarked
+    (see run()). Small removals, and --full, happen at once as before."""
+    if full or len(gone) < MASS_REMOVAL_MIN or len(gone) <= MASS_REMOVAL * n_scanned:
+        return gone
+    now, since = time.time(), {}
+    for i in range(0, len(gone), 900):
+        ids = gone[i:i + 900]
+        since.update(db.execute(f"SELECT id, missing_since FROM files WHERE id IN ({','.join('?' * len(ids))})", ids))
+    confirmed = [f for f in gone if since.get(f) and now - since[f] >= MASS_REMOVAL_WAIT]
+    fresh = [f for f in gone if not since.get(f)]
+    for i in range(0, len(fresh), 900):
+        ids = fresh[i:i + 900]
+        db.execute(f"UPDATE files SET missing_since=? WHERE id IN ({','.join('?' * len(ids))})", [now] + ids)
+    log(f"{len(gone)} of {n_scanned} entries seem to be gone: removing the {len(confirmed)} already "
+        "missed an hour ago, keeping the rest until a later scan agrees "
+        "(check exclude_substrings and roots in config.json if this is unexpected)")
+    return confirmed
+
+
 def run(full=False, limit=None, workers=4, quick=False, paths=None):
     """paths: rescan only these folders (what the file watcher saw change), like a quick run."""
     cfg = config.load()
+    if cfg["config_problems"]:
+        # Running with half the settings could index folders the user excluded, or (with a
+        # different model) rebuild everything; better to wait until config.json is fixed
+        for p in cfg["config_problems"]:
+            log("config problem:", p)
+        log("not indexing until config.json is fixed")
+        return
     WAKE.unlink(missing_ok=True)  # this run picks up the new files
     _exclude_substrings[:] = cfg.get("exclude_substrings", [])
+    _never_collapse.clear()
+    _never_collapse.update(cfg["hot_roots"])
     from . import memguard
     memguard.start("indexer", cfg.get("max_indexer_mb"), every=15, log=log)
     embed.get_model(cfg["model"])
@@ -538,7 +591,7 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
     log(f"scanned {n} entries: {len(todo)} to update, {len(unchanged)} unchanged")
     for i in range(0, len(unchanged), 5000):
         ids = unchanged[i:i + 5000]
-        db.execute(f"UPDATE files SET seen=? WHERE id IN ({','.join('?' * len(ids))})",
+        db.execute(f"UPDATE files SET seen=?, missing_since=NULL WHERE id IN ({','.join('?' * len(ids))})",
                    [scan_id, *ids])
     db.execute("DELETE FROM meta WHERE k='progress'")  # left over from an interrupted run
     db.commit()
@@ -710,9 +763,13 @@ def run(full=False, limit=None, workers=4, quick=False, paths=None):
         ok_roots = [r for r in roots if r not in failed]
         if failed:
             log(f"{len(failed)} folders could not be read; keeping their entries:", ", ".join(failed[:5]))
-        gone = [fid for fid, path in db.execute("SELECT id, path FROM files WHERE seen != ?", (scan_id,))
-                if _under(path, ok_roots) and not _under(path, failed)
-                and path not in roots]  # a scanned folder is not listed by its own scan
+        # Entries found again are no longer counted as missing
+        db.execute("UPDATE files SET missing_since=NULL WHERE seen=? AND missing_since IS NOT NULL", (scan_id,))
+        db.execute("DELETE FROM meta WHERE k='mass_removal'")  # left by 0.1.6 pre-releases
+        under = [(fid, seen) for fid, path, seen in db.execute("SELECT id, path, seen FROM files")
+                 if _under(path, ok_roots) and not _under(path, failed)
+                 and path not in roots]  # a scanned folder is not listed by its own scan
+        gone = _confirmed_gone(db, [fid for fid, seen in under if seen != scan_id], len(under), full)
         for i in range(0, len(gone), 2000):
             ids = gone[i:i + 2000]
             q = ",".join("?" * len(ids))
@@ -749,7 +806,7 @@ def main():
     ap.add_argument("--paths", nargs="+", help="rescan only these folders (from the file watcher)")
     a = ap.parse_args()
     lock = config.DATA_DIR / "indexer.lock"
-    config.DATA_DIR.mkdir(exist_ok=True)
+    config.ensure_data_dir()
     import fcntl
     fh = open(lock, "w")
     try:

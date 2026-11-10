@@ -28,7 +28,7 @@ Spotlight 要記得檔名裡的字才找得到。SemSearch 看得懂意思，就
 
 ## 安裝
 
-**需要**：M1 以後的 Mac（Apple 晶片）、macOS 13 以上、約 2 GB 空間。
+**需要**：M1 以後的 Mac（Apple 晶片）、macOS 14（Sonoma）以上、約 2 GB 空間。
 
 **用 [Homebrew](https://brew.sh) 安裝**（一行；macOS 15 以上不用裝 Xcode 工具）：
 
@@ -48,13 +48,14 @@ cd semsearch
 
 這樣就好了。之後每次登入會自動啟動。接下來會發生的事：
 
-- 第一次會下載語言模型（約 2.3 GB，只下載一次）。
+- 第一次會下載語言模型（約 600 MB，只下載一次）。
 - **幾分鐘內就能用檔名搜尋**，16 萬個檔案大約 15 分鐘。讀完所有文件的內文要比較久，資料少的話幾分鐘，16 萬個檔案大約 2 小時，期間可以照常搜尋。
 - 更新：`brew upgrade semsearch && semsearch-install`，或 `git pull && ./install.sh`。
 - 移除：`semsearch-uninstall`（再執行 `brew uninstall semsearch`），或 `./uninstall.sh`。
 - 從原始碼安裝的話，`semsearch` 資料夾請不要移動或刪除，App 會從那裡執行。
 
-> 如果安裝程式說 Python 版本太舊，執行 `brew install python`（或安裝 [uv](https://github.com/astral-sh/uv)）後，再跑一次 `./install.sh`。
+> 從原始碼安裝需要 Python 3.11 到 3.14。安裝程式說版本不合時，執行 `brew install python@3.13`（或安裝 [uv](https://github.com/astral-sh/uv)）後，再跑一次 `./install.sh`。
+> 已經直接 `brew uninstall semsearch`、沒先跑 `semsearch-uninstall`？看[清掉剩下的東西](docs/troubleshooting.md#removing-what-is-left)。
 
 ## 怎麼用
 

@@ -12,10 +12,9 @@
   and signs it with a self-signed certificate made on your Mac and kept in its own keychain
   (`semsearch-signing`), so macOS keeps your folder permissions across updates. `./uninstall.sh --all` removes that keychain too.
 - Files inside the Trash are not indexed (macOS requires Full Disk Access for that).
-- On macOS 13, iCloud Drive files that are not downloaded appear as hidden `.icloud`
-  placeholders and are not indexed (macOS 14+ uses File Provider and works).
 - The search service listens on `127.0.0.1` only and rejects requests addressed to any other
-  host (DNS-rebinding protection), but other user accounts on the same Mac can query it.
+  host (DNS-rebinding protection), but other user accounts on the same Mac can query it while
+  it runs. The index files themselves (`~/.semsearch`) are readable by your account only.
 - If another program already uses port 8799, set a different `port`.
 
 ## ⌥Space does nothing
@@ -50,11 +49,38 @@ Installed from source, from the folder you cloned:
 
 ```bash
 ./uninstall.sh          # removes the app, its login item and the `ss` command
-./uninstall.sh --all    # also deletes the index, logs and the downloaded model (about 2.3 GB)
+./uninstall.sh --all    # also deletes the index, logs and the downloaded model (about 600 MB)
 cd .. && rm -rf semsearch   # the code and its Python environment
 ```
 
 The plain version keeps the index and the model, so installing again later is quick.
+
+### Removing what is left
+
+Ran `brew uninstall semsearch` (or deleted the cloned folder) before the uninstall step? The app
+then says its files are missing. Remove the rest by hand:
+
+```bash
+osascript -e 'tell application id "io.github.kuanlinb.semsearch" to quit'
+launchctl bootout gui/$(id -u)/io.github.kuanlinb.semsearch
+rm -f ~/Library/LaunchAgents/io.github.kuanlinb.semsearch.plist
+rm -rf /Applications/SemSearch.app
+security delete-keychain ~/Library/Keychains/semsearch-signing.keychain-db
+rm -rf ~/.semsearch                                   # the index, settings and model
+rm -rf "$(brew --prefix)/var/semsearch"               # Homebrew only: its Python environment
+ss="$(brew --prefix)/bin/ss"; [ -L "$ss" ] && [ ! -e "$ss" ] && rm "$ss"   # only a broken link
+```
+
+## The search service does not start
+
+The menu says what went wrong when it can. `~/.semsearch/server.log` has the details.
+
+- **"The SemSearch program files are missing"**: the folder the app runs from was moved or deleted, or
+  `brew upgrade` replaced it. Run `semsearch-install` (Homebrew) or `./install.sh` again.
+- **Downloading the language model** stays at the same percentage: the download resumes where
+  it stopped once the network is back; nothing needs to be deleted.
+- **config.json has a problem**: the menu names the setting. Until it is fixed, SemSearch keeps
+  searching the existing index but does not update it, so a typo never removes files from it.
 
 ## Development
 

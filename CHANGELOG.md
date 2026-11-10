@@ -1,5 +1,51 @@
 # Changelog
 
+## 0.1.6 (2026-11-10)
+
+Fixes found by trying SemSearch the way a new user would, on a fresh install.
+
+- **A mistake in `config.json` can no longer empty the index.** A string where a list belongs
+  (`"exclude_substrings": "secret"`) used to exclude every path containing one of its letters,
+  and the next run deleted everything. Now a single string is read as a one-item list, settings
+  of the wrong type (or `null`, or an unknown `embed_backend`) are ignored, and while the file is invalid JSON or has such a problem the
+  index is not updated at all (search keeps working); the menu names the problem.
+- **A scan that suddenly misses most files removes nothing at once** (a drive or cloud folder
+  that did not answer, a setting that excluded too much): each missing entry is removed only if a
+  scan at least an hour later still misses it, and entries found again are kept.
+- **Folders of screenshots are indexed again.** 150 or more screenshots in one folder were taken
+  for a machine-made dataset and skipped, OCR text and all, along with any file you had named
+  yourself there. Screenshot names no longer count as machine-made, Desktop and Downloads are
+  never folded, and inside a real dataset only the machine-named files are left out.
+- **A query of only a file type works**: "screenshot", "截圖", "pdf", "folder" list the newest
+  files of that type instead of nothing.
+- **Fewer false time and source filters**: "notes on edge detection" is no longer "from Edge",
+  "lecture on line integrals" not "from LINE", "hard drive files" not "from Google Drive".
+  "latest" / "最新" ranks the newest version first instead of hiding files older than 30 days.
+  "過去二十五天" means 25 days (it meant 2).
+- **The model download resumes** where it stopped (it is about 590 MB), times out instead of
+  hanging, retries, works with a python.org Python that has no certificates installed, and shows
+  its progress in the menu and the search box.
+- **The app says why search is not working** instead of "may still be starting" forever: its
+  files are missing (moved, or `brew upgrade` without `semsearch-install`), the model is
+  downloading, `config.json` has a problem, or the service keeps stopping. A service that cannot
+  start is retried less and less often (up to every 10 minutes) instead of every 10 seconds, and
+  `server.log` no longer grows without end.
+- **A shortcut taken by another app is reported** in the menu and the search box (⌥Space is
+  also used by Raycast, Alfred and others).
+- **The index is private to your account**: `~/.semsearch` was readable by other accounts on
+  the Mac, though it holds the text of your documents.
+- Install: macOS 14 or later is now required (onnxruntime and PyTorch no longer support 13; the
+  README said 13). The installer picks Python 3.11 to 3.14 and rebuilds an environment made with
+  an unsupported one (`brew install python` now gives 3.15, which nothing supports yet). It
+  creates `~/Library/LaunchAgents` on a new account, starts the app even when login items are
+  turned off, works in a folder whose path has `&`, reports when the `ss` command was not
+  linked, and detects Rosetta Terminals.
+- Homebrew: the Python environment now lives in `$(brew --prefix)/var/semsearch` so it survives
+  `brew upgrade`, and the OCR and file-watcher helpers are installed with the package.
+- `uninstall.sh --all` no longer deletes the PyTorch models in the shared Hugging Face cache; it
+  says where they are. The docs list what to remove by hand after a `brew uninstall` alone, and
+  give the model size as 600 MB (not 2.3 GB).
+
 ## 0.1.5 (2026-11-09)
 
 - Fixed: running once with a different backend (`SEMSEARCH_EMBED_BACKEND`) no longer wipes the

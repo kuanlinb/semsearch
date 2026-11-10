@@ -159,16 +159,92 @@ def translations(lang):
         return {}
 
 
+# Keys that hold lists of folders or strings. A single string is taken as a one-item list
+# ("roots": "~/Notes"), never as a list of characters: "exclude_substrings": "secret" once
+# excluded every path containing an "s" or a "/", and the next index run deleted everything.
+LIST_KEYS = ("roots", "extra_roots", "hot_roots", "names_only_roots", "exclude_substrings")
+# Text settings where "" (or false / null) turns the feature off
+OFF_KEYS = ("reranker", "remote_reranker", "remote_reranker_ssh")
+BACKENDS = ("onnx", "torch", "llama")
+
+
+def _read_user():
+    """The settings in config.json and a list of problems with them (shown in the app's menu)."""
+    if not USER_CONFIG.exists():
+        return {}, []
+    try:
+        user = json.loads(USER_CONFIG.read_text())
+    except Exception as e:
+        return {}, [f"{USER_CONFIG} is not valid JSON ({e}); using the defaults until it is fixed"]
+    if not isinstance(user, dict):
+        return {}, [f"{USER_CONFIG} should hold a JSON object {{...}}; using the defaults"]
+    clean, problems = {}, []
+    for key, value in user.items():
+        default = DEFAULTS.get(key)
+        bad = None
+        if key in LIST_KEYS:
+            if value is None and key != "roots":
+                value = []  # "exclude_substrings": null means none
+            if isinstance(value, str):
+                value = [value]
+            if not isinstance(value, (list, tuple)) or not all(isinstance(x, str) for x in value):
+                bad = "a list of strings"
+            else:
+                value = [x for x in value if x.strip()]  # "" would match every path
+        elif key in OFF_KEYS and value in (None, False):
+            value = ""  # "reranker": false
+        elif key == "embed_backend":
+            if value not in BACKENDS:
+                bad = " or ".join(f'"{b}"' for b in BACKENDS)
+        elif key == "model":
+            if not isinstance(value, str) or not value.strip():
+                bad = "a model name"
+        elif default is not None:
+            if isinstance(default, bool):
+                if value in (0, 1):
+                    value = bool(value)  # "conditions": 0
+                else:
+                    bad = "true or false"
+            elif isinstance(default, int):
+                if isinstance(value, float) and value.is_integer():
+                    value = int(value)
+                if not isinstance(value, int) or isinstance(value, bool):
+                    bad = "a whole number"
+            elif isinstance(default, float):
+                if not isinstance(value, (int, float)) or isinstance(value, bool):
+                    bad = "a number"
+            elif not isinstance(value, type(default)):
+                bad = f"{type(default).__name__}"
+        if bad:
+            problems.append(f'"{key}" in config.json should be {bad}, not {json.dumps(value)}; ignored')
+            continue
+        clean[key] = value
+    return clean, problems
+
+
 def load():
+    """DEFAULTS updated with config.json. cfg["config_problems"] lists what was wrong in the file;
+    the indexer does not run while there are any, so a typo never removes part of the index."""
     cfg = dict(DEFAULTS)
-    if USER_CONFIG.exists():
-        try:
-            cfg.update(json.loads(USER_CONFIG.read_text()))
-        except Exception:
-            pass
-    cfg["roots"] = list(cfg["roots"]) + list(cfg.get("extra_roots", []))
+    user, problems = _read_user()
+    cfg.update(user)
+    cfg["config_problems"] = problems
+    cfg["roots"] = list(cfg["roots"]) + list(cfg.get("extra_roots") or [])
     for key in ("roots", "hot_roots", "names_only_roots"):
         cfg[key] = [os.path.normpath(os.path.expanduser(r)) for r in cfg[key]]
     if os.environ.get("SEMSEARCH_PORT"):
         cfg["port"] = int(os.environ["SEMSEARCH_PORT"])
     return cfg
+
+
+def ensure_data_dir():
+    """Create the data folder readable by this user only. The index holds the text of
+    Documents, Desktop and Downloads (which macOS keeps private to the user), so it must not be
+    readable by other accounts on the Mac. Files created afterwards by this process are private too."""
+    os.umask(0o077)
+    DATA_DIR.mkdir(mode=0o700, parents=True, exist_ok=True)
+    try:
+        if DATA_DIR.stat().st_mode & 0o077:
+            DATA_DIR.chmod(0o700)  # folders made by older versions were 755
+    except OSError:
+        pass

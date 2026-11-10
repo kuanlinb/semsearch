@@ -63,5 +63,13 @@
  "Reading file contents {done} / {total}; until then, these files are found by name only": "파일 내용 읽는 중 {done} / {total}. 아직 읽지 않은 파일은 이름으로만 찾을 수 있습니다",
  "Scanning your folders. The first time takes a few minutes…": "폴더를 살펴보는 중입니다. 처음에는 몇 분 걸립니다…",
  "Nothing of this type. Press ⌘1 to see all.": "이 종류는 없습니다. ⌘1을 누르면 전체를 봅니다",
- "Clear search history": "검색 기록 지우기"
+ "Clear search history": "검색 기록 지우기",
+ "The SemSearch program files are missing ({path}). Run semsearch-install (Homebrew) or ./install.sh again.": "SemSearch 파일을 찾을 수 없습니다({path}). semsearch-install(Homebrew) 또는 ./install.sh를 다시 실행하세요.",
+ "The language model could not be downloaded ({error}). SemSearch tries again and continues where it stopped.": "언어 모델을 내려받지 못했습니다({error}). SemSearch가 다시 시도하며 멈춘 곳부터 이어받습니다.",
+ "Downloading the language model (first start only): {pct}% of {mb} MB": "언어 모델 내려받는 중(처음 한 번만): {mb} MB 중 {pct}%",
+ "Downloading the language model (first start only)…": "언어 모델 내려받는 중(처음 한 번만)…",
+ "The search service keeps stopping. Details: ~/.semsearch/server.log": "검색 서비스가 계속 멈춥니다. 자세한 내용: ~/.semsearch/server.log",
+ "⚠︎ {shortcut} is used by another app: pick another under Shortcut": "⚠︎ {shortcut}을(를) 다른 앱이 쓰고 있습니다: 단축키에서 다른 것을 고르세요",
+ "⚠︎ The index is not updated until config.json is fixed: {problem}": "⚠︎ config.json을 고칠 때까지 색인을 업데이트하지 않습니다: {problem}",
+ "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut}을(를) 다른 앱이 쓰고 있습니다. 오른쪽 톱니바퀴에서 다른 단축키를 고르세요."
 }

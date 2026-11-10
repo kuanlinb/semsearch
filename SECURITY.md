@@ -20,6 +20,13 @@ Only the latest version on `main` is supported.
 - **Other programs running on the same Mac can query it**, including ones macOS has not given
   access to your Documents, Desktop or Downloads, and other user accounts on the Mac. They would
   see file names, paths and short snippets. Keep this in mind on a shared Mac.
+- **The index files are private to your account.** `~/.semsearch` (which holds the text read
+  from your documents) is created readable by you only (since 0.1.6; older installs are fixed on
+  the next start). Programs running as you can still read it, as they can read the documents.
+- **Programs running as you could borrow SemSearch's folder access.** The search service runs
+  Python code from the folder SemSearch was installed from, and macOS counts what it reads as
+  SemSearch's. A program that can change those files could therefore read Documents, Desktop and
+  Downloads through it. Install from a folder only you can write to (the default).
 - **The app is not notarized.** `./install.sh` signs it with a self-signed certificate created on your
   Mac, in its own keychain (`semsearch-signing`), only so that folder permissions survive updates. Build it from source;
   do not run a copy someone sends you.

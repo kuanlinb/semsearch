@@ -45,8 +45,75 @@ def _sha256(path):
     return h.hexdigest()
 
 
-def _fetch(folder, url, files):
-    """The model's files, downloaded once into config.MODELS_DIR/folder and checked."""
+def _ssl_context():
+    """Certificates for the download. A python.org Python has none until its "Install
+    Certificates" step was run, so macOS's own list (/etc/ssl/cert.pem) is added."""
+    import ssl
+    ctx = ssl.create_default_context()
+    if os.path.exists("/etc/ssl/cert.pem"):
+        try:
+            ctx.load_verify_locations("/etc/ssl/cert.pem")
+        except ssl.SSLError:
+            pass
+    return ctx
+
+
+DOWNLOAD_STATUS = "model-download.json"  # in DATA_DIR, read by the app while the service starts
+
+
+def _report(**state):
+    """Download progress for the app ({} removes it): the search service is not answering yet."""
+    import json
+    path = config.DATA_DIR / DOWNLOAD_STATUS
+    try:
+        if not state:
+            path.unlink(missing_ok=True)
+            return
+        config.ensure_data_dir()
+        tmp = path.with_suffix(".tmp")
+        tmp.write_text(json.dumps(state))
+        tmp.replace(path)
+    except OSError:
+        pass
+
+
+def _download(url, tmp, label, timeout=60):
+    """Append to `tmp` from where an earlier attempt stopped (HTTP Range), reporting progress."""
+    import time
+    import urllib.error
+    have = tmp.stat().st_size if tmp.exists() else 0
+    req = urllib.request.Request(url, headers={"Range": f"bytes={have}-"} if have else {})
+    try:
+        r = urllib.request.urlopen(req, timeout=timeout, context=_ssl_context())
+    except urllib.error.HTTPError as e:
+        if e.code == 416 and have:  # already complete
+            return
+        raise
+    with r:
+        if have and getattr(r, "status", None) != 206:
+            have = 0  # the server sent the whole file again
+        total = have + int(r.headers.get("Content-Length") or 0)
+        last = 0.0
+        with open(tmp, "ab" if have else "wb") as f:
+            done = have
+            while True:
+                block = r.read(1 << 20)
+                if not block:
+                    break
+                f.write(block)
+                done += len(block)
+                if time.time() - last > 1:
+                    _report(file=label, done=done, total=total)
+                    last = time.time()
+        if total and done < total:
+            raise OSError(f"connection closed at {done} of {total} bytes")
+
+
+def _fetch(folder, url, files, attempts=6):
+    """The model's files, downloaded once into config.MODELS_DIR/folder and checked.
+    A dropped or stalled connection is retried, continuing where it stopped (the model is
+    about 590 MB: starting over on every hiccup can mean it never finishes)."""
+    import time
     dest = config.MODELS_DIR / folder
     dest.mkdir(parents=True, exist_ok=True)
     for name, sha in files.items():
@@ -55,11 +122,24 @@ def _fetch(folder, url, files):
             continue
         tmp = path.with_suffix(path.suffix + ".part")
         print(f"downloading {url}{name}", flush=True)
-        urllib.request.urlretrieve(url + name, tmp)
+        for attempt in range(attempts):
+            try:
+                _download(url + name, tmp, name)
+                break
+            except OSError as e:  # includes URLError, timeouts and refused connections
+                if attempt == attempts - 1:
+                    _report(file=name, error=f"{e}")
+                    raise RuntimeError(f"could not download {name} ({e}); check the network. "
+                                       "The next try continues where this one stopped") from e
+                print(f"download of {name} interrupted ({e}); retrying", flush=True)
+                _report(file=name, retrying=f"{e}")
+                time.sleep(min(60, 2 ** attempt * 3))
         if _sha256(tmp) != sha:
             tmp.unlink()
+            _report(file=name, error="checksum mismatch")
             raise RuntimeError(f"{name} from {url} does not match its checksum; try again later")
         tmp.rename(path)
+    _report()
     return dest
 
 

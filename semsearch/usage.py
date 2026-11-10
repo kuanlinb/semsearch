@@ -15,7 +15,7 @@ _cache = {"t": 0.0, "data": {}}
 
 
 def _db():
-    config.DATA_DIR.mkdir(exist_ok=True)
+    config.ensure_data_dir()
     db = sqlite3.connect(config.DATA_DIR / "opens.db", timeout=10)
     db.execute("CREATE TABLE IF NOT EXISTS opens(path TEXT, query TEXT, ts REAL)")
     return db

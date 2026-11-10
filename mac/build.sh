@@ -7,7 +7,7 @@ set -euo pipefail
 mkdir -p "$1"
 OUT="$(cd "$1" && pwd)"
 cd "$(dirname "$0")"
-TARGET="arm64-apple-macos13.0"
+TARGET="arm64-apple-macos14.0"
 swiftc -O -target "$TARGET" main.swift -o "$OUT/SemSearch"
 swiftc -O -target "$TARGET" ocr.swift -o "$OUT/semsearch-ocr"
 swiftc -O -target "$TARGET" fswatch.swift -o "$OUT/semsearch-fswatch"

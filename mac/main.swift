@@ -852,7 +852,8 @@ final class SearchController: NSObject, NSTextFieldDelegate, NSTableViewDataSour
                 } else {
                     self.heads = []
                     self.rebuild()
-                    self.footer.stringValue = L("Cannot reach the search service ({url}); it may still be starting.", ["url": serverURL])
+                    self.footer.stringValue = (NSApp.delegate as? AppDelegate)?.serviceProblem()
+                        ?? L("Cannot reach the search service ({url}); it may still be starting.", ["url": serverURL])
                 }
                 self.table.reloadData()
                 if !self.hits.isEmpty {
@@ -1077,6 +1078,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     var server: Process?
     var quitting = false
     var misses = 0
+    var hotkeyOK = true
     let repo = repoDir
 
     // The app launches the service so macOS folder access is granted once, to this app
@@ -1108,30 +1110,71 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         }.resume()
     }
 
+    // Starts that ended within a minute, in a row. Each one waits twice as long before the next
+    // try (up to 10 minutes), so a service that cannot start does not reload the model every
+    // 10 seconds forever, and the menu says what is wrong.
+    var failures = 0
+    var retryDelay: Double { min(600, 5 * pow(2, Double(max(0, failures - 1)))) }
+
+    /// Why the search service is not answering, in words for the menu and the search box (nil: no idea yet)
+    func serviceProblem() -> String? {
+        if !FileManager.default.isExecutableFile(atPath: repo + "/.venv/bin/python") {
+            return L("The SemSearch program files are missing ({path}). Run semsearch-install (Homebrew) or ./install.sh again.", ["path": repo])
+        }
+        let dl = NSHomeDirectory() + "/.semsearch/model-download.json"
+        if let d = FileManager.default.contents(atPath: dl),
+           let j = try? JSONSerialization.jsonObject(with: d) as? [String: Any] {
+            if let err = j["error"] as? String {
+                return L("The language model could not be downloaded ({error}). SemSearch tries again and continues where it stopped.", ["error": err])
+            }
+            if let done = j["done"] as? Double, let total = j["total"] as? Double, total > 0 {
+                return L("Downloading the language model (first start only): {pct}% of {mb} MB", ["pct": Int(100 * done / total), "mb": Int(total / 1_000_000)])
+            }
+            return L("Downloading the language model (first start only)…")
+        }
+        if failures >= 3 {
+            return L("The search service keeps stopping. Details: ~/.semsearch/server.log")
+        }
+        return nil
+    }
+
     func spawnServer() {
         let p = Process()
         p.executableURL = URL(fileURLWithPath: repo + "/.venv/bin/python")
         p.arguments = ["-m", "semsearch.server"]
         p.currentDirectoryURL = URL(fileURLWithPath: repo)
         let logDir = NSHomeDirectory() + "/.semsearch"
-        try? FileManager.default.createDirectory(atPath: logDir, withIntermediateDirectories: true)
+        // Private to this user: the index holds the text of Documents, Desktop and Downloads
+        try? FileManager.default.createDirectory(atPath: logDir, withIntermediateDirectories: true,
+                                                 attributes: [.posixPermissions: 0o700])
         let logPath = logDir + "/server.log"
+        // Keep the log from growing without end (a crash loop writes a traceback each time)
+        if let size = (try? FileManager.default.attributesOfItem(atPath: logPath))?[.size] as? Int, size > 10_000_000 {
+            try? FileManager.default.removeItem(atPath: logPath + ".1")
+            try? FileManager.default.moveItem(atPath: logPath, toPath: logPath + ".1")
+        }
         if !FileManager.default.fileExists(atPath: logPath) {
-            FileManager.default.createFile(atPath: logPath, contents: nil)
+            FileManager.default.createFile(atPath: logPath, contents: nil, attributes: [.posixPermissions: 0o600])
         }
         if let fh = FileHandle(forWritingAtPath: logPath) {
             fh.seekToEndOfFile()
             p.standardOutput = fh
             p.standardError = fh
         }
+        let started = Date()
         p.terminationHandler = { [weak self] _ in
-            DispatchQueue.main.asyncAfter(deadline: .now() + 5) { self?.startServer() }
+            DispatchQueue.main.async {
+                guard let self, !self.quitting else { return }
+                self.failures = Date().timeIntervalSince(started) < 60 ? self.failures + 1 : 0
+                DispatchQueue.main.asyncAfter(deadline: .now() + self.retryDelay) { self.startServer() }
+            }
         }
         do {
             try p.run()
             server = p
         } catch {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 30) { [weak self] in self?.startServer() }
+            failures += 1
+            DispatchQueue.main.asyncAfter(deadline: .now() + max(30, retryDelay)) { [weak self] in self?.startServer() }
         }
     }
 
@@ -1180,7 +1223,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
         installEditMenu()
         controller = SearchController()
         hotkey = HotKey { [weak self] in self?.controller.toggle() }
-        hotkey.register(shortcut)
+        // Another app (Raycast, Alfred, an input method) may own the shortcut already: say so in
+        // the menu and in the search box, which then opens once so the user sees it
+        hotkeyOK = hotkey.register(shortcut)
         status = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         status.button?.image = NSImage(systemSymbolName: "sparkle.magnifyingglass", accessibilityDescription: "SemSearch")
         let menu = NSMenu()
@@ -1204,6 +1249,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
             UserDefaults.standard.set(true, forKey: "onboarded")
             DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
                 self.controller.field.placeholderString = L("Press {shortcut} anytime to search. Try it: describe a file", ["shortcut": shortcut.label])
+                if !self.controller.panel.isVisible { self.controller.toggle() }
+            }
+        }
+        if !hotkeyOK && UserDefaults.standard.string(forKey: "warnedHotkey") != shortcut.label {
+            UserDefaults.standard.set(shortcut.label, forKey: "warnedHotkey")  // once per shortcut
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                self.controller.field.placeholderString = L("{shortcut} is used by another app. Pick another shortcut with the gear on the right.", ["shortcut": shortcut.label])
                 if !self.controller.panel.isVisible { self.controller.toggle() }
             }
         }
@@ -1279,6 +1331,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
     func menuWillOpen(_ menu: NSMenu) {
         URLSession.shared.dataTask(with: URL(string: serverURL + "/status")!) { [weak self] data, _, _ in
             var text = L("Search service not responding")
+            if let self, !self.hotkeyOK {
+                DispatchQueue.main.async {
+                    self.statusLine.title = L("⚠︎ {shortcut} is used by another app: pick another under Shortcut", ["shortcut": shortcut.label])
+                }
+                return
+            }
             if let data, let j = try? JSONSerialization.jsonObject(with: data) as? [String: Any] {
                 let files = j["files"] as? Int ?? 0
                 let last = j["last_index"] as? String ?? L("not yet")
@@ -1288,6 +1346,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
                     let names = blocked.map { ($0 as NSString).lastPathComponent }.joined(separator: L(", "))
                     text = L("⚠︎ Needs access: {names}. Allow SemSearch in System Settings > Privacy & Security > Files and Folders", ["names": names])
                 }
+                if let problems = j["config_problems"] as? [String], let first = problems.first {
+                    text = L("⚠︎ The index is not updated until config.json is fixed: {problem}", ["problem": first])
+                }
+            } else if let problem = self?.serviceProblem() {
+                text = "⚠︎ " + problem
             }
             DispatchQueue.main.async { self?.statusLine.title = text }
         }.resume()
@@ -1321,7 +1384,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuDelegate {
 
     @objc func pickShortcut(_ item: NSMenuItem) {
         guard let spec = item.representedObject as? String, let sc = Shortcut(spec), sc != shortcut else { return }
-        guard hotkey.register(sc) else { hotkey.register(shortcut); return }
+        guard hotkey.register(sc) else { hotkeyOK = hotkey.register(shortcut); return }
+        hotkeyOK = true
         shortcut = sc
         saveHotkey(spec)
         showShortcut()

@@ -34,7 +34,12 @@ Optional `~/.semsearch/config.json` (any subset of these keys):
 | `max_indexer_mb` | `4000` | Memory limit of the indexer in MB. Past it the run stops and the next scheduled run continues. `0` turns it off. |
 | `hotkey` | `"option+space"` | Shortcut that opens the search box. Easiest to change from the menu-bar icon (**Shortcut**); here any combination works, e.g. `"option+shift+space"` or `"cmd+shift+k"`: `cmd`, `option`, `control`, `shift` plus `space`, a letter or a digit. Takes effect when the app restarts. |
 
-Invalid JSON in the config file is ignored (defaults are used). Package folders
+If the file is not valid JSON, or a setting has the wrong type (a number where a list belongs),
+search keeps working with the defaults, the menu names the problem, and the index is not updated
+until the file is fixed: indexing with half the settings could otherwise remove files from it.
+A single folder in place of a list (`"roots": "~/Notes"`) is read as a one-item list. Package folders
 (`node_modules`, `.venv`, `.git`, build output…) are always skipped, and a folder of hundreds of
-machine-named files (a dataset) is indexed as one entry. Legacy, non-File-Provider sync folders
+machine-named files (a dataset: `frame_000123.png`, `IMG_0001.jpg`) is indexed as one entry.
+Screenshots, files you named yourself, and everything directly on the Desktop or in Downloads are
+always indexed one by one. Legacy, non-File-Provider sync folders
 such as `~/Dropbox` are not added automatically: put them in `extra_roots`.

@@ -63,5 +63,13 @@
  "Reading file contents {done} / {total}; until then, these files are found by name only": "正在读取文件内容 {done} / {total}，还没读到的只能按文件名找到",
  "Scanning your folders. The first time takes a few minutes…": "正在扫描文件夹，第一次需要几分钟…",
  "Nothing of this type. Press ⌘1 to see all.": "这个类型没有结果，按 ⌘1 查看全部",
- "Clear search history": "清除搜索记录"
+ "Clear search history": "清除搜索记录",
+ "The SemSearch program files are missing ({path}). Run semsearch-install (Homebrew) or ./install.sh again.": "找不到 SemSearch 的程序文件（{path}）。请再运行一次 semsearch-install（Homebrew）或 ./install.sh。",
+ "The language model could not be downloaded ({error}). SemSearch tries again and continues where it stopped.": "语言模型下载失败（{error}）。SemSearch 会再试，并从中断的地方继续下载。",
+ "Downloading the language model (first start only): {pct}% of {mb} MB": "正在下载语言模型（仅首次）：{mb} MB 的 {pct}%",
+ "Downloading the language model (first start only)…": "正在下载语言模型（仅首次）…",
+ "The search service keeps stopping. Details: ~/.semsearch/server.log": "搜索服务一直停止。详细原因：~/.semsearch/server.log",
+ "⚠︎ {shortcut} is used by another app: pick another under Shortcut": "⚠︎ {shortcut} 被其他应用占用：请在“快捷键”换一个",
+ "⚠︎ The index is not updated until config.json is fixed: {problem}": "⚠︎ config.json 修好之前不会更新索引：{problem}",
+ "{shortcut} is used by another app. Pick another shortcut with the gear on the right.": "{shortcut} 被其他应用占用了。请点右边的齿轮换一个快捷键。"
 }

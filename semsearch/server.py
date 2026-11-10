@@ -113,6 +113,7 @@ class Handler(BaseHTTPRequestHandler):
             if not st["indexing"]:
                 st.pop("progress", None)  # left behind by an interrupted run
             st["no_access"] = [r for r, v in dict(_access).items() if v != "ok"]  # probe threads add keys
+            st["config_problems"] = config.load()["config_problems"]  # the app shows them in its menu
             self._send(200, st)
         elif re.fullmatch(r"/l10n/[A-Za-z-]+\.json", u.path) and (ROOT / u.path[1:]).is_file():
             self._send(200, (ROOT / u.path[1:]).read_bytes())
@@ -294,7 +295,7 @@ def main():
     signal.signal(signal.SIGTERM, _stop)
     signal.signal(signal.SIGINT, _stop)
     cfg = config.load()
-    config.DATA_DIR.mkdir(exist_ok=True)
+    config.ensure_data_dir()
     # Bind the port before loading the model: a second copy fails fast instead of loading for nothing
     srv = ThreadingHTTPServer(("127.0.0.1", cfg["port"]), Handler)
     # Serve requests only after the model is loaded: loading imports a lot, and a request

@@ -1,7 +1,7 @@
 #!/bin/zsh
 # Remove SemSearch: the app, its login item and the `ss` command.
 # Usage: ./uninstall.sh          keeps the index and the downloaded model, so a reinstall is quick
-#        ./uninstall.sh --all    also deletes the index, logs and the model (about 2.3 GB)
+#        ./uninstall.sh --all    also deletes the index, logs and the model (about 600 MB)
 # This folder itself (the code and its .venv) is left for you to delete.
 # Testing: SEMSEARCH_APP=/tmp/SemSearch.app SEMSEARCH_SKIP_AGENT=1 ./uninstall.sh
 #          removes only that app; does not touch running apps, login items or the `ss` link
@@ -55,8 +55,19 @@ if [[ -n "$ALL" ]]; then
   if [[ -z "$SKIP_AGENT" ]]; then  # the signing certificate made by install.sh
     security delete-keychain "$HOME/Library/Keychains/semsearch-signing.keychain-db" 2>/dev/null || true
   fi
-  rm -rf "${HF_HOME:-$HOME/.cache/huggingface}/hub/models--BAAI--bge-m3"
+  # Homebrew keeps the Python environment outside the package so it survives upgrades
+  if [[ -L .venv ]]; then
+    venv="$(readlink .venv)"
+    [[ "$venv" == */var/semsearch/venv ]] && rm -rf -- "$venv"
+  fi
   echo "Removed SemSearch, its index and the model."
+  # The PyTorch backend's model sits in the Hugging Face cache, which other programs share:
+  # left alone, never deleted for them
+  hf="${HF_HOME:-$HOME/.cache/huggingface}/hub"
+  if [[ -d "$hf/models--BAAI--bge-m3" || -d "$hf/models--BAAI--bge-reranker-v2-m3" ]]; then
+    echo "Note: the PyTorch models in $hf (models--BAAI--bge-m3, models--BAAI--bge-reranker-v2-m3)"
+    echo "      are shared with other programs and were kept; delete them yourself if nothing else uses them."
+  fi
 else
   echo "Removed SemSearch. The index (~/.semsearch) and the model are kept; $again deletes them."
 fi

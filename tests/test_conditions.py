@@ -77,3 +77,18 @@ def test_search_keeps_only_files_that_meet_the_conditions(index_env, monkeypatch
     assert top("上週 Gmail 寄來的")[0] == ["quote_movers.txt"]   # nothing but conditions: newest first
     names, info = top("quotation from Telegram")           # nothing meets it: searched without it
     assert info["matched"] == 0 and {n for n in names[:3]} == {"quote_bathroom.txt", "quote_movers.txt", "quote_website.txt"}
+
+
+def test_words_that_only_look_like_conditions():
+    """2026-11-10: "on" meant "about", "latest" is not a date range, 二十五 is 25."""
+    for q in ["notes on edge detection", "lecture on line integrals", "essay on mail fraud",
+              "slides on teams management", "hard drive files"]:
+        assert conditions.parse(q, NOW)[1] is None, q
+    for q, rest in [("latest resume", "resume"), ("最新的履歷", "履歷"), ("the newest version of the plan", "the plan")]:
+        got, cond = conditions.parse(q, NOW)
+        assert cond == {"newest": True} and got == rest, q  # newer first, never a date filter
+    rest, cond = conditions.parse("the PDF Amy sent me on LINE", NOW)
+    assert cond["source"][0] == "LINE" and rest == "the PDF Amy"
+    _, cond = conditions.parse("過去二十五天的報告", NOW)
+    assert round((cond["before"] - cond["after"]) / 86400) == 26
+    assert [conditions._num(x) for x in ["十", "十五", "二十", "二十五", "兩", "7"]] == [10, 15, 20, 25, 2, 7]

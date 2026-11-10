@@ -39,7 +39,8 @@ SOURCES = [
     ("Mail", ["mail", "email", "e-mail", "郵件", "信件", "電子郵件", "メール", "이메일", "메일"],
      {"Mail"}, ["mail.google.com", "mail-attachment.googleusercontent.com", "outlook.live.com",
                 "outlook.office.com", "outlook.office365.com", "mail.yahoo.com"]),
-    ("Google Drive", ["google drive", "drive", "雲端硬碟", "google 雲端"], set(),
+    # Not plain "drive": "hard drive files" is not about Google Drive
+    ("Google Drive", ["google drive", "雲端硬碟", "google 雲端"], set(),
      ["drive.google.com", "docs.google.com", "drive.usercontent.google.com"]),
     ("Google Docs", ["google docs", "google 文件"], set(), ["docs.google.com"]),
     ("Notion", ["notion"], set(), ["notion.so", "notion.site"]),
@@ -53,7 +54,11 @@ SOURCES = [
 ]
 # A source word counts only next to words like these ("LINE Pay 帳單" is not a condition,
 # "LINE 傳來的帳單" is): before it ...
-_SRC_BEFORE = r"(?:從|由|用|透過|經由|在|于|於|from|via|through|on|over|by|で|から|에서|로|으로)"
+_SRC_BEFORE = r"(?:從|由|用|透過|經由|在|于|於|from|via|through|で|から|에서|로|으로)"
+# English "on" / "over" / "by" mostly mean "about" ("notes on edge detection", "lecture on line
+# integrals"), so they count only after a verb of sending: "the PDF Amy sent me on LINE"
+_SRC_VERB = (r"\b(?:sent|shared|received|got|downloaded|saved|posted|forwarded|texted|messaged)\b"
+             r"(?:\s+\w+){0,2}?\s+(?:on|over|by|in)\s*")
 # ... or after it
 _SRC_AFTER = (r"(?:傳來|傳給我|傳的|傳過來|收到|下載|下载|載的|抓的|存的|存下來|上的|附件|寄來|寄的|來的|"
               r"分享|attachments?|downloads?|downloaded|sent|received|shared|files?|で送|から|で受け|"
@@ -63,7 +68,8 @@ _SRC_AFTER = (r"(?:傳來|傳給我|傳的|傳過來|收到|下載|下载|載的
 def _source_pattern(word):
     w = re.escape(word)
     w = rf"(?<![a-z0-9]){w}(?![a-z0-9])" if word.isascii() else w
-    return re.compile(rf"(?:{_SRC_BEFORE}\s*{w}\s*{_SRC_AFTER}?|{w}\s*{_SRC_AFTER})", re.I)
+    verb = rf"{_SRC_VERB}{w}|" if word.isascii() else ""
+    return re.compile(rf"(?:{verb}{_SRC_BEFORE}\s*{w}\s*{_SRC_AFTER}?|{w}\s*{_SRC_AFTER})", re.I)
 
 
 _SOURCE_RES = [(label, [_source_pattern(w) for w in words], agents, hosts)
@@ -181,14 +187,12 @@ _CN = {"一": 1, "二": 2, "兩": 2, "三": 3, "四": 4, "五": 5, "六": 6, "�
 
 
 def _num(s):
+    """"25", "二十五", "十五", "三十", "兩" → a number."""
     if s.isdigit():
         return int(s)
-    if s == "十":
-        return 10
-    if s.startswith("十"):
-        return 10 + _CN.get(s[1:], 0)
-    if s.endswith("十"):
-        return _CN.get(s[0], 1) * 10
+    if "十" in s:
+        tens, _, ones = s.partition("十")
+        return _CN.get(tens, 1) * 10 + _CN.get(ones, 0)
     return _CN.get(s, 1)
 
 
@@ -200,7 +204,8 @@ TIME_WORDS = [
     (r"上(?:個|个)?(?:禮拜|礼拜|星期|週|周)", "lastweek"),
     (r"這(?:個)?月|本月|这(?:个)?月", "thismonth"), (r"上(?:個|个)?月", "lastmonth"),
     (r"今年", "thisyear"), (r"去年", "lastyear"),
-    (r"最近|近期|最新", "recent"),
+    # Not "最新" / "latest": "最新的履歷" is the newest version, however old, not the last 30 days
+    (r"最近|近期", "recent"),
     (rf"(?:過去|过去|最近|近)\s*{_NUM}\s*(?:天|日)(?:內|内|以?來|来)?", "pastdays"),
     (rf"(?:過去|过去|最近|近)\s*{_NUM}\s*(?:個|个)?(?:禮拜|礼拜|星期|週|周)(?:內|内|以?來|来)?", "pastweeks"),
     (rf"(?:過去|过去|最近|近)\s*{_NUM}\s*(?:個|个)?月(?:內|内|以?來|来)?", "pastmonths"),
@@ -211,7 +216,7 @@ TIME_WORDS = [
     (r"\btoday\b|\bthis morning\b|\btonight\b", "today"), (r"\bthis week\b", "thisweek"),
     (r"\blast week\b", "lastweek"), (r"\b(?:in the |over the )?past week\b", "pastweek1"), (r"\bthis month\b", "thismonth"),
     (r"\blast month\b", "lastmonth"), (r"\bthis year\b", "thisyear"), (r"\blast year\b", "lastyear"),
-    (r"\b(?:recent|recently|lately|latest|newest)\b", "recent"),
+    (r"\b(?:recent|recently|lately)\b", "recent"),
     (r"\b(?:in the |over the )?(?:past|last) (\d+) days\b", "pastdays"),
     (r"\b(?:in the |over the )?(?:past|last) (\d+) weeks\b", "pastweeks"),
     (r"\b(?:in the |over the )?(?:past|last) (\d+) months\b", "pastmonths"),
@@ -236,13 +241,23 @@ _GLUE = re.compile(r"^(?:的|那個|那份|那張|那一個|那|个|個|檔案|�
                    r"給我|传来|に|の|を|한|받은|파일|\s|[,，、。.?？!！])+$", re.I)
 
 
+# "最新的履歷", "latest resume": the newest version first, however old it is. Taken out of the
+# query (so "履歷" matches the file name) but never a date filter.
+_NEWEST = re.compile(r"最新(?:版|的)?|最新版本|\b(?:the )?(?:latest|newest|most recent)\b(?: version of)?|最新の|최신", re.I)
+
+
 def parse(q, t=None):
     """Return (query without the condition phrases, conditions or None).
 
-    conditions: {"after": ts, "before": ts, "time": label, "source": SOURCES entry or None}
+    conditions: {"after": ts, "before": ts, "time": label, "source": SOURCES entry or None,
+                 "newest": True (rank newer files first, no filter)}
     """
     t = now() if t is None else t
     rest, cond = q, {}
+    m = _NEWEST.search(rest)
+    if m and rest[:m.start()].strip() + rest[m.end():].strip():
+        cond["newest"] = True
+        rest = rest[:m.start()] + " " + rest[m.end():]
     for rx, kind in _TIME_RES:
         m = rx.search(rest)
         if not m:

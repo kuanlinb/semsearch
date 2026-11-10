@@ -597,8 +597,12 @@ class Searcher:
         db = self._db()
         # "上個月 LINE 傳來的報價單": search "報價單" among last month's files that came from LINE
         use_cond, cond, cond_info, allowed, sem_q = cond, None, None, None, q
+        prefer_newest = False
         if use_cond and self.cfg.get("conditions"):
             rest, cond = conditions.parse(q)
+            if cond and cond.pop("newest", False):
+                prefer_newest, sem_q = True, rest
+                cond = cond or None
             if cond:
                 allowed = self.names.allowed(cond)
                 src = cond.get("source")
@@ -667,6 +671,12 @@ class Searcher:
             if not fused:  # no words to search for: newest first
                 newest = sorted(allowed_set, key=lambda f: -self.names.mtime_of(f))
                 fused = {f: 1.0 / (RRF_K + r) for r, f in enumerate(newest[:500])}
+        if not fused and want_types and not sem_q and ".app" not in want_types:
+            # Only type words ("截圖", "pdf", "folder"): the newest files of that type, those whose
+            # name has the word first (2026-11-10: such queries returned nothing at all)
+            named = {f for f, c, _ in self.names.match([kw_q]) if c} if kw_q else set()
+            fused = {f: 1.0 / (RRF_K + r) + (1.0 / RRF_K if f in named else 0.0)
+                     for r, f in enumerate(self.names.newest_of(want_types))}
         if want_types and ".app" in want_types:
             # Explicitly asked for an app: list apps only, re-ranking all of them by name
             app_scores = self._app_vector(q)
@@ -678,6 +688,13 @@ class Searcher:
         # The query is exactly an app name (e.g. "Photos" / "照片"): that app goes first
         for fid in self.names.exact_apps(q):
             fused[fid] = max(fused.values(), default=0) + 1
+        if prefer_newest and fused:
+            # "最新的履歷": among the matches about as good as the best one, the most recently
+            # modified first (the versions of one document score alike)
+            best = max(fused.values())
+            top = sorted((f for f in fused if fused[f] >= 0.75 * best), key=lambda f: -fused[f])[:30]
+            for r, f in enumerate(sorted(top, key=self.names.mtime_of, reverse=True)):
+                fused[f] = best + 1.0 - r * 1e-3
         self._usage_boost(fused, q)
         if kind in KINDS:  # filter before reranking, so the reranker only spends time on matching files
             fused = {f: fused[f] for f, ext, is_dir in self.names.types(list(fused)) if kind_ok(kind, ext, is_dir)}
@@ -851,6 +868,12 @@ class _NameIndex:
         q = q.strip().lower()
         return [f for f, (ext, _) in self.kind.items()
                 if ext == ".app" and q and self.app_names.get(f) == q]
+
+    def newest_of(self, types, n=500):
+        """The n most recently modified files whose extension is in `types` ("<dir>" = folders)."""
+        fids = [f for f, (ext, is_dir) in self.kind.items()
+                if ("<dir>" if is_dir else ext) in types and ext != ".app"]
+        return sorted(fids, key=self.mtime_of, reverse=True)[:n]
 
     def types(self, fids):
         return [(f, *self.kind.get(f, ("", 0))) for f in fids]

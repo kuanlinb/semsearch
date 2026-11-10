@@ -16,7 +16,11 @@ LABEL="io.github.kuanlinb.semsearch"
 VERSION="$(cat VERSION)"
 
 die() { echo "Error: $*" >&2; exit 1; }
-[[ "$(uname -m)" == "arm64" ]] || die "SemSearch needs an Apple silicon Mac (arm64)."
+# hw.optional.arm64, not uname: a Terminal running under Rosetta reports x86_64 on an M-series Mac
+[[ "$(sysctl -n hw.optional.arm64 2>/dev/null)" == "1" ]] || die "SemSearch needs an Apple silicon Mac (M1 or newer)."
+[[ "$(uname -m)" == "arm64" ]] || die "This Terminal runs under Rosetta (Intel mode). Open a normal Terminal window and run this again."
+# onnxruntime and PyTorch ship for macOS 14 and later only
+(( ${$(sw_vers -productVersion)%%.*} >= 14 )) || die "SemSearch needs macOS 14 (Sonoma) or later; this Mac has $(sw_vers -productVersion)."
 # Without the Command Line Tools, /usr/bin/swiftc is only a stub that offers to install them
 have_swiftc() { xcode-select -p >/dev/null 2>&1 && xcrun --find swiftc >/dev/null 2>&1; }
 if [[ -f prebuilt/VERSION && "$(cat prebuilt/VERSION)" == "$VERSION" ]]; then
@@ -31,14 +35,33 @@ if [[ -d "$APP" ]]; then
   [[ "$existing" == "$LABEL" ]] || die "$APP exists and is not SemSearch ($existing). Move it away or set SEMSEARCH_APP."
 fi
 
-if [[ ! -x .venv/bin/python ]]; then
+# Python 3.11-3.14: the versions every pinned package has wheels for (3.15 has none yet)
+supported() { "$1" -c 'import sys; sys.exit(not (3, 11) <= sys.version_info[:2] <= (3, 14))' 2>/dev/null; }
+REBUILD=""
+if [[ -e .venv/bin/python ]] && ! supported .venv/bin/python; then
+  echo "Rebuilding .venv: it uses $(.venv/bin/python --version 2>&1), which SemSearch does not support."
+  REBUILD=1
+fi
+if [[ -n "$REBUILD" || ! -x .venv/bin/python ]]; then
   echo "Creating .venv…"
-  if command -v uv >/dev/null; then
-    uv venv -q -p 3.11 .venv
+  # Under Homebrew .venv is a link to a folder outside the versioned package (it survives
+  # upgrades). venv refuses to create an environment through a link, so it is made at the target.
+  VENV=.venv
+  if [[ -L .venv ]]; then
+    VENV="$(readlink .venv)"
+    mkdir -p "$(dirname "$VENV")"
+  fi
+  PY=""
+  for c in python3 python3.13 python3.12 python3.11 python3.14; do  # python3 first: the Homebrew wrapper puts python@3.12 there
+    if command -v "$c" >/dev/null && supported "$(command -v "$c")"; then PY="$(command -v "$c")"; break; fi
+  done
+  if [[ -n "$PY" ]]; then
+    "$PY" -m venv --clear "$VENV"  # --clear empties an old or broken environment in place
+  elif command -v uv >/dev/null; then
+    # Newer uv refuses to replace an environment unless asked; older uv has no --clear flag
+    UV_VENV_CLEAR=1 uv venv -q -p 3.12 "$VENV"
   else
-    python3 -c 'import sys; sys.exit(sys.version_info < (3, 11))' \
-      || die "Python 3.11+ is required (found $(python3 --version 2>&1)). Install uv or a newer Python."
-    python3 -m venv .venv
+    die "Python 3.11 to 3.14 is needed (python3 here is $(python3 --version 2>&1)). Install one with: brew install python@3.13"
   fi
 fi
 # PyTorch only when the config asks for it ("embed_backend": "torch", or a reranker on this Mac).
@@ -47,7 +70,14 @@ REQS="$(.venv/bin/python - "${SEMSEARCH_DATA:-$HOME/.semsearch}" <<'PY'
 import json, os, sqlite3, sys
 data = sys.argv[1]
 path = os.path.join(data, "config.json")
-cfg = json.load(open(path)) if os.path.exists(path) else {}
+readable = True
+try:
+    cfg = json.load(open(path)) if os.path.exists(path) else {}
+except ValueError:
+    print(f"Note: {path} is not valid JSON; fix it, SemSearch does not index until then.", file=sys.stderr)
+    cfg, readable = {}, False
+if not isinstance(cfg, dict):
+    cfg, readable = {}, False
 if "embed_backend" not in cfg and os.path.exists(os.path.join(data, "index.db")):
     try:
         db = sqlite3.connect(os.path.join(data, "index.db"))
@@ -56,7 +86,8 @@ if "embed_backend" not in cfg and os.path.exists(os.path.join(data, "index.db"))
         meta = {}
     if "model" in meta and "backend" not in meta:
         cfg["embed_backend"] = "torch"
-        json.dump(cfg, open(path, "w"), indent=2)
+        if readable:  # never overwrite settings we could not read
+            json.dump(cfg, open(path, "w"), indent=2)
         print('Keeping PyTorch for your index ("embed_backend": "onnx" in the config switches).', file=sys.stderr)
 print("requirements.txt" if cfg.get("embed_backend") == "torch" or cfg.get("reranker") else "requirements-onnx.txt")
 PY
@@ -95,9 +126,9 @@ cat > "$BUILD/SemSearch.app/Contents/Info.plist" <<PLIST
   <key>CFBundlePackageType</key><string>APPL</string>
   <key>CFBundleShortVersionString</key><string>$VERSION</string>
   <key>CFBundleVersion</key><string>1</string>
-  <key>LSMinimumSystemVersion</key><string>13.0</string>
+  <key>LSMinimumSystemVersion</key><string>14.0</string>
   <key>LSUIElement</key><true/>
-  <key>SemSearchRepo</key><string>$REPO</string>
+  <key>SemSearchRepo</key><string></string>
   <key>NSDocumentsFolderUsageDescription</key><string>Build a local search index. Nothing leaves this Mac.</string>
   <key>NSDesktopFolderUsageDescription</key><string>Build a local search index. Nothing leaves this Mac.</string>
   <key>NSDownloadsFolderUsageDescription</key><string>Build a local search index. Nothing leaves this Mac.</string>
@@ -105,6 +136,8 @@ cat > "$BUILD/SemSearch.app/Contents/Info.plist" <<PLIST
 </dict>
 </plist>
 PLIST
+# plutil escapes the path (a folder like ~/R&D would otherwise break the XML)
+plutil -replace SemSearchRepo -string "$REPO" "$BUILD/SemSearch.app/Contents/Info.plist"
 if [[ -n "$SKIP_AGENT" ]]; then
   codesign --force --sign - "$BUILD/SemSearch.app"  # test mode: leave keychains alone
 else
@@ -127,6 +160,7 @@ if [[ -n "$SKIP_AGENT" ]]; then
 fi
 
 AGENT="$HOME/Library/LaunchAgents/$LABEL.plist"
+mkdir -p "$HOME/Library/LaunchAgents"  # a new user account does not have it yet
 cat > "$AGENT" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
@@ -136,11 +170,15 @@ cat > "$AGENT" <<PLIST
   <key>ProgramArguments</key>
   <array><string>/usr/bin/open</string><string>-g</string><string>$APP</string></array>
   <key>RunAtLoad</key><true/>
+  <key>AssociatedBundleIdentifiers</key><string>$LABEL</string>
 </dict>
 </plist>
 PLIST
 launchctl bootout "gui/$(id -u)/$LABEL" 2>/dev/null || true
-launchctl bootstrap "gui/$(id -u)" "$AGENT"
+# Fails when background items are turned off in System Settings; the app still starts now
+launchctl bootstrap "gui/$(id -u)" "$AGENT" 2>/dev/null \
+  || echo "Note: SemSearch could not be added to the login items (System Settings › General › Login Items › Allow in the Background)."
+open -g "$APP"
 
 # `ss` command: only if the name is free (or already ours)
 BIN="$(brew --prefix 2>/dev/null || echo /usr/local)/bin"
@@ -150,6 +188,8 @@ if [[ -d "$BIN" && -w "$BIN" ]]; then
   else
     echo "Note: $BIN/ss already exists, so the ss command was not linked. Use $REPO/ss instead."
   fi
+else
+  echo "Note: the ss command was not linked ($BIN is missing or not writable). Use $REPO/ss instead."
 fi
 
 echo

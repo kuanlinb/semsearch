@@ -32,7 +32,7 @@ on your Mac: your files and searches never leave it.
 
 ## Install
 
-**You need** a Mac with Apple silicon (M1 or newer), macOS 13 or later, and about 2 GB of free space.
+**You need** a Mac with Apple silicon (M1 or newer), macOS 14 (Sonoma) or later, and about 2 GB of free space.
 
 **With [Homebrew](https://brew.sh)** (one line; no Xcode tools needed on macOS 15 or later):
 
@@ -53,7 +53,7 @@ Downloads.
 
 That's it. SemSearch now starts automatically when you log in. What happens next:
 
-- The first time, it downloads the language model (about 2.3 GB, only once).
+- The first time, it downloads the language model (about 600 MB, only once).
 - **File names are searchable within minutes** (about 15 minutes for 165,000 files). Reading the
   text inside every document takes longer, from minutes for a small folder to about 2 hours for
   165,000 files; you can search while it works.
@@ -61,8 +61,10 @@ That's it. SemSearch now starts automatically when you log in. What happens next
 - Removing: `semsearch-uninstall` (then `brew uninstall semsearch`), or `./uninstall.sh`.
 - From source, keep the `semsearch` folder where it is: the app runs from it.
 
-> If the installer says Python is too old, install a newer one with `brew install python`
-> (or install [uv](https://github.com/astral-sh/uv)) and run `./install.sh` again.
+> From source you need Python 3.11 to 3.14. If the installer says yours is not one of them, run
+> `brew install python@3.13` (or install [uv](https://github.com/astral-sh/uv)) and run `./install.sh` again.
+> Already ran `brew uninstall semsearch` without `semsearch-uninstall`? See
+> [removing what is left](docs/troubleshooting.md#removing-what-is-left).
 
 ## How to use
 
